@@ -44,17 +44,17 @@ Some of the main features of J-MIP are:
 
 ## Examples
 
-Many J-MIP examples are documented at https://docs.jmip.com/en/latest/examples.html 
+Many J-MIP examples will be documented at https://docs.jmip.com/en/latest/examples.html 
 
-The code of these examples and additional ones (published in tutorials) can be downloaded at https://github.com/coin-or/jmip/tree/master/examples
+Very soon the code of these examples and additional ones (published in tutorials) can be downloaded at https://github.com/coin-or/jmip/tree/master/examples
 
 ## Documentation
  
-The full Python-MIP documentation is available at
-https://docs.python-mip.com/en/latest/
+The full J-MIP documentation is available at
+https://docs.j-mip.com/en/latest/
 
 A PDF version is also available:
-https://python-mip.readthedocs.io/_/downloads/en/latest/pdf/
+https://j-mip.readthedocs.io/_/downloads/en/latest/pdf/
 
 ## Mailing list
 
