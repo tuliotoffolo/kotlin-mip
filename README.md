@@ -17,7 +17,7 @@ Some of the main features of JMIP are:
 * high level modeling: write your MIP models in Java or Kotlin as easily as in
   high level languages such as
   [MathProg](https://en.wikibooks.org/wiki/GLPK/GMPL_(MathProg)). Particularly
-  for Kotlin programmers: operator overloading makes it very to write linear
+  for Kotlin programmers: operator overloading makes it very easy to write linear
   expressions;
 
 * full featured:
