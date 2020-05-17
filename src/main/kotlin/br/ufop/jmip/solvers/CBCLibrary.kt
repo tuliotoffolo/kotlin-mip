@@ -118,37 +118,37 @@ interface CBCLibrary {
     fun Cbc_getNumElements(model: Pointer): Int
 
     // int Cbc_getRowNz(Cbc_Model *model, int row);
-    // fun Cbc_getRowNz(model: Pointer, row: Int): Int
+    fun Cbc_getRowNz(model: Pointer, row: Int): Int
 
     // int *Cbc_getRowIndices(Cbc_Model *model, int row);
-    // fun Cbc_getRowIndices(model: Pointer, row: Int): IntArray // -> int*
+    fun Cbc_getRowIndices(model: Pointer, row: Int): Pointer // -> int*
 
     // double *Cbc_getRowCoeffs(Cbc_Model *model, int row);
-    // fun Cbc_getRowCoeffs(model: Pointer, row: Int): DoubleArray // -> double*
+    fun Cbc_getRowCoeffs(model: Pointer, row: Int): Pointer // -> double*
 
     // double Cbc_getRowRHS(Cbc_Model *model, int row);
-    // fun Cbc_getRowRHS(model: Pointer, row: Int): Double
+    fun Cbc_getRowRHS(model: Pointer, row: Int): Double
 
     // void Cbc_setRowRHS(Cbc_Model *model, int row, double rhs);
-    // fun Cbc_setRowRHS(model: Pointer, row: Int, rhs: Double)
+    fun Cbc_setRowRHS(model: Pointer, row: Int, rhs: Double)
 
     // char Cbc_getRowSense(Cbc_Model *model, int row);
-    // fun Cbc_getRowSense(model: Pointer, row: Int): Byte
+    fun Cbc_getRowSense(model: Pointer, row: Int): Byte
 
     // const double *Cbc_getRowActivity(Cbc_Model *model);
-    // fun Cbc_getRowActivity(model: Pointer): DoubleArray // -> const double *
+    fun Cbc_getRowActivity(model: Pointer): Pointer // -> const double *
 
     // const double *Cbc_getRowSlack(Cbc_Model *model);
-    // fun Cbc_getRowSlack(model: Pointer): DoubleArray // -> const double*
+    fun Cbc_getRowSlack(model: Pointer): Pointer // -> const double*
 
     // int Cbc_getColNz(Cbc_Model *model, int col);
     fun Cbc_getColNz(model: Pointer, col: Int): Int
 
     // int *Cbc_getColIndices(Cbc_Model *model, int col);
-    // fun Cbc_getColIndices(model: Pointer, col: Int): IntArray // -> int*
+    fun Cbc_getColIndices(model: Pointer, col: Int): Pointer // -> int*
 
     // double *Cbc_getColCoeffs(Cbc_Model *model, int col);
-    // fun Cbc_getColCoeffs(model: Pointer, col: Int): DoubleArray // -> double*
+    fun Cbc_getColCoeffs(model: Pointer, col: Int): Pointer // -> double*
 
     // void Cbc_addCol(Cbc_Model *model, const char *name, double lb, double ub, double obj,
     //                 char isInteger, int nz, int *rows, double *coefs);
@@ -160,56 +160,81 @@ interface CBCLibrary {
     fun Cbc_addRow(model: Pointer, name: String, nz: Int, cols: IntArray?, coeffs: DoubleArray?,
                    sense: Byte, rhs: Double)
 
-    // void Cbc_addLazyConstraint(Cbc_Model *model, int nz,
-    // int *cols, double *coefs, char sense, double rhs);
-    //
-    // void Cbc_addSOS(Cbc_Model *model, int numRows, const int *rowStarts,
-    // const int *colIndices, const double *weights, const int type);
-    //
+    // void Cbc_addLazyConstraint(Cbc_Model *model, int nz, int *cols, double *coefs, char sense,
+    //                            double rhs);
+    fun Cbc_addLazyConstraint(model: Pointer, nz: Int, cols: IntArray?, coefs: DoubleArray?,
+                              sense: Byte, rhs: Double)
+
+    // void Cbc_addSOS(Cbc_Model *model, int numRows, const int *rowStarts, const int *colIndices,
+    //                 const double *weights, const int type);
+    fun Cbc_addSOS(model: Pointer, numRows: Int, rowStarts: IntArray?, colIndices: IntArray,
+                   weights: DoubleArray?, type: Int)
+
     // void Cbc_setObjCoeff(Cbc_Model *model, int index, double value);
-    //
+    fun Cbc_setObjCoeff(model: Pointer, index: Int, value: Double)
+
     // double Cbc_getObjSense(Cbc_Model *model);
-    //
+    fun Cbc_getObjSense(model: Pointer): Double
+
     // const double *Cbc_getObjCoefficients(Cbc_Model *model);
-    //
+    fun Cbc_getObjCoefficients(model: Pointer): Pointer // -> const double*
+
     // const double *Cbc_getColSolution(Cbc_Model *model);
-    //
+    fun Cbc_getColSolution(model: Pointer): Pointer // -> const double*
+
     // const double *Cbc_getReducedCost(Cbc_Model *model);
-    //
+    fun Cbc_getReducedCost(model: Pointer): Pointer // -> const double*
+
     // double *Cbc_bestSolution(Cbc_Model *model);
-    //
+    fun Cbc_bestSolution(model: Pointer): Pointer // -> double*
+
     // int Cbc_numberSavedSolutions(Cbc_Model *model);
-    //
+    fun Cbc_numberSavedSolutions(model: Pointer): Int
+
     // const double *Cbc_savedSolution(Cbc_Model *model, int whichSol);
-    //
+    fun Cbc_savedSolution(model: Pointer, whichSol: Int): Pointer // -> const double*
+
     // double Cbc_savedSolutionObj(Cbc_Model *model, int whichSol);
-    //
+    fun Cbc_savedSolutionObj(model: Pointer, whichSol: Int): Double
+
     // double Cbc_getObjValue(Cbc_Model *model);
-    //
+    fun Cbc_getObjValue(model: Pointer): Double
+
     // void Cbc_setObjSense(Cbc_Model *model, double sense);
     fun Cbc_setObjSense(model: Pointer, sense: Double)
 
     // int Cbc_isProvenOptimal(Cbc_Model *model);
-    //
+    fun Cbc_isProvenOptimal(model: Pointer): Int
+
     // int Cbc_isProvenInfeasible(Cbc_Model *model);
-    //
+    fun Cbc_isProvenInfeasible(model: Pointer): Int
+
     // int Cbc_isContinuousUnbounded(Cbc_Model *model);
-    //
+    fun Cbc_isContinuousUnbounded(model: Pointer): Int
+
     // int Cbc_isAbandoned(Cbc_Model *model);
-    //
+    fun Cbc_isAbandoned(model: Pointer): Int
+
     // const double *Cbc_getColLower(Cbc_Model *model);
-    //
+    fun Cbc_getColLower(model: Pointer): Pointer // -> const double*
+
     // const double *Cbc_getColUpper(Cbc_Model *model);
-    //
+    fun Cbc_getColUpper(model: Pointer): Pointer // -> const double*
+
     // double Cbc_getColObj(Cbc_Model *model, int colIdx);
-    //
+    fun Cbc_getColObj(model: Pointer, colIdx: Int): Double
+
     // double Cbc_getColLB(Cbc_Model *model, int colIdx);
-    //
+    fun Cbc_getColLB(model: Pointer, colIdx: Int): Double
+
     // double Cbc_getColUB(Cbc_Model *model, int colIdx);
-    //
+    fun Cbc_getColUB(model: Pointer, colIdx: Int): Double
+
     // void Cbc_setColLower(Cbc_Model *model, int index, double value);
-    //
+    fun Cbc_setColLower(model: Pointer, index: Int, value: Double)
+
     // void Cbc_setColUpper(Cbc_Model *model, int index, double value);
+    fun Cbc_setColUpper(model: Pointer, index: Int, value: Double)
 
     // int Cbc_isInteger(Cbc_Model *model, int i);
     fun Cbc_isInteger(model: Pointer, i: Int)
@@ -224,7 +249,8 @@ interface CBCLibrary {
     fun Cbc_setContinuous(model: Pointer, iColumn: Int)
 
     // void Cbc_setInteger(Cbc_Model *model, int iColumn);
-    //
+    fun Cbc_setInteger(model: Pointer, iColumn: Int)
+
     // /*! Integer parameters */
     // enum IntParam {
     //     INT_PARAM_PERT_VALUE          = 0,  /*! Method of perturbation, -5000 to 102, default 50 */
