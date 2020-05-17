@@ -29,16 +29,16 @@ Some of the main features of J-MIP are:
     solutions for the MIP search.
 
 * fast: the J-MIP package calls directly the native dynamic loadable library of 
-  the installed solver using JNA (Java Native Access); models are efficiently 
+  the installed solver using JNR (Java Native Runtime); models are efficiently 
   stored and optimized by the solver and J-MIP transparently handles all 
   communication with your Java/Kolin code;
 
 * multi solver: Much like Python-MIP, J-MIP was written to be deeply integrated 
   with the C libraries of the open-source COIN-OR Branch-&-Cut
-  [CBC](https://projects.coin-or.org/Cbc) solver and the commercial solver
-  [Gurobi](http://www.gurobi.com/); all details of communicating with 
-  different solvers are handled by J-MIP and you write only one solver 
-  independent code;
+  [CBC](https://projects.coin-or.org/Cbc) solver and the commercial solvers
+  [Gurobi](http://www.gurobi.com/) and [Cplex](http://www.cplex.com/); 
+  all details of communicating with different solvers are handled by J-MIP and 
+  you write only one solver independent code;
 
 * written in Kotlin 1.4.
 
