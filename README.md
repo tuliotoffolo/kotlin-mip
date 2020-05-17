@@ -8,9 +8,9 @@ of Mixed-Integer Linear programs (MIPs). The entire package is inspired by
 by us. The main goal is to provide the tool for a higher-performance 
 environment such as the one represented by the Java Virtual Machine. Just like
 Python-MIP, J-MIP provides access to advanced solver features such as cut generation,
-lazy constraints, MIPstarts and solution Pools. At first, it is not necessary
-to port Python-MIP models to J-MIP. However, depending on the algorithm you aim
-at implementing, performance-wise it may be totally worth it.
+lazy constraints, MIPstarts and solution Pools. While Python-MIP provides a very
+fast platform for modeling MIP problems, depending on the algorithm you aim
+at implementing, performance-wise it may be worth porting your code to J-MIP.
 
 Some of the main features of J-MIP are:
 
