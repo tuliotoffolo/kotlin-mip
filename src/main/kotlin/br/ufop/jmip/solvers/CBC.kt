@@ -1,129 +1,72 @@
 package br.ufop.jmip.solvers
 
 import br.ufop.jmip.entities.*
-import com.sun.jna.Native
+import jnr.ffi.LibraryLoader
 import jnr.ffi.Pointer
+import jnr.ffi.Runtime
 
 
 class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense) {
 
-    // val lib by lazy {
-    //     Native.loadLibrary("cbc", CBCLibrary::class.java) as CBCLibrary
-    // }
+    var cbc: Pointer
 
-    override fun addConstr(): Constr {
-        TODO("Not yet implemented")
+    val lib: CBCLibrary = LibraryLoader.create(CBCLibrary::class.java)
+        .load("/Docs/Dev/python-mip/mip/libraries/cbc-c-darwin-x86-64.dylib")
+
+    val runtime: Runtime = Runtime.getRuntime(lib)
+
+    init {
+        cbc = lib.Cbc_newModel()
+        if (sense == MAXIMIZE)
+            lib.Cbc_setObjSense(cbc, -1.0)
     }
 
-    override fun addVar(): Var {
-        TODO("Not yet implemented")
+    override fun addConstr(linExpr: LinExpr, name: String) {
+        val nz = linExpr.size
+        val cols = IntArray(nz)
+        val coeffs = DoubleArray(nz)
+        val rhs = -linExpr.const
+        val sense = linExpr.sense.toByte()
+
+        var i = 0
+        for ((v, coeff) in linExpr.terms) {
+            cols[i] = v.idx
+            coeffs[i] = coeff
+            i++
+        }
+
+        lib.Cbc_addRow(cbc, name, nz, cols, coeffs, sense, rhs)
     }
 
-    override fun get(param: String): Any? {
-        TODO("Not yet implemented")
+    override fun addVar(name: String, obj: Double, lb: Double, ub: Double, varType: VarType,
+                        column: Column) {
+        val nz = column.size
+        var rows: IntArray? = null
+        var coeffs: DoubleArray? = null
+
+        if (nz > 0) {
+            rows = IntArray(nz) { column.constrs[it].idx }
+            coeffs = DoubleArray(nz) { column.coeffs[it].toDouble() }
+        }
+
+        val isInteger = when(varType) {
+            VarType.BINARY -> CBCLibrary.CHAR_ONE
+            VarType.CONTINUOUS -> CBCLibrary.CHAR_ZERO
+            VarType.INTEGER -> CBCLibrary.CHAR_ONE
+        }
+
+        lib.Cbc_addCol(cbc, name, lb, ub, obj, isInteger, nz, rows, coeffs)
     }
 
-    override fun set(param: String, value: Any?) {
-        TODO("Not yet implemented")
+    override fun optimize(): OptimizationStatus {
+        lib.Cbc_solve(cbc)
+        return OptimizationStatus.OTHER
     }
 
-    override fun getVarColumn(idx: Int): Column {
-        TODO("Not yet implemented")
-    }
-
-    override fun setVarColumn(idx: Int, value: Column) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getVarIdx(name: String): Int {
-        TODO("Not yet implemented")
-    }
-
-    override fun getVarLB(idx: Int): Double {
-        TODO("Not yet implemented")
-    }
-
-    override fun setVarLB(idx: Int, value: Double) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getVarName(idx: Int): String {
-        TODO("Not yet implemented")
-    }
-
-    override fun setVarName(idx: Int, value: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getVarObj(idx: Int): Double {
-        TODO("Not yet implemented")
-    }
-
-    override fun setVarObj(idx: Int, value: Double) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getVarRC(idx: Int): Double {
-        TODO("Not yet implemented")
-    }
-
-    override fun getVarType(idx: Int): VarType {
-        TODO("Not yet implemented")
-    }
-
-    override fun setVarType(idx: Int, value: VarType) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getVarUB(idx: Int): Double {
-        TODO("Not yet implemented")
-    }
-
-    override fun setVarUB(idx: Int, value: Double) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getVarX(idx: Int): Double {
-        TODO("Not yet implemented")
-    }
-
-    override fun getVarXi(idx: Int, i: Int): Double {
-        TODO("Not yet implemented")
-    }
-
-    override fun getConstrExpr(idx: Int): LinExpr {
-        TODO("Not yet implemented")
-    }
-
-    override fun setConstrExpr(idx: Int, value: LinExpr) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getConstrIdx(name: String): Int {
-        TODO("Not yet implemented")
-    }
-
-    override fun getConstrName(idx: Int): String {
-        TODO("Not yet implemented")
-    }
-
-    override fun setConstrName(idx: Int, value: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getConstrPi(idx: Int): Double {
-        TODO("Not yet implemented")
-    }
-
-    override fun getConstrRHS(idx: Int): Double {
-        TODO("Not yet implemented")
-    }
-
-    override fun setConstrRHS(idx: Int, value: Double) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getConstrSlack(idx: Int): Double {
-        TODO("Not yet implemented")
+    override fun write(path: String) {
+        if (path.endsWith(".lp"))
+            lib.Cbc_writeLp(cbc, path)
+        else if  (path.endsWith(".mps"))
+            lib.Cbc_writeMps(cbc, path)
     }
 }

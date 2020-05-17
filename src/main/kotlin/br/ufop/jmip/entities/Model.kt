@@ -61,8 +61,8 @@ class Model(var name: String = "JMipModel", var sense: String = MINIMIZE,
         // creating a solver instance
         solver = when (solverName.toUpperCase()) {
             CBC -> CBC(this, name, sense)
-            CPLEX -> Cplex(this, name, sense)
-            GUROBI -> Gurobi(this, name, sense)
+            // CPLEX -> Cplex(this, name, sense)
+            // GUROBI -> Gurobi(this, name, sense)
             else -> findSolver()
         }
     }
@@ -72,14 +72,17 @@ class Model(var name: String = "JMipModel", var sense: String = MINIMIZE,
     }
 
     @JvmOverloads
-    fun addVar(name: String = "v_${vars.size}", obj: Number = 0.0, varType: Char = CONTINUOUS,
-               lb: Number = 0.0, ub: Number = INF, column: Column = Column.EMPTY): Var {
+    fun addVar(name: String = "v_${vars.size}", obj: Number = 0.0,
+               varType: VarType = VarType.CONTINUOUS, lb: Number = 0.0, ub: Number = INF,
+               column: Column = Column.EMPTY): Var {
+        solver.addVar(name, obj.toDouble(), lb.toDouble(), ub.toDouble(), varType, column)
         vars.add(Var(this, vars.size))
         return vars.last()
     }
 
     @JvmOverloads
     fun addConstr(expr: LinExpr, name: String = "c_${constrs.size}"): Constr {
+        solver.addConstr(expr, name)
         constrs.add(Constr(this, constrs.size))
         return constrs.last()
     }
@@ -87,7 +90,7 @@ class Model(var name: String = "JMipModel", var sense: String = MINIMIZE,
     fun set(arg: String, value: Any?) {}
 
     operator fun plusAssign(arg: Any?) {
-        when(arg) {
+        when (arg) {
             is Pair<*, *> -> addConstr(arg.first as LinExpr, arg.second as String)
             is LinExpr -> {
                 if (arg.isAffine)
@@ -97,6 +100,8 @@ class Model(var name: String = "JMipModel", var sense: String = MINIMIZE,
             }
         }
     }
+
+    fun write(path: String) = solver.write(path)
 
     // region aliases for addConstr
 
@@ -139,6 +144,10 @@ class Model(var name: String = "JMipModel", var sense: String = MINIMIZE,
     fun addConstr(lhs: Number, sense: Char, rhs: Var, name: String = "c_${constrs.size}"): Constr {
         val expr = LinExpr(lhs).apply { sub(rhs); this.sense = sense }
         return addConstr(expr, name)
+    }
+
+    fun optimize() {
+        solver.optimize()
     }
 
     // endregion aliases for addConstr

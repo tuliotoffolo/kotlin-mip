@@ -8,6 +8,7 @@ class LinExpr {
     val terms = HashMap<Var, Double>()
 
     val isAffine: Boolean get() = sense == ' '
+    val size: Int get() = terms.size
 
     constructor(iterable: Iterable<Any>) {
         add(iterable)
@@ -226,3 +227,5 @@ class LinExpr {
 
     // endregion kotlin operators
 }
+
+data class NamedExpr(val linExpr: LinExpr, val name: String)

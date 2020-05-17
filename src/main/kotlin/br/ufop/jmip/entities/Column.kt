@@ -1,6 +1,8 @@
 package br.ufop.jmip.entities
 
 data class Column(val constrs: List<Constr> = ArrayList(), val coeffs: List<Number> = ArrayList()) {
+    val size: Int get() = constrs.size
+
     companion object {
         @JvmField
         val EMPTY = Column(emptyList(), emptyList())

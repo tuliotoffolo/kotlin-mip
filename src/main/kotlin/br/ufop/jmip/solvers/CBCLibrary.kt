@@ -7,13 +7,6 @@ import jnr.ffi.annotations.Transient
 import jnr.ffi.Struct.SignedLong
 import jnr.ffi.Struct.time_t
 
-public class Gettimeofday {
-    public class Timeval(runtime: Runtime) : Struct(runtime) {
-        public val tv_sec: time_t = super.time_t()
-        public val tv_usec: SignedLong = super.SignedLong()
-    }
-}
-
 public fun main(args: Array<String>) {
     val lib = LibraryLoader.create(CBCLibrary::class.java)
         .load("/Docs/Dev/python-mip/mip/libraries/cbc-c-darwin-x86-64.dylib")
@@ -34,6 +27,39 @@ public fun main(args: Array<String>) {
 }
 
 interface CBCLibrary {
+    companion object {
+        const val CHAR_ONE: Byte = 1.toByte()
+        const val CHAR_ZERO: Byte = 0.toByte()
+
+        const val DBL_PARAM_PRIMAL_TOL = 0
+        const val DBL_PARAM_DUAL_TOL = 1
+        const val DBL_PARAM_ZERO_TOL = 2
+        const val DBL_PARAM_INT_TOL = 3
+        const val DBL_PARAM_PRESOLVE_TOL = 4
+        const val DBL_PARAM_TIME_LIMIT = 5
+        const val DBL_PARAM_PSI = 6
+        const val DBL_PARAM_CUTOFF = 7
+        const val DBL_PARAM_ALLOWABLE_GAP = 8
+        const val DBL_PARAM_GAP_RATIO = 9
+
+        const val INT_PARAM_PERT_VALUE = 0
+        const val INT_PARAM_IDIOT = 1
+        const val INT_PARAM_STRONG_BRANCHING = 2
+        const val INT_PARAM_CUT_DEPTH = 3
+        const val INT_PARAM_MAX_NODES = 4
+        const val INT_PARAM_NUMBER_BEFORE = 5
+        const val INT_PARAM_FPUMP_ITS = 6
+        const val INT_PARAM_MAX_SOLS = 7
+        const val INT_PARAM_CUT_PASS_IN_TREE = 8
+        const val INT_PARAM_THREADS = 9
+        const val INT_PARAM_CUT_PASS = 10
+        const val INT_PARAM_LOG_LEVEL = 11
+        const val INT_PARAM_MAX_SAVED_SOLS = 12
+        const val INT_PARAM_MULTIPLE_ROOTS = 13
+        const val INT_PARAM_ROUND_INT_VARS = 14
+        const val INT_PARAM_RANDOM_SEED = 15
+    }
+
     class CBCProgressCallback(runtime: Runtime) : Struct(runtime) {
         public val tv_sec: time_t = super.time_t()
         public val tv_usec: SignedLong = super.SignedLong()
@@ -68,7 +94,7 @@ interface CBCLibrary {
     fun Cbc_newModel(): Pointer
 
     // void Cbc_readLp(Cbc_Model *model, const char *file)
-    fun Cbc_readLp(model: Pointer, @size_t file: String)
+    fun Cbc_readLp(model: Pointer, file: String)
 
     // void Cbc_readMps(Cbc_Model *model, const char *file);
     fun Cbc_readMps(model: Pointer, file: String)
@@ -77,44 +103,63 @@ interface CBCLibrary {
     fun Cbc_writeLp(model: Pointer, file: String);
 
     // void Cbc_writeMps(Cbc_Model *model, const char *file);
-    //
+    fun Cbc_writeMps(model: Pointer, file: String)
+
     // int Cbc_getNumCols(Cbc_Model *model);
-    //
+    fun Cbc_getNumCols(model: Pointer): Int
+
     // int Cbc_getNumRows(Cbc_Model *model);
-    //
+    fun Cbc_getNumRows(model: Pointer): Int
+
     // int Cbc_getNumIntegers(Cbc_Model *model);
-    //
+    fun Cbc_getNumIntegers(model: Pointer): Int
+
     // int Cbc_getNumElements(Cbc_Model *model);
-    //
+    fun Cbc_getNumElements(model: Pointer): Int
+
     // int Cbc_getRowNz(Cbc_Model *model, int row);
-    //
+    // fun Cbc_getRowNz(model: Pointer, row: Int): Int
+
     // int *Cbc_getRowIndices(Cbc_Model *model, int row);
-    //
+    // fun Cbc_getRowIndices(model: Pointer, row: Int): IntArray // -> int*
+
     // double *Cbc_getRowCoeffs(Cbc_Model *model, int row);
-    //
+    // fun Cbc_getRowCoeffs(model: Pointer, row: Int): DoubleArray // -> double*
+
     // double Cbc_getRowRHS(Cbc_Model *model, int row);
-    //
+    // fun Cbc_getRowRHS(model: Pointer, row: Int): Double
+
     // void Cbc_setRowRHS(Cbc_Model *model, int row, double rhs);
-    //
+    // fun Cbc_setRowRHS(model: Pointer, row: Int, rhs: Double)
+
     // char Cbc_getRowSense(Cbc_Model *model, int row);
-    //
+    // fun Cbc_getRowSense(model: Pointer, row: Int): Byte
+
     // const double *Cbc_getRowActivity(Cbc_Model *model);
-    //
+    // fun Cbc_getRowActivity(model: Pointer): DoubleArray // -> const double *
+
     // const double *Cbc_getRowSlack(Cbc_Model *model);
-    //
+    // fun Cbc_getRowSlack(model: Pointer): DoubleArray // -> const double*
+
     // int Cbc_getColNz(Cbc_Model *model, int col);
-    //
+    fun Cbc_getColNz(model: Pointer, col: Int): Int
+
     // int *Cbc_getColIndices(Cbc_Model *model, int col);
-    //
+    // fun Cbc_getColIndices(model: Pointer, col: Int): IntArray // -> int*
+
     // double *Cbc_getColCoeffs(Cbc_Model *model, int col);
-    //
-    // void Cbc_addCol(Cbc_Model *model, const char *name,
-    // double lb, double ub, double obj, char isInteger,
-    // int nz, int *rows, double *coefs);
-    //
-    // void Cbc_addRow(Cbc_Model *model, const char *name, int nz,
-    // const int *cols, const double *coefs, char sense, double rhs);
-    //
+    // fun Cbc_getColCoeffs(model: Pointer, col: Int): DoubleArray // -> double*
+
+    // void Cbc_addCol(Cbc_Model *model, const char *name, double lb, double ub, double obj,
+    //                 char isInteger, int nz, int *rows, double *coefs);
+    fun Cbc_addCol(model: Pointer, name: String, lb: Double, ub: Double, obj: Double,
+                   isInteger: Byte, nz: Int, rows: IntArray?, coeffs: DoubleArray?)
+
+    // void Cbc_addRow(Cbc_Model *model, const char *name, int nz, const int *cols,
+    //                 const double *coefs, char sense, double rhs);
+    fun Cbc_addRow(model: Pointer, name: String, nz: Int, cols: IntArray?, coeffs: DoubleArray?,
+                   sense: Byte, rhs: Double)
+
     // void Cbc_addLazyConstraint(Cbc_Model *model, int nz,
     // int *cols, double *coefs, char sense, double rhs);
     //
@@ -142,7 +187,8 @@ interface CBCLibrary {
     // double Cbc_getObjValue(Cbc_Model *model);
     //
     // void Cbc_setObjSense(Cbc_Model *model, double sense);
-    //
+    fun Cbc_setObjSense(model: Pointer, sense: Double)
+
     // int Cbc_isProvenOptimal(Cbc_Model *model);
     //
     // int Cbc_isProvenInfeasible(Cbc_Model *model);
@@ -164,17 +210,19 @@ interface CBCLibrary {
     // void Cbc_setColLower(Cbc_Model *model, int index, double value);
     //
     // void Cbc_setColUpper(Cbc_Model *model, int index, double value);
-    //
+
     // int Cbc_isInteger(Cbc_Model *model, int i);
-    //
-    // void Cbc_getColName(Cbc_Model *model,
-    // int iColumn, char *name, size_t maxLength);
-    //
+    fun Cbc_isInteger(model: Pointer, i: Int)
+
+    // void Cbc_getColName(Cbc_Model *model, int iColumn, char *name, size_t maxLength);
+    fun Cbc_getColName(model: Pointer, iColumn: Int, name: Pointer, @size_t maxLength: Int);
+
     // void Cbc_getRowName(Cbc_Model *model, int iRow, char *name, size_t maxLength);
     fun Cbc_getRowName(model: Pointer, iRow: Int, name: Pointer, @size_t maxLength: Int)
 
     // void Cbc_setContinuous(Cbc_Model *model, int iColumn);
-    //
+    fun Cbc_setContinuous(model: Pointer, iColumn: Int)
+
     // void Cbc_setInteger(Cbc_Model *model, int iColumn);
     //
     // /*! Integer parameters */
