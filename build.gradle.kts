@@ -7,11 +7,19 @@ version = "0.1"
 
 repositories {
     maven("https://dl.bintray.com/kotlin/kotlin-eap")
+    jcenter()
     mavenCentral()
 }
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
+
+    implementation("net.java.dev.jna:jna:4.3.0")
+    implementation("net.java.dev.jna:jna-platform:4.3.0")
+
+    implementation("com.github.jnr:jnr-ffi:2.1.12")
+    implementation("com.github.jnr:jnr-posix:3.0.54")
+    implementation("com.github.jnr:jnr-constants:0.9.15")
 }
 
 tasks {

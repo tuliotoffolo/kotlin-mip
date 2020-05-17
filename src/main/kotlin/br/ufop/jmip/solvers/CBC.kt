@@ -1,8 +1,16 @@
 package br.ufop.jmip.solvers
 
 import br.ufop.jmip.entities.*
+import com.sun.jna.Native
+import jnr.ffi.Pointer
+
 
 class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense) {
+
+    // val lib by lazy {
+    //     Native.loadLibrary("cbc", CBCLibrary::class.java) as CBCLibrary
+    // }
+
     override fun addConstr(): Constr {
         TODO("Not yet implemented")
     }
