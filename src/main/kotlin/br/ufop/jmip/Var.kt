@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package br.ufop.jmip
 
 class Var internal constructor(val model: Model, var idx: Int) {
@@ -52,6 +54,16 @@ class Var internal constructor(val model: Model, var idx: Int) {
         return true
     }
     override fun toString() = name
+
+    inline infix fun leq(other: LinExpr) = Constr.leq(this, other)
+    inline infix fun leq(other: Var) = Constr.leq(this, other)
+    inline infix fun leq(other: Number) = Constr.leq(this, other)
+    inline infix fun geq(other: LinExpr) = Constr.geq(this, other)
+    inline infix fun geq(other: Var) = Constr.geq(this, other)
+    inline infix fun geq(other: Number) = Constr.geq(this, other)
+    inline infix fun eq(other: LinExpr) = Constr.eq(this, other)
+    inline infix fun eq(other: Var) = Constr.eq(this, other)
+    inline infix fun eq(other: Number) = Constr.eq(this, other)
 
     // region kotlin operators
 

@@ -98,7 +98,7 @@ class Model(var name: String = "JMipModel", var sense: String = MINIMIZE,
         return constrs.last()
     }
 
-    fun addConstr(expr: NamedLinExpr) = addConstr(expr.linExpr, expr.name)
+    fun addConstr(pair: NamedLinExpr) = addConstr(pair.first, pair.second)
 
     fun set(arg: String, value: Any?) {}
 
@@ -106,11 +106,8 @@ class Model(var name: String = "JMipModel", var sense: String = MINIMIZE,
 
     operator fun plusAssign(arg: Any?) {
         when (arg) {
-            is NamedLinExpr -> {
-                if (arg.name.isNotBlank())
-                    addConstr(arg.linExpr, arg.name)
-                else
-                    addConstr(arg.linExpr)
+            is Pair<*, *> -> {
+                addConstr(arg.first as LinExpr, arg.second as String)
             }
             is LinExpr -> {
                 if (arg.isAffine)

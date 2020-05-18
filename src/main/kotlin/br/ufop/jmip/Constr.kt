@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package br.ufop.jmip
 
 class Constr internal constructor(val model: Model, var idx: Int) {
@@ -40,293 +42,201 @@ class Constr internal constructor(val model: Model, var idx: Int) {
 
     companion object {
 
-        // region LEQ
+        // region leq
 
         @JvmStatic
-        @JvmOverloads
-        fun leq(lhs: Iterable<Any>, rhs: Iterable<Any>, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '<' }, name)
+        fun leq(lhs: Iterable<Any>, rhs: Iterable<Any>) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        @JvmOverloads
-        fun leq(lhs: Iterable<Any>, rhs: LinExpr, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '<' }, name)
+        fun leq(lhs: Iterable<Any>, rhs: LinExpr) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        @JvmOverloads
-        fun leq(lhs: Iterable<Any>, rhs: Var, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '<' }, name)
+        fun leq(lhs: Iterable<Any>, rhs: Var) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        @JvmOverloads
-        fun leq(lhs: Iterable<Any>, rhs: Number, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '<' }, name)
+        fun leq(lhs: Iterable<Any>, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        @JvmOverloads
-        fun leq(lhs: LinExpr, rhs: Iterable<Any>, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '<' }, name)
+        fun leq(lhs: LinExpr, rhs: Iterable<Any>) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        @JvmOverloads
-        fun leq(lhs: LinExpr, rhs: LinExpr, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '<' }, name)
+        fun leq(lhs: LinExpr, rhs: LinExpr) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        @JvmOverloads
-        fun leq(lhs: LinExpr, rhs: Var, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '<' }, name)
+        fun leq(lhs: LinExpr, rhs: Var) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        @JvmOverloads
-        fun leq(lhs: LinExpr, rhs: Number, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '<' }, name)
+        fun leq(lhs: LinExpr, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        @JvmOverloads
-        fun leq(lhs: Var, rhs: Iterable<Any>, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '<' }, name)
+        fun leq(lhs: Var, rhs: Iterable<Any>) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        @JvmOverloads
-        fun leq(lhs: Var, rhs: LinExpr, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '<' }, name)
+        fun leq(lhs: Var, rhs: LinExpr) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        @JvmOverloads
-        fun leq(lhs: Var, rhs: Var, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '<' }, name)
+        fun leq(lhs: Var, rhs: Var) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        @JvmOverloads
-        fun leq(lhs: Var, rhs: Number, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '<' }, name)
+        fun leq(lhs: Var, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        @JvmOverloads
-        fun leq(lhs: Number, rhs: Iterable<Any>, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '<' }, name)
+        fun leq(lhs: Number, rhs: Iterable<Any>) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        @JvmOverloads
-        fun leq(lhs: Number, rhs: LinExpr, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '<' }, name)
+        fun leq(lhs: Number, rhs: LinExpr) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        @JvmOverloads
-        fun leq(lhs: Number, rhs: Var, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '<' }, name)
+        fun leq(lhs: Number, rhs: Var) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
-        // endregion LEQ
+        // endregion leq
 
-        // region GEQ
+        // region geq
 
         @JvmStatic
-        @JvmOverloads
-        fun geq(lhs: Iterable<Any>, rhs: Iterable<Any>, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '>' }, name)
+        fun geq(lhs: Iterable<Any>, rhs: Iterable<Any>) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        @JvmOverloads
-        fun geq(lhs: Iterable<Any>, rhs: LinExpr, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '>' }, name)
+        fun geq(lhs: Iterable<Any>, rhs: LinExpr) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        @JvmOverloads
-        fun geq(lhs: Iterable<Any>, rhs: Var, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '>' }, name)
+        fun geq(lhs: Iterable<Any>, rhs: Var) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        @JvmOverloads
-        fun geq(lhs: Iterable<Any>, rhs: Number, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '>' }, name)
+        fun geq(lhs: Iterable<Any>, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        @JvmOverloads
-        fun geq(lhs: LinExpr, rhs: Iterable<Any>, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '>' }, name)
+        fun geq(lhs: LinExpr, rhs: Iterable<Any>) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        @JvmOverloads
-        fun geq(lhs: LinExpr, rhs: LinExpr, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '>' }, name)
+        fun geq(lhs: LinExpr, rhs: LinExpr) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        @JvmOverloads
-        fun geq(lhs: LinExpr, rhs: Var, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '>' }, name)
+        fun geq(lhs: LinExpr, rhs: Var) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        @JvmOverloads
-        fun geq(lhs: LinExpr, rhs: Number, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '>' }, name)
+        fun geq(lhs: LinExpr, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        @JvmOverloads
-        fun geq(lhs: Var, rhs: Iterable<Any>, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '>' }, name)
+        fun geq(lhs: Var, rhs: Iterable<Any>) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        @JvmOverloads
-        fun geq(lhs: Var, rhs: LinExpr, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '>' }, name)
+        fun geq(lhs: Var, rhs: LinExpr) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        @JvmOverloads
-        fun geq(lhs: Var, rhs: Var, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '>' }, name)
+        fun geq(lhs: Var, rhs: Var) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        @JvmOverloads
-        fun geq(lhs: Var, rhs: Number, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '>' }, name)
+        fun geq(lhs: Var, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        @JvmOverloads
-        fun geq(lhs: Number, rhs: Iterable<Any>, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '>' }, name)
+        fun geq(lhs: Number, rhs: Iterable<Any>) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        @JvmOverloads
-        fun geq(lhs: Number, rhs: LinExpr, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '>' }, name)
+        fun geq(lhs: Number, rhs: LinExpr) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        @JvmOverloads
-        fun geq(lhs: Number, rhs: Var, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '>' }, name)
+        fun geq(lhs: Number, rhs: Var) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
-        // endregion LEQ
+        // endregion geq
 
-        // region EQ
+        // region eq
 
         @JvmStatic
-        @JvmOverloads
-        fun eq(lhs: Iterable<Any>, rhs: Iterable<Any>, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '=' }, name)
+        fun eq(lhs: Iterable<Any>, rhs: Iterable<Any>) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        @JvmOverloads
-        fun eq(lhs: Iterable<Any>, rhs: LinExpr, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '=' }, name)
+        fun eq(lhs: Iterable<Any>, rhs: LinExpr) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        @JvmOverloads
-        fun eq(lhs: Iterable<Any>, rhs: Var, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '=' }, name)
+        fun eq(lhs: Iterable<Any>, rhs: Var) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        @JvmOverloads
-        fun eq(lhs: Iterable<Any>, rhs: Number, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '=' }, name)
+        fun eq(lhs: Iterable<Any>, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        @JvmOverloads
-        fun eq(lhs: LinExpr, rhs: Iterable<Any>, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '=' }, name)
+        fun eq(lhs: LinExpr, rhs: Iterable<Any>) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        @JvmOverloads
-        fun eq(lhs: LinExpr, rhs: LinExpr, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '=' }, name)
+        fun eq(lhs: LinExpr, rhs: LinExpr) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        @JvmOverloads
-        fun eq(lhs: LinExpr, rhs: Var, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '=' }, name)
+        fun eq(lhs: LinExpr, rhs: Var) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        @JvmOverloads
-        fun eq(lhs: LinExpr, rhs: Number, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '=' }, name)
+        fun eq(lhs: LinExpr, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        @JvmOverloads
-        fun eq(lhs: Var, rhs: Iterable<Any>, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '=' }, name)
+        fun eq(lhs: Var, rhs: Iterable<Any>) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        @JvmOverloads
-        fun eq(lhs: Var, rhs: LinExpr, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '=' }, name)
+        fun eq(lhs: Var, rhs: LinExpr) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        @JvmOverloads
-        fun eq(lhs: Var, rhs: Var, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '=' }, name)
+        fun eq(lhs: Var, rhs: Var) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        @JvmOverloads
-        fun eq(lhs: Var, rhs: Number, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '=' }, name)
+        fun eq(lhs: Var, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        @JvmOverloads
-        fun eq(lhs: Number, rhs: Iterable<Any>, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '=' }, name)
+        fun eq(lhs: Number, rhs: Iterable<Any>) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        @JvmOverloads
-        fun eq(lhs: Number, rhs: LinExpr, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '=' }, name)
+        fun eq(lhs: Number, rhs: LinExpr) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        @JvmOverloads
-        fun eq(lhs: Number, rhs: Var, name: String = "") =
-            NamedLinExpr(LinExpr(lhs).apply { sub(rhs); sense = '=' }, name)
+        fun eq(lhs: Number, rhs: Var) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
-        // endregion LEQ
+        // endregion eq
     }
 }
 
 // region aliases (inline functions)
 
-inline fun leq(lhs: Iterable<Any>, rhs: Iterable<Any>, name: String = "") = Constr.leq(lhs, rhs, name)
-inline fun leq(lhs: Iterable<Any>, rhs: LinExpr, name: String = "") = Constr.leq(lhs, rhs, name)
-inline fun leq(lhs: Iterable<Any>, rhs: Var, name: String = "") = Constr.leq(lhs, rhs, name)
-inline fun leq(lhs: Iterable<Any>, rhs: Number, name: String = "") = Constr.leq(lhs, rhs, name)
-inline fun leq(lhs: LinExpr, rhs: Iterable<Any>, name: String = "") = Constr.leq(lhs, rhs, name)
-inline fun leq(lhs: LinExpr, rhs: LinExpr, name: String = "") = Constr.leq(lhs, rhs, name)
-inline fun leq(lhs: LinExpr, rhs: Var, name: String = "") = Constr.leq(lhs, rhs, name)
-inline fun leq(lhs: LinExpr, rhs: Number, name: String = "") = Constr.leq(lhs, rhs, name)
-inline fun leq(lhs: Var, rhs: Iterable<Any>, name: String = "") = Constr.leq(lhs, rhs, name)
-inline fun leq(lhs: Var, rhs: LinExpr, name: String = "") = Constr.leq(lhs, rhs, name)
-inline fun leq(lhs: Var, rhs: Var, name: String = "") = Constr.leq(lhs, rhs, name)
-inline fun leq(lhs: Var, rhs: Number, name: String = "") = Constr.leq(lhs, rhs, name)
-inline fun leq(lhs: Number, rhs: Iterable<Any>, name: String = "") = Constr.leq(lhs, rhs, name)
-inline fun leq(lhs: Number, rhs: LinExpr, name: String = "") = Constr.leq(lhs, rhs, name)
-inline fun leq(lhs: Number, rhs: Var, name: String = "") = Constr.leq(lhs, rhs, name)
-
-inline fun geq(lhs: Iterable<Any>, rhs: Iterable<Any>, name: String = "") = Constr.geq(lhs, rhs, name)
-inline fun geq(lhs: Iterable<Any>, rhs: LinExpr, name: String = "") = Constr.geq(lhs, rhs, name)
-inline fun geq(lhs: Iterable<Any>, rhs: Var, name: String = "") = Constr.geq(lhs, rhs, name)
-inline fun geq(lhs: Iterable<Any>, rhs: Number, name: String = "") = Constr.geq(lhs, rhs, name)
-inline fun geq(lhs: LinExpr, rhs: Iterable<Any>, name: String = "") = Constr.geq(lhs, rhs, name)
-inline fun geq(lhs: LinExpr, rhs: LinExpr, name: String = "") = Constr.geq(lhs, rhs, name)
-inline fun geq(lhs: LinExpr, rhs: Var, name: String = "") = Constr.geq(lhs, rhs, name)
-inline fun geq(lhs: LinExpr, rhs: Number, name: String = "") = Constr.geq(lhs, rhs, name)
-inline fun geq(lhs: Var, rhs: Iterable<Any>, name: String = "") = Constr.geq(lhs, rhs, name)
-inline fun geq(lhs: Var, rhs: LinExpr, name: String = "") = Constr.geq(lhs, rhs, name)
-inline fun geq(lhs: Var, rhs: Var, name: String = "") = Constr.geq(lhs, rhs, name)
-inline fun geq(lhs: Var, rhs: Number, name: String = "") = Constr.geq(lhs, rhs, name)
-inline fun geq(lhs: Number, rhs: Iterable<Any>, name: String = "") = Constr.geq(lhs, rhs, name)
-inline fun geq(lhs: Number, rhs: LinExpr, name: String = "") = Constr.geq(lhs, rhs, name)
-inline fun geq(lhs: Number, rhs: Var, name: String = "") = Constr.geq(lhs, rhs, name)
-
-inline fun eq(lhs: Iterable<Any>, rhs: Iterable<Any>, name: String = "") = Constr.eq(lhs, rhs, name)
-inline fun eq(lhs: Iterable<Any>, rhs: LinExpr, name: String = "") = Constr.eq(lhs, rhs, name)
-inline fun eq(lhs: Iterable<Any>, rhs: Var, name: String = "") = Constr.eq(lhs, rhs, name)
-inline fun eq(lhs: Iterable<Any>, rhs: Number, name: String = "") = Constr.eq(lhs, rhs, name)
-inline fun eq(lhs: LinExpr, rhs: Iterable<Any>, name: String = "") = Constr.eq(lhs, rhs, name)
-inline fun eq(lhs: LinExpr, rhs: LinExpr, name: String = "") = Constr.eq(lhs, rhs, name)
-inline fun eq(lhs: LinExpr, rhs: Var, name: String = "") = Constr.eq(lhs, rhs, name)
-inline fun eq(lhs: LinExpr, rhs: Number, name: String = "") = Constr.eq(lhs, rhs, name)
-inline fun eq(lhs: Var, rhs: Iterable<Any>, name: String = "") = Constr.eq(lhs, rhs, name)
-inline fun eq(lhs: Var, rhs: LinExpr, name: String = "") = Constr.eq(lhs, rhs, name)
-inline fun eq(lhs: Var, rhs: Var, name: String = "") = Constr.eq(lhs, rhs, name)
-inline fun eq(lhs: Var, rhs: Number, name: String = "") = Constr.eq(lhs, rhs, name)
-inline fun eq(lhs: Number, rhs: Iterable<Any>, name: String = "") = Constr.eq(lhs, rhs, name)
-inline fun eq(lhs: Number, rhs: LinExpr, name: String = "") = Constr.eq(lhs, rhs, name)
-inline fun eq(lhs: Number, rhs: Var, name: String = "") = Constr.eq(lhs, rhs, name)
+inline fun leq(lhs: Iterable<Any>, rhs: Iterable<Any>) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Iterable<Any>, rhs: LinExpr) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Iterable<Any>, rhs: Var) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Iterable<Any>, rhs: Number) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: LinExpr, rhs: Iterable<Any>) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: LinExpr, rhs: LinExpr) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: LinExpr, rhs: Var) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: LinExpr, rhs: Number) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Var, rhs: Iterable<Any>) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Var, rhs: LinExpr) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Var, rhs: Var) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Var, rhs: Number) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Number, rhs: Iterable<Any>) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Number, rhs: LinExpr) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Number, rhs: Var) = Constr.leq(lhs, rhs)
+inline fun geq(lhs: Iterable<Any>, rhs: Iterable<Any>) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Iterable<Any>, rhs: LinExpr) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Iterable<Any>, rhs: Var) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Iterable<Any>, rhs: Number) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: LinExpr, rhs: Iterable<Any>) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: LinExpr, rhs: LinExpr) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: LinExpr, rhs: Var) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: LinExpr, rhs: Number) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Var, rhs: Iterable<Any>) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Var, rhs: LinExpr) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Var, rhs: Var) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Var, rhs: Number) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Number, rhs: Iterable<Any>) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Number, rhs: LinExpr) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Number, rhs: Var) = Constr.geq(lhs, rhs)
+inline fun eq(lhs: Iterable<Any>, rhs: Iterable<Any>) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Iterable<Any>, rhs: LinExpr) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Iterable<Any>, rhs: Var) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Iterable<Any>, rhs: Number) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: LinExpr, rhs: Iterable<Any>) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: LinExpr, rhs: LinExpr) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: LinExpr, rhs: Var) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: LinExpr, rhs: Number) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Var, rhs: Iterable<Any>) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Var, rhs: LinExpr) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Var, rhs: Var) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Var, rhs: Number) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Number, rhs: Iterable<Any>) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Number, rhs: LinExpr) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Number, rhs: Var) = Constr.eq(lhs, rhs)
 
 // endregion aliases (inline functions)

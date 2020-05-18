@@ -2,6 +2,7 @@ package br.ufop.jmip
 
 import kotlin.math.abs
 
+@Suppress("NOTHING_TO_INLINE")
 class LinExpr {
     var const = 0.0
     var sense = ' '
@@ -145,6 +146,18 @@ class LinExpr {
     fun sub(variable: Var) = add(variable, -1.0)
     fun sub(const: Number) = add(const.toDouble() * -1.0)
 
+    inline infix fun leq(other: LinExpr) = Constr.leq(this, other)
+    inline infix fun leq(other: Var) = Constr.leq(this, other)
+    inline infix fun leq(other: Number) = Constr.leq(this, other)
+    inline infix fun geq(other: LinExpr) = Constr.geq(this, other)
+    inline infix fun geq(other: Var) = Constr.geq(this, other)
+    inline infix fun geq(other: Number) = Constr.geq(this, other)
+    inline infix fun eq(other: LinExpr) = Constr.eq(this, other)
+    inline infix fun eq(other: Var) = Constr.eq(this, other)
+    inline infix fun eq(other: Number) = Constr.eq(this, other)
+
+    inline infix fun named(name: String) = NamedLinExpr(this, name)
+
     override fun toString(): String {
         var counter = 0
         val s = StringBuilder()
@@ -215,4 +228,4 @@ class LinExpr {
     // endregion kotlin operators
 }
 
-data class NamedLinExpr(val linExpr: LinExpr, val name: String)
+typealias NamedLinExpr = Pair<LinExpr, String>
