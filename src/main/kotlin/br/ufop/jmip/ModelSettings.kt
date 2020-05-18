@@ -1,4 +1,4 @@
-package br.ufop.jmip.entities
+package br.ufop.jmip
 
 import br.ufop.jmip.util.Logger
 import kotlin.reflect.KProperty

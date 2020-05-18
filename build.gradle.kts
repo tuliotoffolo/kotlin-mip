@@ -6,6 +6,7 @@ group = "br.ufop.jmip"
 version = "0.1"
 
 repositories {
+    maven("https://dl.bintray.com/kyonifer/maven")
     maven("https://dl.bintray.com/kotlin/kotlin-eap")
     jcenter()
     mavenCentral()
@@ -17,6 +18,9 @@ dependencies {
     implementation("com.github.jnr:jnr-ffi:2.1.12")
     implementation("com.github.jnr:jnr-posix:3.0.54")
     implementation("com.github.jnr:jnr-constants:0.9.15")
+
+    implementation("com.kyonifer:koma-core-ejml:0.12")
+    implementation("com.kyonifer:koma-plotting:0.12")
 }
 
 tasks {

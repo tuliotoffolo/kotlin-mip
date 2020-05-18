@@ -65,6 +65,8 @@ interface CBCLibrary {
         public val tv_usec: SignedLong = super.SignedLong()
     }
 
+    fun fflush(stream: Pointer?)
+
     // typedef int(*cbc_progress_callback)(void *model,
     // int phase,
     // int step,
@@ -153,11 +155,11 @@ interface CBCLibrary {
     // void Cbc_addCol(Cbc_Model *model, const char *name, double lb, double ub, double obj,
     //                 char isInteger, int nz, int *rows, double *coefs);
     fun Cbc_addCol(model: Pointer, name: String, lb: Double, ub: Double, obj: Double,
-                   isInteger: Byte, nz: Int, rows: IntArray?, coeffs: DoubleArray?)
+                   isInteger: Byte, nz: Int, rows: Pointer?, coeffs: Pointer?)
 
     // void Cbc_addRow(Cbc_Model *model, const char *name, int nz, const int *cols,
     //                 const double *coefs, char sense, double rhs);
-    fun Cbc_addRow(model: Pointer, name: String, nz: Int, cols: IntArray?, coeffs: DoubleArray?,
+    fun Cbc_addRow(model: Pointer, name: String, nz: Int, cols: Pointer, coeffs: Pointer,
                    sense: Byte, rhs: Double)
 
     // void Cbc_addLazyConstraint(Cbc_Model *model, int nz, int *cols, double *coefs, char sense,
@@ -472,7 +474,8 @@ interface CBCLibrary {
     // void Cbc_deleteCols(Cbc_Model *model, int numCols, const int cols[]);
     //
     // void Cbc_storeNameIndexes(Cbc_Model *model, char _store);
-    //
+    fun Cbc_storeNameIndexes(model: Pointer, _store: Byte);
+
     // int Cbc_getColNameIndex(Cbc_Model *model, const char *name);
     //
     // int Cbc_getRowNameIndex(Cbc_Model *model, const char *name);

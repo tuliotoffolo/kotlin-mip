@@ -1,8 +1,5 @@
 package br.ufop.jmip
 
-import br.ufop.jmip.entities.LinExpr
-import br.ufop.jmip.entities.Var
-
 operator fun Number.plus(linExpr: LinExpr) = linExpr + this
 operator fun Number.minus(linExpr: LinExpr) = -linExpr + this
 operator fun Number.times(linExpr: LinExpr) = linExpr * this

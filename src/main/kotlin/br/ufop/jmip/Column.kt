@@ -1,6 +1,6 @@
-package br.ufop.jmip.entities
+package br.ufop.jmip
 
-data class Column(val constrs: List<Constr> = ArrayList(), val coeffs: List<Number> = ArrayList()) {
+data class Column(val constrs: List<Constr> = ArrayList(), val coeffs: List<Double> = ArrayList()) {
     val size: Int get() = constrs.size
 
     companion object {

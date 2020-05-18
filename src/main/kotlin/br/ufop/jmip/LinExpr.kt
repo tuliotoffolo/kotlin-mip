@@ -1,4 +1,4 @@
-package br.ufop.jmip.entities
+package br.ufop.jmip
 
 import kotlin.math.abs
 
@@ -9,6 +9,12 @@ class LinExpr {
 
     val isAffine: Boolean get() = sense == ' '
     val size: Int get() = terms.size
+
+    constructor(linExpr: LinExpr) {
+        this.const = linExpr.const
+        this.sense = linExpr.sense
+        this.terms.putAll(linExpr.terms)
+    }
 
     constructor(iterable: Iterable<Any>) {
         add(iterable)
@@ -64,10 +70,9 @@ class LinExpr {
     fun add(iterable: Iterable<Any>, mult: Double = 1.0) {
         for (term in iterable) {
             when (term) {
-                is LinExpr -> add(term as LinExpr, mult)
-                is LinSum -> add(term as LinSum, mult)
-                is LinTerm -> add(term as LinTerm, mult)
-                is Var -> add(term as Var, mult)
+                is LinExpr -> add(term, mult)
+                is LinTerm -> add(term, mult)
+                is Var -> add(term, mult)
                 is Number -> add(term.toDouble() * mult)
                 else -> throw IllegalArgumentException()
             }
@@ -79,14 +84,6 @@ class LinExpr {
         const += linExpr.const * mult
         for ((v, coeff) in linExpr.terms) {
             add(v, coeff * mult)
-        }
-    }
-
-    @JvmOverloads
-    fun add(linSum: LinSum, mult: Double = 1.0) {
-        const += linSum.const * mult
-        for (term in linSum.terms) {
-            add(term.variable, term.coeff * mult)
         }
     }
 
@@ -111,10 +108,7 @@ class LinExpr {
     }
 
     fun copy(): LinExpr {
-        val copy = LinExpr()
-        copy.const = const
-        copy.terms.putAll(terms)
-        return copy
+        return LinExpr(this)
     }
 
     fun divide(const: Number) {
@@ -147,7 +141,6 @@ class LinExpr {
 
     fun sub(iterable: Iterable<Any>) = add(iterable, -1.0)
     fun sub(linExpr: LinExpr) = add(linExpr, -1.0)
-    fun sub(linSum: LinSum) = add(linSum, -1.0)
     fun sub(linTerm: LinTerm) = add(linTerm, -1.0)
     fun sub(variable: Var) = add(variable, -1.0)
     fun sub(const: Number) = add(const.toDouble() * -1.0)
@@ -173,14 +166,12 @@ class LinExpr {
 
     fun addLHS(iterable: Iterable<Any>) = add(iterable)
     fun addLHS(linExpr: LinExpr) = add(linExpr)
-    fun addLHS(linSum: LinSum) = add(linSum)
     fun addLHS(linTerm: LinTerm) = add(linTerm)
     fun addLHS(variable: Var) = add(variable)
     fun addLHS(const: Number) = add(const)
 
     fun addRHS(iterable: Iterable<Any>) = sub(iterable)
     fun addRHS(linExpr: LinExpr) = sub(linExpr)
-    fun addRHS(linSum: LinSum) = sub(linSum)
     fun addRHS(linTerm: LinTerm) = sub(linTerm)
     fun addRHS(variable: Var) = sub(variable)
     fun addRHS(const: Number) = sub(const)
@@ -191,14 +182,12 @@ class LinExpr {
 
     operator fun plusAssign(iterable: Iterable<Any>) = add(iterable)
     operator fun plusAssign(linExpr: LinExpr) = add(linExpr)
-    operator fun plusAssign(linSum: LinSum) = add(linSum)
     operator fun plusAssign(linTerm: LinTerm) = add(linTerm)
     operator fun plusAssign(variable: Var) = add(variable)
     operator fun plusAssign(const: Number) = add(const)
 
     operator fun minusAssign(iterable: Iterable<Any>) = sub(iterable)
     operator fun minusAssign(linExpr: LinExpr) = sub(linExpr)
-    operator fun minusAssign(linSum: LinSum) = sub(linSum)
     operator fun minusAssign(linTerm: LinTerm) = sub(linTerm)
     operator fun minusAssign(variable: Var) = sub(variable)
     operator fun minusAssign(const: Number) = sub(const)
@@ -208,7 +197,6 @@ class LinExpr {
 
     operator fun plus(iterable: Iterable<Any>) = copy().apply { add(iterable) }
     operator fun plus(linExpr: LinExpr) = copy().apply { add(linExpr) }
-    operator fun plus(linSum: LinSum) = copy().apply { add(linSum) }
     operator fun plus(linTerm: LinTerm) = copy().apply { add(linTerm) }
     operator fun plus(variable: Var) = copy().apply { add(variable) }
     operator fun plus(const: Number) = copy().apply { add(const) }
@@ -216,7 +204,6 @@ class LinExpr {
 
     operator fun minus(iterable: Iterable<Any>) = copy().apply { sub(iterable) }
     operator fun minus(linExpr: LinExpr) = copy().apply { sub(linExpr) }
-    operator fun minus(linSum: LinSum) = copy().apply { sub(linSum) }
     operator fun minus(linTerm: LinTerm) = copy().apply { sub(linTerm) }
     operator fun minus(variable: Var) = copy().apply { sub(variable) }
     operator fun minus(const: Number) = copy().apply { sub(const) }
@@ -228,4 +215,4 @@ class LinExpr {
     // endregion kotlin operators
 }
 
-data class NamedExpr(val linExpr: LinExpr, val name: String)
+data class NamedLinExpr(val linExpr: LinExpr, val name: String)

@@ -1,6 +1,6 @@
 @file:JvmName("Constants")
 
-package br.ufop.jmip.entities
+package br.ufop.jmip
 
 /** Epsilon number (practical zero) */
 const val EPS = 10e-64

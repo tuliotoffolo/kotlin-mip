@@ -1,6 +1,10 @@
-package br.ufop.jmip.entities
+package br.ufop.jmip
 
 abstract class Solver(val model: Model, var name: String, sense: String = MINIMIZE) {
+
+    abstract val hasSolution: Boolean
+    abstract val objectiveValue: Double
+
     var sense = sense
         set(value) {
             if (value != MINIMIZE && value != MAXIMIZE)
@@ -15,9 +19,13 @@ abstract class Solver(val model: Model, var name: String, sense: String = MINIMI
 
     open fun get(param: String): Any? = throw NotImplementedError()
 
+    open fun getObjective(): LinExpr = throw NotImplementedError()
+
     open fun optimize(): OptimizationStatus = throw NotImplementedError()
 
     open fun set(param: String, value: Any?): Unit = throw NotImplementedError()
+
+    open fun setObjective(linExpr: LinExpr): Unit = throw NotImplementedError()
 
     open fun write(path: String): Unit = throw NotImplementedError()
 

@@ -1,4 +1,4 @@
-package br.ufop.jmip.entities
+package br.ufop.jmip
 
 class Var internal constructor(val model: Model, var idx: Int) {
 
@@ -67,8 +67,8 @@ class Var internal constructor(val model: Model, var idx: Int) {
     operator fun minus(const: Number) = toLinExpr().apply { sub(const) }
     operator fun unaryMinus() = toLinExpr(-1.0)
 
-    operator fun times(coeff: Number) = toLinExpr(coeff)
-    operator fun div(coeff: Number) = toLinExpr(1.0 / coeff.toDouble())
+    operator fun times(coeff: Number) = LinExpr(this, coeff)
+    operator fun div(coeff: Number) = LinExpr(this, 1.0 / coeff.toDouble())
 
     // endregion kotlin operators
 }

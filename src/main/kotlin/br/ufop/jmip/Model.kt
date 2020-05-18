@@ -1,4 +1,4 @@
-package br.ufop.jmip.entities
+package br.ufop.jmip
 
 import br.ufop.jmip.solvers.*
 
@@ -21,14 +21,25 @@ class Model(var name: String = "JMipModel", var sense: String = MINIMIZE,
 
     // region main components
 
+    val hasSolution: Boolean get() = solver.hasSolution
     val solver: Solver
     val settings = ModelSettings(this)
 
     val constrs = ArrayList<Constr>()
     val vars = ArrayList<Var>()
+
+    val objectiveValue: Double get() = solver.objectiveValue
     var status = OptimizationStatus.LOADED
 
     // endregion main components
+
+    // region settable model properties
+
+    var objective: LinExpr
+        get() = solver.getObjective()
+        set(value) = solver.setObjective(value)
+
+    // endregion
 
     // region additional delegated properties
 
@@ -62,7 +73,7 @@ class Model(var name: String = "JMipModel", var sense: String = MINIMIZE,
         solver = when (solverName.toUpperCase()) {
             CBC -> CBC(this, name, sense)
             // CPLEX -> Cplex(this, name, sense)
-            // GUROBI -> Gurobi(this, name, sense)
+            GUROBI -> Gurobi(this, name, sense)
             else -> findSolver()
         }
     }
@@ -72,8 +83,8 @@ class Model(var name: String = "JMipModel", var sense: String = MINIMIZE,
     }
 
     @JvmOverloads
-    fun addVar(name: String = "v_${vars.size}", obj: Number = 0.0,
-               varType: VarType = VarType.CONTINUOUS, lb: Number = 0.0, ub: Number = INF,
+    fun addVar(name: String = "v_${vars.size}", varType: VarType = VarType.CONTINUOUS,
+               obj: Number = 0.0, lb: Number = 0.0, ub: Number = INF,
                column: Column = Column.EMPTY): Var {
         solver.addVar(name, obj.toDouble(), lb.toDouble(), ub.toDouble(), varType, column)
         vars.add(Var(this, vars.size))
@@ -87,21 +98,28 @@ class Model(var name: String = "JMipModel", var sense: String = MINIMIZE,
         return constrs.last()
     }
 
+    fun addConstr(expr: NamedLinExpr) = addConstr(expr.linExpr, expr.name)
+
     fun set(arg: String, value: Any?) {}
+
+    fun write(path: String) = solver.write(path)
 
     operator fun plusAssign(arg: Any?) {
         when (arg) {
-            is Pair<*, *> -> addConstr(arg.first as LinExpr, arg.second as String)
+            is NamedLinExpr -> {
+                if (arg.name.isNotBlank())
+                    addConstr(arg.linExpr, arg.name)
+                else
+                    addConstr(arg.linExpr)
+            }
             is LinExpr -> {
                 if (arg.isAffine)
-                    TODO("Implement += for affine expressions")
+                    objective = arg
                 else
                     addConstr(arg)
             }
         }
     }
-
-    fun write(path: String) = solver.write(path)
 
     // region aliases for addConstr
 

@@ -1,13 +1,21 @@
 package br.ufop.jmip;
 
-import br.ufop.jmip.entities.*;
+import java.util.*;
 
 public class TestJava {
     public static void main(String args[]) {
         Model model = new Model();
-        Var v1 = model.addVar();
-        LinExpr expr = new LinExpr(v1, Constants.INF);
-        Column col = Column.EMPTY;
-        System.out.println(Double.POSITIVE_INFINITY);
+        Var v1 = model.addVar("v1");
+        Var v2 = model.addVar("v2");
+
+        List<Object> vars = new ArrayList();
+        vars.add(v1);
+        vars.add(v2);
+        vars.add(-30);
+
+        model.addConstr(Constr.eq(new LinExpr(vars), 10));
+
+        model.optimize();
+        model.write("x.lp");
     }
 }
