@@ -3,7 +3,7 @@ package mip
 import kotlin.math.abs
 
 @Suppress("NOTHING_TO_INLINE")
-class LinExp {
+class LinExpr {
 
     var const = 0.0
     var sense = ' '
