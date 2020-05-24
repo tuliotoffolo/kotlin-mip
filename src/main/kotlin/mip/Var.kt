@@ -2,7 +2,7 @@
 
 package mip
 
-class Var internal constructor(val model: Model, var idx: Int) {
+class Var internal constructor(val model: Model, idx: Int) {
 
     // region properties
 
@@ -10,13 +10,15 @@ class Var internal constructor(val model: Model, var idx: Int) {
         get() = model.solver.getVarColumn(idx)
         set(value) = model.solver.setVarColumn(idx, value)
 
+    var idx: Int = idx
+        internal set
+
     var lb: Number
         get() = model.solver.getVarLB(idx)
         set(value) = model.solver.setVarLB(idx, value.toDouble())
 
-    var name: String
+    val name: String
         get() = model.solver.getVarName(idx)
-        set(value) = model.solver.setVarName(idx, value)
 
     var obj: Number
         get() = model.solver.getVarObj(idx)
@@ -44,7 +46,8 @@ class Var internal constructor(val model: Model, var idx: Int) {
     operator fun compareTo(other: Var?): Int {
         if (other == null) return -1
         return idx.compareTo(other.idx)
-    } 
+    }
+
     override fun hashCode() = idx
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -56,6 +59,7 @@ class Var internal constructor(val model: Model, var idx: Int) {
 
         return true
     }
+
     override fun toString() = name
 
     // region comparators

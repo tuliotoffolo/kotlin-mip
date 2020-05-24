@@ -217,10 +217,10 @@ interface CBCLibrary {
     fun Cbc_setColUpper(model: Pointer, index: Int, value: Double)
 
     // int Cbc_isInteger(Cbc_Model *model, int i);
-    fun Cbc_isInteger(model: Pointer, i: Int)
+    fun Cbc_isInteger(model: Pointer, i: Int): Int
 
     // void Cbc_getColName(Cbc_Model *model, int iColumn, char *name, size_t maxLength);
-    fun Cbc_getColName(model: Pointer, iColumn: Int, name: Pointer, @size_t maxLength: Int);
+    fun Cbc_getColName(model: Pointer, iColumn: Int, name: Pointer, @size_t maxLength: Int)
 
     // void Cbc_getRowName(Cbc_Model *model, int iRow, char *name, size_t maxLength);
     fun Cbc_getRowName(model: Pointer, iRow: Int, name: Pointer, @size_t maxLength: Int)
@@ -499,7 +499,7 @@ interface CBCLibrary {
     fun Cbc_clearCallBack(model: Pointer)
 
     // const double *Cbc_getRowPrice(Cbc_Model *model);
-    fun Cbc_Cbc_getRowPrice(model: Pointer): DoubleArray
+    fun Cbc_getRowPrice(model: Pointer): Pointer
 
     // const double *Osi_getRowPrice(void *osi);
     fun Cbc_Osi_getRowPrice(osi: Pointer): DoubleArray

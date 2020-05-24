@@ -28,8 +28,6 @@ abstract class Solver(val model: Model, var name: String, sense: String = MINIMI
     open fun getConstrExpr(idx: Int): LinExpr = throw NotImplementedError()
     open fun setConstrExpr(idx: Int, value: LinExpr): Unit = throw NotImplementedError()
 
-    open fun getConstrIdx(name: String): Int = throw NotImplementedError()
-
     open fun getConstrName(idx: Int): String = throw NotImplementedError()
     open fun setConstrName(idx: Int, value: String): Unit = throw NotImplementedError()
 
@@ -46,8 +44,6 @@ abstract class Solver(val model: Model, var name: String, sense: String = MINIMI
 
     open fun getVarColumn(idx: Int): Column = throw NotImplementedError()
     open fun setVarColumn(idx: Int, value: Column): Unit = throw NotImplementedError()
-
-    open fun getVarIdx(name: String): Int = throw NotImplementedError()
 
     open fun getVarLB(idx: Int): Double = throw NotImplementedError()
     open fun setVarLB(idx: Int, value: Double): Unit = throw NotImplementedError()
