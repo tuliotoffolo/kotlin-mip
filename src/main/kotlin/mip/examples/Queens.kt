@@ -57,14 +57,14 @@ fun main(args: Array<String>) {
 
     println("Third constraint set created in ${runtime(checkpoint)} seconds!")
 
-    queens.write("queens.lp")
-    queens.optimize()
-
-    for (i in ns) {
-        for (j in ns)
-            print(if (x[i][j].x >= EPS) "O " else ". ")
-        println()
-    }
+    // queens.write("queens.lp")
+    // queens.optimize()
+    //
+    // for (i in ns) {
+    //     for (j in ns)
+    //         print(if (x[i][j].x >= EPS) "O " else ". ")
+    //     println()
+    // }
     println()
     println("Total runtime: ${runtime(start)} seconds!")
 }

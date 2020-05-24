@@ -13,7 +13,9 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
     // cbc-related variables
     private var cbc: Pointer
 
-    private val lib: CBCLibrary = LibraryLoader.create(CBCLibrary::class.java)
+    private val lib: CBCLibrary = LibraryLoader
+        .create(CBCLibrary::class.java)
+        .failImmediately()
         .load("/Docs/Dev/python-mip/mip/libraries/cbc-c-darwin-x86-64.dylib")
 
     private val runtime: Runtime = Runtime.getRuntime(lib)

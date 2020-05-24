@@ -311,16 +311,16 @@ interface CBCLibrary {
     fun Osi_getReducedCost(osi: Pointer): Pointer
 
     // const double *Osi_getObjCoefficients();
-    fun Osi_getObjCoefficients(): Pointer
+    // fun Osi_getObjCoefficients(): Pointer
 
     // double Osi_getObjSense();
-    fun Osi_getObjSense(): Double
+    // fun Osi_getObjSense(): Double
 
     // void *Osi_newSolver();
     fun Osi_newSolver(): Pointer
 
     // void Osi_deleteSolver( void *osi );
-    fun Osi_deleteSolver(osi: Pointer)
+    // fun Osi_deleteSolver(osi: Pointer)
 
     // void Osi_initialSolve(void *osi);
     fun Osi_initialSolve(osi: Pointer)
@@ -502,7 +502,7 @@ interface CBCLibrary {
     fun Cbc_getRowPrice(model: Pointer): Pointer
 
     // const double *Osi_getRowPrice(void *osi);
-    fun Cbc_Osi_getRowPrice(osi: Pointer): DoubleArray
+    // fun Cbc_Osi_getRowPrice(osi: Pointer): DoubleArray
 
     // double Osi_getIntegerTolerance(void *osi);
     fun Osi_getIntegerTolerance(osi: Pointer): Double
@@ -520,7 +520,7 @@ interface CBCLibrary {
     fun CG_conflicting(cgraph: Pointer, n1: Int, n2: Int): Byte
 
     // double CG_density( void *cgraph );
-    fun Cbc_density(cgraph: Pointer)
+    // fun Cbc_density(cgraph: Pointer)
 
     // CGNeighbors CG_conflictingNodes(Cbc_Model *model, void *cgraph, size_t node);
     fun CG_conflictingNodes(model: Pointer, cgraph: Pointer, @size_t node: Int): CGNeighbors

@@ -120,9 +120,10 @@ class Model(var name: String = "JMipModel", sense: String = MINIMIZE,
         var ub = ub.toDouble()
 
         // ensuring binary variables have correct LB/UB
-        if (varType == VarType.Binary)
+        if (varType == VarType.Binary) {
             lb = max(lb.toDouble(), 0.0)
-        ub = min(ub.toDouble(), 1.0)
+            ub = min(ub.toDouble(), 1.0)
+        }
 
         solver.addVar(name, obj.toDouble(), lb, ub, varType, column)
         vars.add(Var(this, vars.size))

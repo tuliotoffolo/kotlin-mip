@@ -32,8 +32,8 @@ fun main() {
 
     val m = Model(solverName = GUROBI)
 
-    val x = Array(r.size) { i ->
-        Array(U.last + 1) { c -> m.addBinVar("x($i,$c") }
+    val x = N.map { i ->
+        U.map { c -> m.addBinVar("x($i,$c)") }
     }
 
     val z = m.addVar("z", obj = 1.0)
@@ -57,6 +57,7 @@ fun main() {
         m += z ge (c + 1) * x[i][c]
     }
 
+    m.write("bmcp.lp")
     m.optimize()
 
     if (m.hasSolution)
