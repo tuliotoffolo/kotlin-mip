@@ -9,25 +9,6 @@ import jnr.ffi.Struct.time_t
 import jnr.ffi.annotations.Delegate
 import jnr.ffi.byref.PointerByReference
 
-public fun main(args: Array<String>) {
-    val lib = LibraryLoader.create(CBCLibrary::class.java)
-        .load("/Docs/Dev/python-mip/mip/libraries/cbc-c-darwin-x86-64.dylib")
-    val runtime = Runtime.getRuntime(lib)
-
-    val model = lib.Cbc_newModel()
-    lib.Cbc_readLp(model, "/Users/tuliotoffolo/dieta.lp")
-    lib.Cbc_writeLp(model, "/Users/tuliotoffolo/dieta_cbc.lp")
-    val status = lib.Cbc_solve(model)
-
-    val buffer = Memory.allocateDirect(runtime, 1000, true);
-    lib.Cbc_getRowName(model, 1, buffer, 100)
-
-    val name = buffer.getString(0)
-
-    println("Status = $status")
-    println("name = $name")
-}
-
 interface CBCLibrary {
 
     fun fflush(stream: Pointer?)
@@ -526,6 +507,12 @@ interface CBCLibrary {
     fun CG_conflictingNodes(model: Pointer, cgraph: Pointer, @size_t node: Int): CGNeighbors
 
     companion object {
+
+        val lib = LibraryLoader
+            .create(CBCLibrary::class.java)
+            .option(LibraryOption.LoadNow, null)
+            .load("/Docs/Dev/python-mip/mip/libraries/cbc-c-darwin-x86-64.dylib")
+
         const val CHAR_ONE: Byte = 1.toByte()
         const val CHAR_ZERO: Byte = 0.toByte()
 

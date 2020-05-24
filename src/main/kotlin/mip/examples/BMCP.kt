@@ -59,12 +59,12 @@ fun main() {
         m += z ge (c + 1) * x[i][c]
     }
 
-    m.write("bmcp.lp")
-    m.optimize()
-
-    if (m.hasSolution)
-        for (i in N)
-            println("Channels of node $i: ${U.filter { c -> x[i][c].x >= 0.99 }}")
+    // m.write("bmcp.lp")
+    // m.optimize()
+    //
+    // if (m.hasSolution)
+    //     for (i in N)
+    //         println("Channels of node $i: ${U.filter { c -> x[i][c].x >= 0.99 }}")
 
     // sanity tests
     // assert m.objective_bound <= 41+1e-10
