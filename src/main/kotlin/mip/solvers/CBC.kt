@@ -1,10 +1,7 @@
 package mip.solvers
 
+import jnr.ffi.*
 import mip.*
-import jnr.ffi.LibraryLoader
-import jnr.ffi.Memory
-import jnr.ffi.Pointer
-import jnr.ffi.Runtime
 
 class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense) {
 
@@ -15,7 +12,7 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     private val lib: CBCLibrary = LibraryLoader
         .create(CBCLibrary::class.java)
-        .failImmediately()
+        .option(LibraryOption.LoadNow, true)
         .load("/Docs/Dev/python-mip/mip/libraries/cbc-c-darwin-x86-64.dylib")
 
     private val runtime: Runtime = Runtime.getRuntime(lib)

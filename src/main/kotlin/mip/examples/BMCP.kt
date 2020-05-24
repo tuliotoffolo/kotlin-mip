@@ -8,6 +8,10 @@ import mip.*
  */
 fun main() {
     val start = System.currentTimeMillis()
+    val runtime: (Long) -> Double = { (System.currentTimeMillis() - it) / 1000.0 }
+
+    val m = Model(solverName = GUROBI)
+    println("Model started in ${runtime(start)} seconds!")
 
     // number of channels per node
     val r = intArrayOf(3, 5, 8, 3, 6, 5, 7, 3)
@@ -29,8 +33,6 @@ fun main() {
     // in complete applications this upper bound should be obtained from a feasible solution
     // produced with some heuristic
     val U = 0 until N.sumBy { i -> N.sumBy { j -> d[i][j] } } + r.sum()
-
-    val m = Model(solverName = GUROBI)
 
     val x = N.map { i ->
         U.map { c -> m.addBinVar("x($i,$c)") }
