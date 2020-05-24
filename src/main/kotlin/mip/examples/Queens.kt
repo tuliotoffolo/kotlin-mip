@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
     val runtime: (Long) -> Double = { (System.currentTimeMillis() - it) / 1000.0 }
 
     // number of queens
-    val n = 1000
+    val n = 1500
     val ns = 0 until n
 
     val queens = Model("NQueens", MINIMIZE, GUROBI)
