@@ -1,4 +1,4 @@
-package br.ufop.jmip
+package mip
 
 data class Column(val constrs: List<Constr> = ArrayList(), val coeffs: List<Double> = ArrayList()) {
     val size: Int get() = constrs.size

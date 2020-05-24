@@ -1,31 +1,25 @@
-package br.ufop.jmip
+package mip
 
-abstract class Solver(val model: Model, var name: String, sense: String = MINIMIZE) {
+import kotlin.reflect.KProperty
+
+abstract class Solver(val model: Model, var name: String, sense: String = MINIMIZE) : Parameters() {
 
     abstract val hasSolution: Boolean
-    abstract val objectiveValue: Double
-
-    var sense = sense
-        set(value) {
-            if (value != MINIMIZE && value != MAXIMIZE)
-                throw IllegalArgumentException()
-            field = value
-        }
 
     abstract fun addConstr(linExpr: LinExpr, name: String): Unit
 
     abstract fun addVar(name: String, obj: Double, lb: Double, ub: Double, varType: VarType,
                         column: Column): Unit
 
-    open fun get(param: String): Any? = throw NotImplementedError()
+    abstract fun optimize(): OptimizationStatus
 
-    open fun getObjective(): LinExpr = throw NotImplementedError()
+    open fun relax(): Unit = throw NotImplementedError()
 
-    open fun optimize(): OptimizationStatus = throw NotImplementedError()
+    abstract fun remove(iterable: Iterable<Any?>)
 
-    open fun set(param: String, value: Any?): Unit = throw NotImplementedError()
+    fun remove(constr: Constr) = remove(listOf(constr))
 
-    open fun setObjective(linExpr: LinExpr): Unit = throw NotImplementedError()
+    fun remove(variable: Var) = remove(listOf(variable))
 
     open fun write(path: String): Unit = throw NotImplementedError()
 

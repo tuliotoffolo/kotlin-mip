@@ -1,10 +1,12 @@
-import br.ufop.jmip.*
+import mip.*
 
 /**
  * Bandwidth multi coloring problem, more specificially the Frequency assignment problem as
  * described here: http://fap.zib.de/problems/Philadelphia/
  */
-fun main(args: Array<String>) {
+fun main() {
+    val start = System.currentTimeMillis()
+
     // number of channels per node
     val r = intArrayOf(3, 5, 8, 3, 6, 5, 7, 3)
 
@@ -22,35 +24,35 @@ fun main(args: Array<String>) {
 
     val N = 0 until r.size
 
-    // in complete applications this upper bound should be obtained from a feasible
-    // solution produced with some heuristic
+    // in complete applications this upper bound should be obtained from a feasible solution
+    // produced with some heuristic
     val U = 0 until N.sumBy { i -> N.sumBy { j -> d[i][j] } } + r.sum()
 
     val m = Model(solverName = GUROBI)
 
     val x = Array(r.size) { i ->
-        Array(U.last + 1) { c -> m.addVar("x($i,$c", VarType.BINARY) }
+        Array(U.last + 1) { c -> m.addBinVar("x($i,$c") }
     }
 
     val z = m.addVar("z", obj = 1.0)
 
     for (i in N)
-        m += eq(U.map { c -> x[i][c] }, r[i])
+        m += U.map { c -> x[i][c] } eq r[i]
 
     for (i in N) for (j in N) if (i != j) {
         for (c1 in U) for (c2 in U) if (c1 <= c2 && c2 < c1 + d[i][j]) {
-            m += leq(x[i][c1] + x[j][c2], 1)
+            m += x[i][c1] + x[j][c2] le 1
         }
     }
 
     for (i in N) {
         for (c1 in U) for (c2 in U) if (c1 < c2 && c2 < c1 + d[i][i]) {
-            m += leq(x[i][c1] + x[i][c2], 1)
+            m += x[i][c1] + x[i][c2] le 1
         }
     }
 
     for (i in N) for (c in U) {
-        m += geq(z, (c + 1) * x[i][c])
+        m += z ge (c + 1) * x[i][c]
     }
 
     m.optimize()
@@ -67,6 +69,7 @@ fun main(args: Array<String>) {
     // assert m . objective_value >= 41-1e-10
     // m.check_optimization_results()
 
+    println("Total runtime = ${(System.currentTimeMillis() - start) / 1000.0} seconds.")
 }
 
 /*

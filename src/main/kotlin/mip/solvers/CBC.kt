@@ -1,6 +1,6 @@
-package br.ufop.jmip.solvers
+package mip.solvers
 
-import br.ufop.jmip.*
+import mip.*
 import jnr.ffi.LibraryLoader
 import jnr.ffi.Memory
 import jnr.ffi.Pointer
@@ -8,29 +8,25 @@ import jnr.ffi.Runtime
 
 class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense) {
 
-    // region override properties
-
     override val hasSolution get() = nSolutions > 0
-    override val objectiveValue get() = lib.Cbc_getObjValue(cbc)
-
-    // endregion override properties
 
     // cbc-related variables
     private var cbc: Pointer
+
     private val lib: CBCLibrary = LibraryLoader.create(CBCLibrary::class.java)
         .load("/Docs/Dev/python-mip/mip/libraries/cbc-c-darwin-x86-64.dylib")
+
     private val runtime: Runtime = Runtime.getRuntime(lib)
 
-    // buffers (to speed up things)
+    private var nSolutions = 0
+
+    // region buffers
+
     private var bufferLength = 8192
     private var dblBuffer = Memory.allocateDirect(runtime, bufferLength * 8)
     private var intBuffer = Memory.allocateDirect(runtime, bufferLength * 4)
     private var strBuffer = Memory.allocateDirect(runtime, bufferLength * 1)
 
-    // solution information
-    private var nSolutions = 0
-
-    // region solution buffers
     private var rc: Pointer? = null
         get() {
             if (field == null && hasSolution)
@@ -45,7 +41,7 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
             return field
         }
 
-    // endregion solution buffers
+    // endregion buffers
 
     init {
         // initializing the solver/model
@@ -53,7 +49,7 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
 
         // setting sense (if needed)
         if (sense == MAXIMIZE)
-            lib.Cbc_setObjSense(cbc, -1.0)
+            this.sense = MAXIMIZE
 
         lib.fflush(null)
     }
@@ -79,9 +75,9 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
         val nz = column.size
 
         val isInteger = when (varType) {
-            VarType.BINARY -> CBCLibrary.CHAR_ONE
-            VarType.CONTINUOUS -> CBCLibrary.CHAR_ZERO
-            VarType.INTEGER -> CBCLibrary.CHAR_ONE
+            VarType.Binary -> CBCLibrary.CHAR_ONE
+            VarType.Continuous -> CBCLibrary.CHAR_ZERO
+            VarType.Integer -> CBCLibrary.CHAR_ONE
         }
 
         if (nz > 0) {
@@ -96,10 +92,70 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
         }
     }
 
+    override fun get(param: String): Any {
+        return when (param) {
+            "objective" -> getObjectiveExpr()
+            "objectiveBound" -> lib.Cbc_getObjValue(cbc)
+            "objectiveValue" -> lib.Cbc_getBestPossibleObjValue(cbc)
+            "sense"-> if (lib.Cbc_getObjSense(cbc) > 0) MINIMIZE else MAXIMIZE
+            else -> throw NotImplementedError("Parameter currently unavailable in CBC interface")
+        }
+    }
+
     override fun optimize(): OptimizationStatus {
-        nSolutions = lib.Cbc_solve(cbc)
+        // resetting buffers
+        rc = null
+        solution = null
+
+        // optimizing...
+        lib.Cbc_solve(cbc)
+        if (lib.Cbc_isProvenOptimal(cbc) != 0 || lib.Cbc_getNumIntegers(cbc) > 0) {
+            nSolutions = lib.Cbc_numberSavedSolutions(cbc)
+        }
+
+        // flushing stdout
         lib.fflush(null)
-        return OptimizationStatus.OTHER
+
+        return OptimizationStatus.Other
+    }
+
+    override fun remove(iterable: Iterable<Any?>) {
+        val constrs = ArrayList<Int>()
+        val vars = ArrayList<Int>()
+
+        for (term in iterable) {
+            if (term == null) continue
+            when (term) {
+                is Constr -> constrs.add(term.idx)
+                is Var -> vars.add(term.idx)
+                else -> throw IllegalArgumentException()
+            }
+        }
+
+        // remove constraints
+        if (constrs.isNotEmpty()) {
+            checkBuffer(constrs.size)
+            for ((i,idx) in constrs.withIndex())
+                intBuffer.putInt(4*i.toLong(), idx)
+            lib.Cbc_deleteRows(cbc, constrs.size, intBuffer)
+        }
+
+        // remove variables
+        if (vars.isNotEmpty()) {
+            checkBuffer(vars.size)
+            for ((i,idx) in vars.withIndex())
+                intBuffer.putInt(4*i.toLong(), idx)
+            lib.Cbc_deleteCols(cbc, vars.size, intBuffer)
+        }
+    }
+
+    override fun <T> set(param: String, value: T) {
+        when (param) {
+            "objective" -> setObjectiveExpr(value as LinExpr)
+            "sense"-> lib.Cbc_setObjSense(cbc, if (value == MAXIMIZE) 1.0 else -1.0)
+            "threads" -> lib.Cbc_setParameter(cbc, "threads", value.toString())
+            else -> throw NotImplementedError("Parameter currently unavailable in CBC interface")
+        }
     }
 
     override fun write(path: String) {
@@ -109,7 +165,6 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
             lib.Cbc_writeMps(cbc, path)
     }
 
-
     private fun checkBuffer(nz: Int) {
         if (nz > bufferLength) {
             bufferLength = nz
@@ -118,6 +173,13 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
         }
     }
 
+    private fun getObjectiveExpr(): LinExpr {
+        TODO("Not yet implemented")
+    }
+
+    private fun setObjectiveExpr(linExpr: LinExpr) {
+        TODO("Not yet implemented")
+    }
 
     // region variable getters and setters
 

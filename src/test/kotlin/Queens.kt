@@ -1,4 +1,4 @@
-import br.ufop.jmip.*
+import mip.*
 
 fun main() {
     val start = System.currentTimeMillis()
@@ -6,7 +6,7 @@ fun main() {
     val runtime: (Long) -> Double = { (System.currentTimeMillis() - it) / 1000.0 }
 
     // number of queens
-    val n = 1000
+    val n = 10
     val ns = 0 until n
 
     val queens = Model("NQueens", MINIMIZE, GUROBI)
@@ -14,9 +14,9 @@ fun main() {
     println("Model started in ${runtime(checkpoint)} seconds!")
     checkpoint = System.currentTimeMillis()
 
-    val x = ns.map { i ->
-        ns.map { j ->
-            queens.addVar("x($i,$j)", varType = VarType.BINARY)
+    val x = Array(n) { i ->
+        Array(n) { j ->
+            queens.addBinVar("x($i,$j)")
         }
     }
 
@@ -25,11 +25,11 @@ fun main() {
 
     // one per row
     for (i in ns)
-        queens += xsum(ns.map { j -> x[i][j] }) eq 1 named "row_$i"
+        queens += ns.map { j -> x[i][j] } eq 1 named "row_$i"
 
     // one per column
     for (j in ns)
-        queens += xsum(ns.map { i -> x[i][j] }) eq 1 named "col_$j"
+        queens += ns.map { i -> x[i][j] } eq 1 named "col_$j"
 
     println("First constraint set created in ${runtime(checkpoint)} seconds!")
     checkpoint = System.currentTimeMillis()
@@ -39,7 +39,7 @@ fun main() {
         val lhs = LinExpr()
         for (i in ns) for (j in ns) if (i - j == k)
             lhs += x[i][j]
-        queens += lhs leq 1 to "diag1_$k"
+        queens += lhs le 1 named "diag1_${k.toString().replace("-", "m")}"
     }
 
     println("Second constraint set created in ${runtime(checkpoint)} seconds!")
@@ -50,20 +50,19 @@ fun main() {
         val lhs = LinExpr()
         for (i in ns) for (j in ns) if (i + j == k)
             lhs += x[i][j]
-        queens += lhs leq 1 to "diag2_$k"
+        queens += lhs le 1 named "diag2_$k"
     }
 
     println("Third constraint set created in ${runtime(checkpoint)} seconds!")
 
     queens.write("queens.lp")
-    // queens.optimize()
-    //
-    // println()
-    // for (i in ns) {
-    //     for (j in ns)
-    //         print(if (x[i][j].x >= EPS) "O " else ". ")
-    //     println()
-    // }
+    queens.optimize()
 
+    for (i in ns) {
+        for (j in ns)
+            print(if (x[i][j].x >= EPS) "O " else ". ")
+        println()
+    }
+    println()
     println("Total runtime: ${runtime(start)} seconds!")
 }

@@ -1,4 +1,4 @@
-package br.ufop.jmip.util
+package mip.util
 
 data class Property(var value: Any?, val readOnly: Boolean, val category: Category) {
 

@@ -1,4 +1,4 @@
-package br.ufop.jmip.solvers
+package mip.solvers
 
 import jnr.ffi.*
 import jnr.ffi.types.*

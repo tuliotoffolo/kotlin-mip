@@ -1,4 +1,4 @@
-package br.ufop.jmip
+package mip
 
 data class LinTerm(val variable: Var, val coeff: Double = 1.0) {
 

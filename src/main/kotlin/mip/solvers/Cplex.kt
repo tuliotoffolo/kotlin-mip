@@ -1,6 +1,6 @@
-package br.ufop.jmip.solvers
+package mip.solvers
 
-import br.ufop.jmip.Model
+import mip.Model
 
 class Cplex(model: Model, name: String, sense: String)
     // : Solver(model, name, sense)

@@ -1,6 +1,6 @@
 @file:Suppress("NOTHING_TO_INLINE")
 
-package br.ufop.jmip
+package mip
 
 class Var internal constructor(val model: Model, var idx: Int) {
 
@@ -41,7 +41,10 @@ class Var internal constructor(val model: Model, var idx: Int) {
 
     fun xi(i: Int) = model.solver.getVarXi(idx, i)
 
-    operator fun compareTo(other: Var) = idx.compareTo(other.idx)
+    operator fun compareTo(other: Var?): Int {
+        if (other == null) return -1
+        return idx.compareTo(other.idx)
+    } 
     override fun hashCode() = idx
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -55,27 +58,31 @@ class Var internal constructor(val model: Model, var idx: Int) {
     }
     override fun toString() = name
 
-    inline infix fun leq(other: LinExpr) = Constr.leq(this, other)
-    inline infix fun leq(other: Var) = Constr.leq(this, other)
-    inline infix fun leq(other: Number) = Constr.leq(this, other)
-    inline infix fun geq(other: LinExpr) = Constr.geq(this, other)
-    inline infix fun geq(other: Var) = Constr.geq(this, other)
-    inline infix fun geq(other: Number) = Constr.geq(this, other)
-    inline infix fun eq(other: LinExpr) = Constr.eq(this, other)
-    inline infix fun eq(other: Var) = Constr.eq(this, other)
+    // region comparators
+
+    inline infix fun le(other: LinExpr?) = Constr.le(this, other)
+    inline infix fun le(other: Var?) = Constr.le(this, other)
+    inline infix fun le(other: Number) = Constr.le(this, other)
+    inline infix fun ge(other: LinExpr?) = Constr.ge(this, other)
+    inline infix fun ge(other: Var?) = Constr.ge(this, other)
+    inline infix fun ge(other: Number) = Constr.ge(this, other)
+    inline infix fun eq(other: LinExpr?) = Constr.eq(this, other)
+    inline infix fun eq(other: Var?) = Constr.eq(this, other)
     inline infix fun eq(other: Number) = Constr.eq(this, other)
+
+    // endregion comparators
 
     // region kotlin operators
 
     operator fun plus(iterable: Iterable<Any>) = toLinExpr().apply { add(iterable) }
-    operator fun plus(linExpr: LinExpr) = linExpr.copy().apply { add(this) }
-    operator fun plus(variable: Var) = toLinExpr().apply { add(variable) }
+    operator fun plus(linExpr: LinExpr?) = LinExpr(linExpr).apply { add(this) }
+    operator fun plus(variable: Var?) = toLinExpr().apply { add(variable) }
     operator fun plus(const: Number) = toLinExpr().apply { add(const) }
     operator fun unaryPlus() = this
 
-    operator fun minus(iterable: Iterable<Any>) = toLinExpr().apply { sub(iterable) }
-    operator fun minus(linExpr: LinExpr) = linExpr.copy().apply { multiply(-1); add(this) }
-    operator fun minus(variable: Var) = toLinExpr().apply { add(variable) }
+    operator fun minus(iterable: Iterable<Any?>) = toLinExpr().apply { sub(iterable) }
+    operator fun minus(linExpr: LinExpr?) = LinExpr(linExpr).apply { multiply(-1.0); add(this) }
+    operator fun minus(variable: Var?) = toLinExpr().apply { add(variable) }
     operator fun minus(const: Number) = toLinExpr().apply { sub(const) }
     operator fun unaryMinus() = toLinExpr(-1.0)
 

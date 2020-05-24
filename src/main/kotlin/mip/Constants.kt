@@ -1,6 +1,6 @@
-@file:JvmName("Constants")
+@file:JvmName("MIP")
 
-package br.ufop.jmip
+package mip
 
 /** Epsilon number (practical zero) */
 const val EPS = 10e-64
@@ -32,7 +32,6 @@ const val BINARY = 'B'
 const val CONTINUOUS = 'C'
 const val INTEGER = 'I'
 
-
 /**
  * Different type of cuts (for enabling/disabling)
  */
@@ -40,22 +39,22 @@ enum class CutType(val value: Int) {
     /**  Types of cuts that can be generated */
 
     /** Gomory Mixed Integer cuts [Gomo69] . */
-    GOMORY (0),
+    Gomory(0),
 
     /** Mixed-Integer Rounding cuts [Marc01]. */
-    MIR (1),
+    MIR(1),
 
     /** Zero/Half cuts [Capr96]. */
-    ZERO_HALF (2),
+    ZeroHalf(2),
 
     /** Clique cuts [Padb73]. */
-    CLIQUE (3),
+    Clique(3),
 
     /** Knapsack cover cuts [Bala75]. */
-    KNAPSACK_COVER (4),
+    KnapsackCover(4),
 
     /** Lift-and-project cuts [BCC93]. */
-    LIFT_AND_PROJECT (5),
+    LiftAndProject(5),
 }
 
 /**
@@ -63,16 +62,23 @@ enum class CutType(val value: Int) {
  */
 enum class LPMethod(val value: Int) {
     /*** Let the solver decide which is the best method */
-    AUTO(0),
+    Auto(0),
 
     /** The dual simplex algorithm */
-    DUAL(1),
+    Dual(1),
 
     /** The primal simplex algorithm */
-    PRIMAL(2),
+    Primal(2),
 
     /** The barrier algorithm */
-    BARRIER(3),
+    Barrier(3),
+}
+
+/**
+ * Parameters to set
+ */
+enum class Parameter(val value: String) {
+    Cutoff("CUTOFF"),
 }
 
 /**
@@ -80,37 +86,37 @@ enum class LPMethod(val value: Int) {
  */
 enum class OptimizationStatus(val value: Int) {
     /**  Solver returned an error */
-    ERROR(-1),
+    Error(-1),
 
     /** Optimal solution was computed */
-    OPTIMAL(0),
+    Optimal(0),
 
     /** The model is proven infeasible */
-    INFEASIBLE(1),
+    Infeasible(1),
 
     /** One or more variables that appear in the objective function are not  included in binding
      * constraints and the optimal objective value is infinity. */
-    UNBOUNDED(2),
+    Unbounded(2),
 
     /** An integer feasible solution was found during the search but the search was interrupted
      * before concluding if this is the optimal solution or
      * not. */
-    FEASIBLE(3),
+    Feasible(3),
 
     /** A feasible solution exist for the relaxed linear program but not for the problem with
      * existing integer variables */
-    INT_INFEASIBLE(4),
+    IntInfeasible(4),
 
     /** A truncated search was executed and no integer feasible solution was found */
-    NO_SOLUTION_FOUND(5),
+    NoSolutionFound(5),
 
     /** The problem was loaded but no optimization was performed */
-    LOADED(6),
+    Loaded(6),
 
     /** No feasible solution exists for the current cutoff */
-    CUTOFF(7),
+    Cutoff(7),
 
-    OTHER(10000),
+    Other(10000),
 }
 
 /**
@@ -119,14 +125,14 @@ enum class OptimizationStatus(val value: Int) {
 enum class SearchEmphasis(val value: Int) {
     /** Default search emphasis, try to balance between improving the dual bound and producing
      * integer feasible solutions. */
-    DEFAULT (0),
+    Default(0),
 
     /** More aggressive search for feasible solutions. */
-    FEASIBILITY (1),
+    Feasibility(1),
 
     /** Focuses more on producing improved dual bounds even if the production of integer feasible
      *  solutions is delayed. */
-    OPTIMALITY (2),
+    Optimality(2),
 }
 
 /**
@@ -134,11 +140,56 @@ enum class SearchEmphasis(val value: Int) {
  */
 enum class VarType(val value: Char) {
     /** Binary variable, i.e. integer variable such that 0 <= value <= 1. */
-    BINARY('B'),
+    Binary('B'),
 
     /** Continuous variable. */
-    CONTINUOUS('C'),
+    Continuous('C'),
 
     /** Integer variable. */
-    INTEGER('I'),
+    Integer('I'),
+}
+
+
+/**
+ * Possible boolean parameters.
+ */
+enum class BooleanParam {
+    NumericalEmphasis
+}
+
+/**
+ * Possible double parameters.
+ */
+enum class DoubleParam {
+    Cutoff,
+    MIPGap,
+    MIPGapAbs,
+    ObjDif,
+    RelObjDif,
+    TimeLimit;
+}
+
+/**
+ * Possible integer parameters.
+ */
+enum class IntParam {
+    LogToConsole,
+    PopulateLim,
+    RootAlg,
+    Threads
+}
+
+/**
+ * Possible long parameters.
+ */
+enum class LongParam {
+    IntSolLim,
+    IterLimit
+}
+
+/**
+ * Possible String parameters.
+ */
+enum class StringParam {
+    LogFile
 }

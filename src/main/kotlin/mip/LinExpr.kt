@@ -1,9 +1,10 @@
-package br.ufop.jmip
+package mip
 
 import kotlin.math.abs
 
 @Suppress("NOTHING_TO_INLINE")
 class LinExpr {
+
     var const = 0.0
     var sense = ' '
     val terms = HashMap<Var, Double>()
@@ -11,13 +12,15 @@ class LinExpr {
     val isAffine: Boolean get() = sense == ' '
     val size: Int get() = terms.size
 
-    constructor(linExpr: LinExpr) {
-        this.const = linExpr.const
-        this.sense = linExpr.sense
-        this.terms.putAll(linExpr.terms)
+    constructor(linExpr: LinExpr?) {
+        if (linExpr != null) {
+            this.const = linExpr.const
+            this.sense = linExpr.sense
+            this.terms.putAll(linExpr.terms)
+        }
     }
 
-    constructor(iterable: Iterable<Any>) {
+    constructor(iterable: Iterable<Any?>) {
         add(iterable)
     }
 
@@ -40,7 +43,7 @@ class LinExpr {
     }
 
     @JvmOverloads
-    constructor(vars: List<Var>, coeffs: List<Number>, const: Number = 0.0) {
+    constructor(vars: List<Var?>, coeffs: List<Number>, const: Number = 0.0) {
         // setting constant and sense
         this.const = const.toDouble()
 
@@ -50,15 +53,34 @@ class LinExpr {
     }
 
     @JvmOverloads
-    constructor(pair: LinTerm, const: Number = 0.0) {
+    constructor(vars: List<Var?>, coeffs: DoubleArray, const: Number = 0.0) {
+        // setting constant and sense
         this.const = const.toDouble()
-        this.terms[pair.variable] = pair.coeff
+
+        // adding variables and their coefficients
+        assert(vars.size == coeffs.size)
+        for (i in vars.indices) add(vars[i], coeffs[i])
     }
 
     @JvmOverloads
-    constructor(variable: Var, coeff: Number = 1.0, const: Number = 0.0) {
+    constructor(pair: LinTerm?, const: Number = 0.0) {
         this.const = const.toDouble()
-        this.terms[variable] = coeff.toDouble()
+        if (pair != null)
+            this.terms[pair.variable] = pair.coeff
+    }
+
+    @JvmOverloads
+    constructor(variable: Var?, coeff: Number = 1.0, const: Number = 0.0) {
+        this.const = const.toDouble()
+        if (variable != null)
+            this.terms[variable] = coeff.toDouble()
+    }
+
+    @JvmOverloads
+    constructor(coeff: Number, variable: Var?, const: Number = 0.0) {
+        this.const = const.toDouble()
+        if (variable != null)
+            this.terms[variable] = coeff.toDouble()
     }
 
     constructor(const: Number) {
@@ -68,8 +90,9 @@ class LinExpr {
     constructor()
 
     @JvmOverloads
-    fun add(iterable: Iterable<Any>, mult: Double = 1.0) {
+    fun add(iterable: Iterable<Any?>, mult: Double = 1.0) {
         for (term in iterable) {
+            if (term == null) continue
             when (term) {
                 is LinExpr -> add(term, mult)
                 is LinTerm -> add(term, mult)
@@ -81,27 +104,32 @@ class LinExpr {
     }
 
     @JvmOverloads
-    fun add(linExpr: LinExpr, mult: Double = 1.0) {
-        const += linExpr.const * mult
-        for ((v, coeff) in linExpr.terms) {
-            add(v, coeff * mult)
+    fun add(linExpr: LinExpr?, mult: Double = 1.0) {
+        if (linExpr!=null) {
+            const += linExpr.const * mult
+            for ((v, coeff) in linExpr.terms) {
+                add(v, coeff * mult)
+            }
         }
     }
 
     @JvmOverloads
-    fun add(linTerm: LinTerm, mult: Double = 1.0) {
-        add(linTerm.variable, linTerm.coeff * mult)
+    fun add(linTerm: LinTerm?, mult: Double = 1.0) {
+        if (linTerm != null)
+            add(linTerm.variable, linTerm.coeff * mult)
     }
 
     @JvmOverloads
-    fun add(variable: Var, coeff: Number = 1.0) {
+    fun add(variable: Var?, coeff: Number = 1.0) {
         if (coeff == 0.0) return
 
-        val res = coeff.toDouble() + (terms[variable] ?: 0.0)
-        if (res != 0.0)
-            terms[variable] = res
-        else
-            terms.remove(variable)
+        if (variable != null) {
+            val res = coeff.toDouble() + (terms[variable] ?: 0.0)
+            if (res != 0.0)
+                terms[variable] = res
+            else
+                terms.remove(variable)
+        }
     }
 
     fun add(const: Number) {
@@ -140,20 +168,20 @@ class LinExpr {
         }
     }
 
-    fun sub(iterable: Iterable<Any>) = add(iterable, -1.0)
-    fun sub(linExpr: LinExpr) = add(linExpr, -1.0)
-    fun sub(linTerm: LinTerm) = add(linTerm, -1.0)
-    fun sub(variable: Var) = add(variable, -1.0)
+    fun sub(iterable: Iterable<Any?>) = add(iterable, -1.0)
+    fun sub(linExpr: LinExpr?) = add(linExpr, -1.0)
+    fun sub(linTerm: LinTerm?) = add(linTerm, -1.0)
+    fun sub(variable: Var?) = add(variable, -1.0)
     fun sub(const: Number) = add(const.toDouble() * -1.0)
 
-    inline infix fun leq(other: LinExpr) = Constr.leq(this, other)
-    inline infix fun leq(other: Var) = Constr.leq(this, other)
-    inline infix fun leq(other: Number) = Constr.leq(this, other)
-    inline infix fun geq(other: LinExpr) = Constr.geq(this, other)
-    inline infix fun geq(other: Var) = Constr.geq(this, other)
-    inline infix fun geq(other: Number) = Constr.geq(this, other)
-    inline infix fun eq(other: LinExpr) = Constr.eq(this, other)
-    inline infix fun eq(other: Var) = Constr.eq(this, other)
+    inline infix fun le(other: LinExpr?) = Constr.le(this, other)
+    inline infix fun le(other: Var?) = Constr.le(this, other)
+    inline infix fun le(other: Number) = Constr.le(this, other)
+    inline infix fun ge(other: LinExpr?) = Constr.ge(this, other)
+    inline infix fun ge(other: Var?) = Constr.ge(this, other)
+    inline infix fun ge(other: Number) = Constr.ge(this, other)
+    inline infix fun eq(other: LinExpr?) = Constr.eq(this, other)
+    inline infix fun eq(other: Var?) = Constr.eq(this, other)
     inline infix fun eq(other: Number) = Constr.eq(this, other)
 
     inline infix fun named(name: String) = NamedLinExpr(this, name)
@@ -177,48 +205,48 @@ class LinExpr {
 
     // region addLHS and addRHS aliases
 
-    fun addLHS(iterable: Iterable<Any>) = add(iterable)
-    fun addLHS(linExpr: LinExpr) = add(linExpr)
-    fun addLHS(linTerm: LinTerm) = add(linTerm)
-    fun addLHS(variable: Var) = add(variable)
+    fun addLHS(iterable: Iterable<Any?>) = add(iterable)
+    fun addLHS(linExpr: LinExpr?) = add(linExpr)
+    fun addLHS(linTerm: LinTerm?) = add(linTerm)
+    fun addLHS(variable: Var?) = add(variable)
     fun addLHS(const: Number) = add(const)
 
-    fun addRHS(iterable: Iterable<Any>) = sub(iterable)
-    fun addRHS(linExpr: LinExpr) = sub(linExpr)
-    fun addRHS(linTerm: LinTerm) = sub(linTerm)
-    fun addRHS(variable: Var) = sub(variable)
+    fun addRHS(iterable: Iterable<Any?>) = sub(iterable)
+    fun addRHS(linExpr: LinExpr?) = sub(linExpr)
+    fun addRHS(linTerm: LinTerm?) = sub(linTerm)
+    fun addRHS(variable: Var?) = sub(variable)
     fun addRHS(const: Number) = sub(const)
 
     // endregion addLHS and addRHS aliases
 
     // region kotlin operators
 
-    operator fun plusAssign(iterable: Iterable<Any>) = add(iterable)
-    operator fun plusAssign(linExpr: LinExpr) = add(linExpr)
-    operator fun plusAssign(linTerm: LinTerm) = add(linTerm)
-    operator fun plusAssign(variable: Var) = add(variable)
+    operator fun plusAssign(iterable: Iterable<Any?>) = add(iterable)
+    operator fun plusAssign(linExpr: LinExpr?) = add(linExpr)
+    operator fun plusAssign(linTerm: LinTerm?) = add(linTerm)
+    operator fun plusAssign(variable: Var?) = add(variable)
     operator fun plusAssign(const: Number) = add(const)
 
-    operator fun minusAssign(iterable: Iterable<Any>) = sub(iterable)
-    operator fun minusAssign(linExpr: LinExpr) = sub(linExpr)
-    operator fun minusAssign(linTerm: LinTerm) = sub(linTerm)
-    operator fun minusAssign(variable: Var) = sub(variable)
+    operator fun minusAssign(iterable: Iterable<Any?>) = sub(iterable)
+    operator fun minusAssign(linExpr: LinExpr?) = sub(linExpr)
+    operator fun minusAssign(linTerm: LinTerm?) = sub(linTerm)
+    operator fun minusAssign(variable: Var?) = sub(variable)
     operator fun minusAssign(const: Number) = sub(const)
 
     operator fun timesAssign(const: Number) = multiply(const)
     operator fun divAssign(const: Number) = divide(const)
 
-    operator fun plus(iterable: Iterable<Any>) = copy().apply { add(iterable) }
-    operator fun plus(linExpr: LinExpr) = copy().apply { add(linExpr) }
-    operator fun plus(linTerm: LinTerm) = copy().apply { add(linTerm) }
-    operator fun plus(variable: Var) = copy().apply { add(variable) }
+    operator fun plus(iterable: Iterable<Any?>) = copy().apply { add(iterable) }
+    operator fun plus(linExpr: LinExpr?) = copy().apply { add(linExpr) }
+    operator fun plus(linTerm: LinTerm?) = copy().apply { add(linTerm) }
+    operator fun plus(variable: Var?) = copy().apply { add(variable) }
     operator fun plus(const: Number) = copy().apply { add(const) }
     operator fun unaryPlus() = this
 
-    operator fun minus(iterable: Iterable<Any>) = copy().apply { sub(iterable) }
-    operator fun minus(linExpr: LinExpr) = copy().apply { sub(linExpr) }
-    operator fun minus(linTerm: LinTerm) = copy().apply { sub(linTerm) }
-    operator fun minus(variable: Var) = copy().apply { sub(variable) }
+    operator fun minus(iterable: Iterable<Any?>) = copy().apply { sub(iterable) }
+    operator fun minus(linExpr: LinExpr?) = copy().apply { sub(linExpr) }
+    operator fun minus(linTerm: LinTerm?) = copy().apply { sub(linTerm) }
+    operator fun minus(variable: Var?) = copy().apply { sub(variable) }
     operator fun minus(const: Number) = copy().apply { sub(const) }
     operator fun unaryMinus() = copy().apply { multiply(-1) }
 
