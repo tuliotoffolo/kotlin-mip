@@ -1,3 +1,5 @@
+package mip.examples
+
 import mip.*
 
 /**

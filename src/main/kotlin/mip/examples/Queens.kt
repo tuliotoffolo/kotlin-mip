@@ -1,12 +1,14 @@
+package mip.examples
+
 import mip.*
 
-fun main() {
+fun main(args: Array<String>) {
     val start = System.currentTimeMillis()
     var checkpoint = System.currentTimeMillis()
     val runtime: (Long) -> Double = { (System.currentTimeMillis() - it) / 1000.0 }
 
     // number of queens
-    val n = 10
+    val n = 1000
     val ns = 0 until n
 
     val queens = Model("NQueens", MINIMIZE, GUROBI)

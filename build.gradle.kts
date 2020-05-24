@@ -79,3 +79,20 @@ tasks {
         }
     }
 }
+
+tasks.register<Jar>("queens") {
+    archiveClassifier.set("uber")
+    archiveFileName.set("queens.jar")
+    from(sourceSets.main.get().output)
+    dependsOn(configurations.runtimeClasspath)
+    destinationDirectory.set(rootDir)
+    from(configurations.runtimeClasspath.get()
+        .filter {
+            it.name.endsWith("jar") && !it.name.startsWith("kotlin")
+                && !it.name.startsWith("annotations")
+        }.map { zipTree(it) }
+    )
+    manifest {
+        attributes["Main-Class"] = "mip.examples.QueensKt"
+    }
+}
