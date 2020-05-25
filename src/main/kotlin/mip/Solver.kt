@@ -15,11 +15,9 @@ abstract class Solver(val model: Model, var name: String, sense: String = MINIMI
 
     open fun relax(): Unit = throw NotImplementedError()
 
-    abstract fun remove(iterable: Iterable<Any?>)
+    abstract fun removeConstrs(constrs: Iterable<Constr>)
 
-    fun remove(constr: Constr) = remove(listOf(constr))
-
-    fun remove(variable: Var) = remove(listOf(variable))
+    abstract fun removeVars(vars: Iterable<Var>)
 
     open fun write(path: String): Unit = throw NotImplementedError()
 

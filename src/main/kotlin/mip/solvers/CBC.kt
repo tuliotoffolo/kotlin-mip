@@ -46,7 +46,7 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     init {
         // initializing the solver/model
-        cbc = lib.Cbc_newModel()
+        this.cbc = lib.Cbc_newModel()
 
         // setting sense (if needed)
         if (sense == MAXIMIZE)
@@ -62,10 +62,10 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
         val sense = linExpr.sense.toByte()
 
         checkBuffer(nz)
-        var i: Long = 0
+        var i = 0L
         for ((v, coeff) in linExpr.terms) {
-            intBuffer.putInt(4 * i, v.idx)
-            dblBuffer.putDouble(8 * i, coeff)
+            intBuffer.putInt(4L * i, v.idx)
+            dblBuffer.putDouble(8L * i, coeff)
             i++
         }
 
@@ -103,8 +103,8 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
             "maxMipGap" -> lib.Cbc_getAllowableFractionGap(cbc)
             "maxMipGapAbs" -> lib.Cbc_getAllowableGap(cbc)
             "objective" -> getObjectiveExpr()
-            "objectiveBound" -> lib.Cbc_getObjValue(cbc)
-            "objectiveValue" -> lib.Cbc_getBestPossibleObjValue(cbc)
+            "objectiveBound" -> lib.Cbc_getBestPossibleObjValue(cbc)
+            "objectiveValue" -> lib.Cbc_getObjValue(cbc)
             "sense" -> if (lib.Cbc_getObjSense(cbc) > 0) MINIMIZE else MAXIMIZE
 
             else -> throw NotImplementedError("Parameter currently unavailable in CBC interface")
@@ -127,33 +127,23 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
         return OptimizationStatus.Other
     }
 
-    override fun remove(iterable: Iterable<Any?>) {
-        val constrs = ArrayList<Int>()
-        val vars = ArrayList<Int>()
-
-        for (term in iterable) {
-            if (term == null) continue
-            when (term) {
-                is Constr -> constrs.add(term.idx)
-                is Var -> vars.add(term.idx)
-                else -> throw IllegalArgumentException()
-            }
+    override fun removeConstrs(constrs: Iterable<Constr>) {
+        val size = if (constrs is Collection<*>) constrs.size else constrs.count()
+        if (size > 0) {
+            checkBuffer(size)
+            for ((i, constr) in constrs.withIndex())
+                intBuffer.putInt(4 * i.toLong(), constr.idx)
+            lib.Cbc_deleteRows(cbc, size, intBuffer)
         }
+    }
 
-        // remove constraints
-        if (constrs.isNotEmpty()) {
-            checkBuffer(constrs.size)
-            for ((i, idx) in constrs.withIndex())
-                intBuffer.putInt(4 * i.toLong(), idx)
-            lib.Cbc_deleteRows(cbc, constrs.size, intBuffer)
-        }
-
-        // remove variables
-        if (vars.isNotEmpty()) {
-            checkBuffer(vars.size)
-            for ((i, idx) in vars.withIndex())
-                intBuffer.putInt(4 * i.toLong(), idx)
-            lib.Cbc_deleteCols(cbc, vars.size, intBuffer)
+    override fun removeVars(vars: Iterable<Var>) {
+        val size = if (vars is Collection<*>) vars.size else vars.count()
+        if (size > 0) {
+            checkBuffer(size)
+            for ((i, variable) in vars.withIndex())
+                intBuffer.putInt(4 * i.toLong(), variable.idx)
+            lib.Cbc_deleteCols(cbc, size, intBuffer)
         }
     }
 
@@ -164,7 +154,7 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
             "maxMipGapAbs" -> lib.Cbc_setAllowableGap(cbc, value as Double)
             "objective" -> setObjectiveExpr(value as LinExpr)
             "seed" -> lib.Cbc_setIntParam(cbc, CBCLibrary.INT_PARAM_RANDOM_SEED, value as Int)
-            "sense" -> lib.Cbc_setObjSense(cbc, if (value == MAXIMIZE) 1.0 else -1.0)
+            "sense" -> lib.Cbc_setObjSense(cbc, if (value == MAXIMIZE) -1.0 else 1.0)
             "threads" -> lib.Cbc_setParameter(cbc, "threads", value.toString())
             "timeLimit" -> lib.Cbc_setMaximumSeconds(cbc, value as Double)
 

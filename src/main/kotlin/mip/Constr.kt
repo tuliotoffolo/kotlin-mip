@@ -2,7 +2,7 @@
 
 package mip
 
-class Constr internal constructor(val model: Model, var idx: Int) {
+class Constr internal constructor(val model: Model, var idx: Int) : Comparable<Constr> {
 
     // region properties
 
@@ -11,8 +11,8 @@ class Constr internal constructor(val model: Model, var idx: Int) {
         set(value) = model.solver.setConstrExpr(idx, value)
 
     var name: String
-        get() = model.solver.getVarName(idx)
-        set(value) = model.solver.setVarName(idx, value)
+        get() = model.solver.getConstrName(idx)
+        set(value) = model.solver.setConstrName(idx, value)
 
     val pi get() = model.solver.getConstrPi(idx)
 
@@ -24,19 +24,31 @@ class Constr internal constructor(val model: Model, var idx: Int) {
 
     // endregion properties
 
-    // region override functions
-
+    override fun compareTo(other: Constr): Int = idx.compareTo(other.idx)
     override fun hashCode() = idx
 
-    override fun toString(): String {
-        // collecting data from solver
-        val name = this.name
-        val expr = this.expr
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
-        if (name.isNotBlank())
-            return "$name: $expr"
-        return "constr($idx): $expr"
+        other as Var
+        if (model != other.model) return false
+        if (idx != other.idx) return false
+
+        return true
     }
+
+    override fun toString() = name
+
+    // override fun toString(): String {
+    //     // collecting data from solver
+    //     val name = this.name
+    //     val expr = this.expr
+    //
+    //     if (name.isNotBlank())
+    //         return "$name: $expr"
+    //     return "constr($idx): $expr"
+    // }
 
     // endregion override functions
 

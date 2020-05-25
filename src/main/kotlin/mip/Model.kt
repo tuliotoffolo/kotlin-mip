@@ -1,6 +1,8 @@
 package mip
 
 import java.lang.Double.*
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.reflect.KProperty
 
 /**
@@ -104,11 +106,6 @@ class Model(var name: String = "JMipModel", sense: String = MINIMIZE,
         return addConstr(expr, name)
     }
 
-    fun optimize(): OptimizationStatus {
-        solver.optimize()
-        return OptimizationStatus.Optimal
-    }
-
     // endregion aliases for addConstr
 
     @JvmOverloads
@@ -133,35 +130,28 @@ class Model(var name: String = "JMipModel", sense: String = MINIMIZE,
     // region addVar aliases
 
     fun addBinVar(name: String = "v_${vars.size}", obj: Number = 0.0,
-                  column: Column = Column.EMPTY
-    ): Var =
-        addVar(name = name,
-            varType = VarType.Binary,
-            obj = obj,
-            lb = 0.0, ub = 1.0,
+                  column: Column = Column.EMPTY): Var =
+        addVar(name = name, varType = VarType.Binary, obj = obj, lb = 0.0, ub = 1.0,
             column = column)
 
     fun addIntVar(name: String = "v_${vars.size}", obj: Number = 0.0, lb: Number = 0.0,
-                  ub: Number = INF, column: Column = Column.EMPTY
-    ): Var =
-        addVar(name = name,
-            varType = VarType.Binary,
-            obj = obj,
-            lb = lb, ub = ub,
+                  ub: Number = INF, column: Column = Column.EMPTY): Var =
+        addVar(name = name, varType = VarType.Binary, obj = obj, lb = lb, ub = ub,
             column = column)
 
     fun addNumVar(name: String = "v_${vars.size}", obj: Number = 0.0, lb: Number = 0.0,
-                  ub: Number = INF, column: Column = Column.EMPTY
-    ): Var =
-        addVar(name = name,
-            varType = VarType.Continuous,
-            obj = obj,
-            lb = lb, ub = ub,
+                  ub: Number = INF, column: Column = Column.EMPTY): Var =
+        addVar(name = name, varType = VarType.Continuous, obj = obj, lb = lb, ub = ub,
             column = column)
 
     // endregion addVar aliases
 
     override inline fun get(param: String) = solver.get(param)
+
+    fun optimize(): OptimizationStatus {
+        solver.optimize()
+        return OptimizationStatus.Optimal
+    }
 
     operator fun plusAssign(arg: Any?) {
         when (arg) {
@@ -176,6 +166,40 @@ class Model(var name: String = "JMipModel", sense: String = MINIMIZE,
             }
         }
     }
+
+    fun remove(iterable: Iterable<Any?>) {
+        val constrsToRemove = TreeSet<Constr>()
+        val varsToRemove = TreeSet<Var>()
+
+        for (term in iterable) {
+            when (term) {
+                null -> continue
+                is Constr -> constrsToRemove.add(term)
+                is Var -> varsToRemove.add(term)
+                else -> throw IllegalArgumentException()
+            }
+        }
+
+        // removing constraints
+        if (constrsToRemove.isNotEmpty()) {
+            solver.removeConstrs(constrsToRemove)
+            constrs.removeAll(constrsToRemove)
+            for (i in constrsToRemove.first().idx until constrs.size)
+                constrs[i].idx = i
+        }
+
+        // removing variables
+        if (varsToRemove.isNotEmpty()) {
+            solver.removeVars(varsToRemove)
+            vars.removeAll(varsToRemove)
+            for (i in varsToRemove.first().idx until vars.size)
+                vars[i].idx = i
+        }
+    }
+
+    inline fun remove(constr: Constr) = remove(listOf(constr))
+
+    inline fun remove(variable: Var) = remove(listOf(variable))
 
     override inline fun <T> set(param: String, value: T) = solver.set(param, value)
 

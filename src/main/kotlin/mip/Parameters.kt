@@ -6,6 +6,7 @@ abstract class Parameters {
 
     open var objective by Param<LinExpr>()
     open var sense by Param<String>()
+    open var cutoff by Param<Double>()
 
     open var cuts by Param<Int>()
     open var cutPasses by Param<Int>()

@@ -2,7 +2,7 @@
 
 package mip
 
-class Var internal constructor(val model: Model, idx: Int) {
+class Var internal constructor(val model: Model, idx: Int) : Comparable<Var> {
 
     // region properties
 
@@ -43,12 +43,9 @@ class Var internal constructor(val model: Model, idx: Int) {
 
     fun xi(i: Int) = model.solver.getVarXi(idx, i)
 
-    operator fun compareTo(other: Var?): Int {
-        if (other == null) return -1
-        return idx.compareTo(other.idx)
-    }
-
+    override fun compareTo(other: Var): Int = idx.compareTo(other.idx)
     override fun hashCode() = idx
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
