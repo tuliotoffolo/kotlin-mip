@@ -7,12 +7,9 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     override val hasSolution get() = nSolutions > 0
 
-    // cbc-related variables
     private var cbc: Pointer
-
     private val lib = CBCLibrary.lib
     private val runtime: Runtime = Runtime.getRuntime(lib)
-
     private var nSolutions = 0
 
     // region buffers
@@ -58,6 +55,7 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
         lib.fflush(null)
     }
 
+
     override fun addConstr(linExpr: LinExpr, name: String) {
         val nz = linExpr.size
         val rhs = -linExpr.const
@@ -101,10 +99,14 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     override fun get(param: String): Any {
         return when (param) {
+            "cutoff" -> lib.Cbc_getCutoff(cbc)
+            "maxMipGap" -> lib.Cbc_getAllowableFractionGap(cbc)
+            "maxMipGapAbs" -> lib.Cbc_getAllowableGap(cbc)
             "objective" -> getObjectiveExpr()
             "objectiveBound" -> lib.Cbc_getObjValue(cbc)
             "objectiveValue" -> lib.Cbc_getBestPossibleObjValue(cbc)
             "sense" -> if (lib.Cbc_getObjSense(cbc) > 0) MINIMIZE else MAXIMIZE
+
             else -> throw NotImplementedError("Parameter currently unavailable in CBC interface")
         }
     }
@@ -157,9 +159,15 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     override fun <T> set(param: String, value: T) {
         when (param) {
+            "cutoff" -> lib.Cbc_setCutoff(cbc, value as Double)
+            "maxMipGap" -> lib.Cbc_setAllowableFractionGap(cbc, value as Double)
+            "maxMipGapAbs" -> lib.Cbc_setAllowableGap(cbc, value as Double)
             "objective" -> setObjectiveExpr(value as LinExpr)
+            "seed" -> lib.Cbc_setIntParam(cbc, CBCLibrary.INT_PARAM_RANDOM_SEED, value as Int)
             "sense" -> lib.Cbc_setObjSense(cbc, if (value == MAXIMIZE) 1.0 else -1.0)
             "threads" -> lib.Cbc_setParameter(cbc, "threads", value.toString())
+            "timeLimit" -> lib.Cbc_setMaximumSeconds(cbc, value as Double)
+
             else -> throw NotImplementedError("Parameter currently unavailable in CBC interface")
         }
     }
@@ -170,6 +178,7 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
         else if (path.endsWith(".mps"))
             lib.Cbc_writeMps(cbc, path)
     }
+
 
     private fun checkBuffer(nz: Int) {
         if (nz > bufferLength) {

@@ -320,14 +320,19 @@ interface CBCLibrary {
     fun Cbc_getCutoff(model: Pointer): Double
 
     // void Cbc_setCutoff(Cbc_Model *model, double cutoff);
+    fun Cbc_setCutoff(model: Pointer, cutoff: Double);
 
     // double Cbc_getAllowableGap(Cbc_Model *model);
+    fun Cbc_getAllowableGap(model: Pointer): Double
 
     // void Cbc_setAllowableGap(Cbc_Model *model, double allowedGap);
+    fun Cbc_setAllowableGap(model: Pointer, allowedFracionGap: Double)
 
     // double Cbc_getAllowableFractionGap(Cbc_Model *model);
+    fun Cbc_getAllowableFractionGap(model: Pointer): Double
 
     // void Cbc_setAllowableFractionGap(Cbc_Model *model, double allowedFracionGap);
+    fun Cbc_setAllowableFractionGap(model: Pointer, allowedFracionGap: Double)
 
     // double Cbc_getAllowablePercentageGap(Cbc_Model *model);
 
@@ -336,6 +341,7 @@ interface CBCLibrary {
     // double Cbc_getMaximumSeconds(Cbc_Model *model);
 
     // void Cbc_setMaximumSeconds(Cbc_Model *model, double maxSeconds);
+    fun Cbc_setMaximumSeconds(model: Pointer, maxSeconds: Double)
 
     // int Cbc_getMaximumNodes(Cbc_Model *model);
 
