@@ -16,35 +16,6 @@ interface CBCLibrary {
         @JvmStatic
         val lib: CBCLibrary
 
-        private val DARWIN_LIBS = listOf("libCbcSolver.dylib")
-
-        private val LINUX_LIBS = listOf("libCbc.so", "libCbc.so.0", "libCbc.so.0.0.0",
-            "libCbcSolver.so", "libCbcSolver.so.0", "libCbcSolver.so.0.0.0", "libCgl.so",
-            "libCgl.so.0", "libCgl.so.0.0.0", "libClp.so", "libClp.so.0", "libClp.so.0.0.0",
-            "libClpSolver.so", "libClpSolver.so.0", "libClpSolver.so.0.0.0", "libCoinUtils.so",
-            "libCoinUtils.so.0", "libCoinUtils.so.0.0.0", "libOsi.so", "libOsi.so.0",
-            "libOsi.so.0.0.0", "libOsiCbc.so", "libOsiCbc.so.0", "libOsiCbc.so.0.0.0",
-            "libOsiClp.so", "libOsiClp.so.0", "libOsiClp.so.0.0.0", "libOsiCommonTest.so",
-            "libOsiCommonTest.so.0", "libOsiCommonTest.so.0.0.0", "libOsiGlpk.so",
-            "libOsiGlpk.so.0", "libOsiGlpk.so.0.0.0", "libamd.so.2.2.0", "libblas.so.3gf",
-            "libbz2.so.1.0", "libcholmod.so.1.7.1", "libcoinasl.so", "libcoinasl.so.0",
-            "libcoinasl.so.0.0.0", "libcoinglpk.so", "libcoinglpk.so.40", "libcoinglpk.so.40.3.0",
-            "libcoinmetis.so", "libcoinmetis.so.0", "libcoinmetis.so.0.0.0", "libcoinmumps.so",
-            "libcoinmumps.so.0", "libcoinmumps.so.0.0.0", "libcoinmumps.so.2",
-            "libcoinmumps.so.2.1.0", "libcolamd.so.2.7.1", "libgfortran.so.3", "libgfortran.so.5",
-            "liblapack.so.3gf", "libmetis-edf.so.4", "libmetis-edf.so.4.1", "libquadmath.so.0",
-            "libreadline.so.6", "libstdc++.so.6", "libtinfo.so.5")
-
-        private val WINDOWS_LIBS = listOf("libCbc-0.dll", "libCbcSolver-0.dll", "libCgl-0.dll",
-            "libClp-0.dll", "libClpSolver-0.dll", "libCoinUtils-0.dll", "libOsi-0.dll",
-            "libOsiCbc-0.dll", "libOsiClp-0.dll", "libOsiCommonTest-0.dll", "libOsiGlpk-0.dll",
-            "libamd.dll", "libblas.dll", "libbz2-1.dll", "libcamd.dll", "libccolamd.dll",
-            "libcholmod.dll", "libcoinasl-0.dll", "libcoinglpk-40.dll", "libcolamd.dll",
-            "libgcc_s_seh-1.dll", "libgfortran-5.dll", "libgomp-1.dll", "liblapack.dll",
-            "libmetis.dll", "libopenblas.dll", "libquadmath-0.dll", "libreadline8.dll",
-            "libstdc++-6.dll", "libsuitesparseconfig.dll", "libtermcap-0.dll",
-            "libwinpthread-1.dll", "zlib1.dll")
-
         init {
             var library: String? = null
             var libLocation: String? = System.getProperty("user.dir") + File.separatorChar
@@ -52,16 +23,16 @@ interface CBCLibrary {
             val platform = Platform.getNativePlatform();
             when (platform.os) {
                 OS.DARWIN -> {
-                    library = "CbcSolver"
+                    library = "libCbcSolver.dylib"
                     libLocation += "libraries/mac64"
                 }
                 OS.LINUX -> {
-                    library = "CbcSolver"
+                    library = "libCbcSolver.so"
                     libLocation += "libraries/lin64"
                 }
                 OS.WINDOWS -> {
-                    library = "CbcSolver-0"
-                    libLocation += "libraries/win64/"
+                    library = "libCbcSolver-0.dll"
+                    libLocation += "libraries\\win64"
                 }
                 else -> {
                     library = null
@@ -69,24 +40,29 @@ interface CBCLibrary {
                 }
             }
 
-            if (libLocation != null) {
-                val currentPath = System.getProperty("user.dir")
-                CLibrary.lib.chdir(libLocation)
+            this.lib = LibraryLoader
+                .create(CBCLibrary::class.java)
+                .failImmediately()
+                .load(libLocation + File.separatorChar + library)
 
-                val libLoader = LibraryLoader.create(CBCLibrary::class.java)
-                    .library(library)
-                    .search(libLocation)
-                this.lib = libLoader.load()
-
-                CLibrary.lib.chdir(currentPath)
-            }
-            else {
-                val libLoader = LibraryLoader.create(CBCLibrary::class.java)
-                    .library(library)
-                    .failImmediately()
-                    .search(libLocation)
-                this.lib = libLoader.load()
-            }
+            // if (libLocation != null) {
+            //     val currentPath = System.getProperty("user.dir")
+            //     CLibrary.lib.chdir(libLocation)
+            //
+            //     val libLoader = LibraryLoader.create(CBCLibrary::class.java)
+            //         .library(library)
+            //         .search(libLocation)
+            //     this.lib = libLoader.load()
+            //
+            //     CLibrary.lib.chdir(currentPath)
+            // }
+            // else {
+            //     val libLoader = LibraryLoader.create(CBCLibrary::class.java)
+            //         .library(library)
+            //         .failImmediately()
+            //         .search(libLocation)
+            //     this.lib = libLoader.load()
+            // }
         }
 
         const val CHAR_ONE: Byte = 1.toByte()
