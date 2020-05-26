@@ -1,10 +1,11 @@
 package mip.examples
 
 import mip.*
+import kotlin.math.roundToInt
 
 /**
- * Bandwidth multi coloring problem, more specificially the Frequency assignment problem as
- * described here: http://fap.zib.de/problems/Philadelphia/
+ * Bandwidth multi coloring problem, more specifically the Frequency assignment problem as
+ * described in http://fap.zib.de/problems/Philadelphia/
  */
 fun main() {
     val start = System.currentTimeMillis()
@@ -59,20 +60,20 @@ fun main() {
         m += z ge (c + 1) * x[i][c]
     }
 
-    // m.write("bmcp.lp")
-    // m.optimize()
-    //
-    // if (m.hasSolution)
-    //     for (i in N)
-    //         println("Channels of node $i: ${U.filter { c -> x[i][c].x >= 0.99 }}")
+    m.write("bmcp.lp")
+    m.optimize()
+
+    if (m.hasSolution)
+        for (i in N)
+            println("Channels of node $i: ${U.filter { c -> x[i][c].x >= 0.99 }}")
 
     // sanity tests
-    // assert m.objective_bound <= 41+1e-10
-    // if m.status == OptimizationStatus.OPTIMAL:
-    // assert round (m.objective_value) == 41
-    // elif m . status == OptimizationStatus . FEASIBLE :
-    // assert m . objective_value >= 41-1e-10
-    // m.check_optimization_results()
+    assert(m.objectiveBound <= 41 + 1e-10)
+    if (m.status == OptimizationStatus.Optimal)
+        assert(m.objectiveValue.roundToInt() == 41)
+    else if (m.status == OptimizationStatus.Feasible)
+        assert(m.objectiveValue >= 41 - 1e-10)
+    // m.validateOptimizationResult() TODO("Finish validation..")
 
     println("Total runtime = ${(System.currentTimeMillis() - start) / 1000.0} seconds.")
 }

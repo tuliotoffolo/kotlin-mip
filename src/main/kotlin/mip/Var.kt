@@ -83,7 +83,7 @@ class Var internal constructor(val model: Model, idx: Int) : Comparable<Var> {
 
     operator fun minus(iterable: Iterable<Any?>) = toLinExpr().apply { sub(iterable) }
     operator fun minus(linExpr: LinExpr?) = LinExpr(linExpr).apply { multiply(-1.0); add(this) }
-    operator fun minus(variable: Var?) = toLinExpr().apply { add(variable) }
+    operator fun minus(variable: Var?) = toLinExpr().apply { sub(variable) }
     operator fun minus(const: Number) = toLinExpr().apply { sub(const) }
     operator fun unaryMinus() = toLinExpr(-1.0)
 

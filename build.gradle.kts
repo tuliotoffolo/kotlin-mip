@@ -42,7 +42,7 @@ java {
 
 tasks {
     compileKotlin {
-        kotlinOptions.includeRuntime = false
+        kotlinOptions.includeRuntime = true
         kotlinOptions.jvmTarget = "1.8"
     }
     compileTestKotlin {
@@ -83,15 +83,12 @@ tasks {
 tasks.register<Jar>("queens") {
     archiveClassifier.set("uber")
     archiveFileName.set("queens.jar")
-    from(sourceSets.main.get().output)
     dependsOn(configurations.runtimeClasspath)
     destinationDirectory.set(rootDir)
     from(configurations.runtimeClasspath.get()
-        .filter {
-            it.name.endsWith("jar") && !it.name.startsWith("kotlin")
-                && !it.name.startsWith("annotations")
-        }.map { zipTree(it) }
+        .map { if (it.isDirectory) it else zipTree(it) }
     )
+    from(sourceSets.main.get().output)
     manifest {
         attributes["Main-Class"] = "mip.examples.QueensKt"
     }

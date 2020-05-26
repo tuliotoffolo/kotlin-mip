@@ -203,6 +203,58 @@ class Model(var name: String = "JMipModel", sense: String = MINIMIZE,
 
     override inline fun <T> set(param: String, value: T) = solver.set(param, value)
 
+    /**
+     * Checks the consistency of the optimization results, i.e., if the solution(s) produced by
+     * the MIP solver respects all constraints and variable values are within acceptable bounds,
+     * being integral whenever requested.
+     */
+    fun validateOptimizationResult(): Boolean {
+        if (status in arrayOf(OptimizationStatus.Feasible, OptimizationStatus.Optimal)) {
+            assert(numSolutions >= 1)
+
+            if (sense == MINIMIZE)
+                assert(objectiveBound <= objectiveValue + EPS)
+            else
+                assert(objectiveBound + EPS >= objectiveValue)
+
+            // for (c in constrs) {
+            //     if (c.violation >= infeasTol * 1.1) {
+            //
+            //     }
+            // }
+
+            TODO("Finish this method based on Python-MIP's")
+        }
+        return true
+
+        // for c in constrs:
+        // if c.expr.violation >= infeas_tol + infeas_tol * 0.1:
+        // raise mip.InfeasibleSolution(
+        //     "Constraint {}:\n{}\n is violated."
+        // "Computed violation is {}."
+        // "Tolerance for infeasibility is {}."
+        // "Solution status is {}.".format(
+        //     c.name,
+        //     str(c),
+        //     c.expr.violation,
+        //     infeas_tol,
+        //     status,
+        // )
+        // )
+        // for v in vars:
+        // if v.x <= v.lb - 1e-10 or v.x >= v.ub + 1e-10:
+        // raise mip.InfeasibleSolution(
+        //     "Invalid solution value for "
+        // "variable {}={} variable bounds"
+        // " are [{}, {}].".format(v.name, v.x, v.lb, v.ub)
+        // )
+        // if v.var_type in [mip.BINARY, mip.INTEGER]:
+        // if (round(v.x) - v.x) >= integer_tol + integer_tol * 0.1:
+        // raise mip.InfeasibleSolution(
+        //     "Variable {}={} should be integral.".format(v.name, v.x)
+        //     )
+    }
+
     fun write(path: String) = solver.write(path)
 
     private class Param<T>(val default: T? = null) {

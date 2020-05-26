@@ -12,6 +12,21 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
     private val runtime: Runtime = Runtime.getRuntime(lib)
     private var nSolutions = 0
 
+    // region properties override
+
+    override var objective: LinExpr
+        get() {
+            TODO("Not yet implemented")
+        }
+        set(value:LinExpr) {
+            TODO("Not yet implemented")
+        }
+
+    override var status = OptimizationStatus.Loaded
+        private set // TODO("Implement this...")
+
+    // endregion properties override
+
     // region buffers
 
     private var bufferLength = 8192
@@ -97,18 +112,16 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
         }
     }
 
-    override fun get(param: String): Any {
-        return when (param) {
-            "cutoff" -> lib.Cbc_getCutoff(cbc)
-            "maxMipGap" -> lib.Cbc_getAllowableFractionGap(cbc)
-            "maxMipGapAbs" -> lib.Cbc_getAllowableGap(cbc)
-            "objective" -> getObjectiveExpr()
-            "objectiveBound" -> lib.Cbc_getBestPossibleObjValue(cbc)
-            "objectiveValue" -> lib.Cbc_getObjValue(cbc)
-            "sense" -> if (lib.Cbc_getObjSense(cbc) > 0) MINIMIZE else MAXIMIZE
+    override fun get(param: String): Any = when (param) {
+        "cutoff" -> lib.Cbc_getCutoff(cbc)
+        "maxMipGap" -> lib.Cbc_getAllowableFractionGap(cbc)
+        "maxMipGapAbs" -> lib.Cbc_getAllowableGap(cbc)
+        "numSolutions" -> lib.Cbc_numberSavedSolutions(cbc)
+        "objectiveBound" -> lib.Cbc_getBestPossibleObjValue(cbc)
+        "objectiveValue" -> lib.Cbc_getObjValue(cbc)
+        "sense" -> if (lib.Cbc_getObjSense(cbc) > 0) MINIMIZE else MAXIMIZE
 
-            else -> throw NotImplementedError("Parameter currently unavailable in CBC interface")
-        }
+        else -> throw NotImplementedError("Parameter currently unavailable in CBC interface")
     }
 
     override fun optimize(): OptimizationStatus {
@@ -152,7 +165,6 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
             "cutoff" -> lib.Cbc_setCutoff(cbc, value as Double)
             "maxMipGap" -> lib.Cbc_setAllowableFractionGap(cbc, value as Double)
             "maxMipGapAbs" -> lib.Cbc_setAllowableGap(cbc, value as Double)
-            "objective" -> setObjectiveExpr(value as LinExpr)
             "seed" -> lib.Cbc_setIntParam(cbc, CBCLibrary.INT_PARAM_RANDOM_SEED, value as Int)
             "sense" -> lib.Cbc_setObjSense(cbc, if (value == MAXIMIZE) -1.0 else 1.0)
             "threads" -> lib.Cbc_setParameter(cbc, "threads", value.toString())
@@ -162,43 +174,12 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
         }
     }
 
+
     override fun write(path: String) {
         if (path.endsWith(".lp"))
             lib.Cbc_writeLp(cbc, path)
         else if (path.endsWith(".mps"))
             lib.Cbc_writeMps(cbc, path)
-    }
-
-
-    private fun checkBuffer(nz: Int) {
-        if (nz > bufferLength) {
-            bufferLength = nz
-            dblBuffer = Memory.allocateDirect(runtime, bufferLength * 8)
-            intBuffer = Memory.allocateDirect(runtime, bufferLength * 4)
-        }
-    }
-
-    private fun getSolutionIdx(idx: Int): Pointer? {
-        if (idx in solutions) return solutions[idx]
-
-        val sol = lib.Cbc_savedSolution(cbc, idx)
-        solutions[idx] = sol
-        return sol
-    }
-
-    private fun getObjectiveExpr(): LinExpr {
-        TODO("Not yet implemented")
-    }
-
-    private fun setObjectiveExpr(linExpr: LinExpr) {
-        TODO("Not yet implemented")
-    }
-
-    private fun removeSolution() {
-        pi = null
-        rc = null
-        solution = null
-        solutions.clear()
     }
 
     // region constraints getters and setters
@@ -291,4 +272,31 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
     }
 
     // endregion variable getters and setters
+
+    // region private useful functions
+
+    private fun checkBuffer(nz: Int) {
+        if (nz > bufferLength) {
+            bufferLength = nz
+            dblBuffer = Memory.allocateDirect(runtime, bufferLength * 8)
+            intBuffer = Memory.allocateDirect(runtime, bufferLength * 4)
+        }
+    }
+
+    private fun getSolutionIdx(idx: Int): Pointer? {
+        if (idx in solutions) return solutions[idx]
+
+        val sol = lib.Cbc_savedSolution(cbc, idx)
+        solutions[idx] = sol
+        return sol
+    }
+
+    private fun removeSolution() {
+        pi = null
+        rc = null
+        solution = null
+        solutions.clear()
+    }
+
+    // endregion private useful functions
 }

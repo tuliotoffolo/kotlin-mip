@@ -1,6 +1,7 @@
 package mip.examples
 
 import mip.*
+import mip.solvers.CLibrary
 
 fun main(args: Array<String>) {
     val start = System.currentTimeMillis()
@@ -8,7 +9,7 @@ fun main(args: Array<String>) {
     val runtime: (Long) -> Double = { (System.currentTimeMillis() - it) / 1000.0 }
 
     // number of queens
-    val n = 1500
+    val n = 16
     val ns = 0 until n
 
     val queens = Model("NQueens", MINIMIZE, GUROBI)
@@ -58,13 +59,13 @@ fun main(args: Array<String>) {
     println("Third constraint set created in ${runtime(checkpoint)} seconds!")
 
     // queens.write("queens.lp")
-    // queens.optimize()
-    //
-    // for (i in ns) {
-    //     for (j in ns)
-    //         print(if (x[i][j].x >= EPS) "O " else ". ")
-    //     println()
-    // }
+    queens.optimize()
+
+    for (i in ns) {
+        for (j in ns)
+            print(if (x[i][j].x >= EPS) "O " else ". ")
+        println()
+    }
     println()
     println("Total runtime: ${runtime(start)} seconds!")
 }
