@@ -4,7 +4,6 @@ import jnr.ffi.*
 import jnr.ffi.Platform.OS
 import jnr.ffi.types.*
 import jnr.ffi.annotations.Delegate
-import jnr.ffi.byref.PointerByReference
 import java.io.File
 
 interface CBCLibrary {
@@ -68,19 +67,21 @@ interface CBCLibrary {
         const val CHAR_ONE: Byte = 1.toByte()
         const val CHAR_ZERO: Byte = 0.toByte()
 
-        // enum DblParam {
-        //     DBL_PARAM_PRIMAL_TOL    = 0,  /*! Tollerance to consider a solution feasible in the linear programming solver. */
-        //     DBL_PARAM_DUAL_TOL      = 1,  /*! Tollerance for a solution to be considered optimal in the linear programming solver. */
-        //     DBL_PARAM_ZERO_TOL      = 2,  /*! Coefficients less that this value will be ignored when reading instances */
-        //     DBL_PARAM_INT_TOL       = 3,  /*! Maximum allowed distance from integer value for a variable to be considered integral */
-        //     DBL_PARAM_PRESOLVE_TOL  = 4,  /*! Tollerance used in the presolver, should be increased if the pre-solver is declaring infeasible a feasible problem */
-        //     DBL_PARAM_TIME_LIMIT    = 5,  /*! Time limit in seconds */
-        //     DBL_PARAM_PSI           = 6,  /*! Two dimensional princing factor in the Positive Edge pivot strategy. */
-        //     DBL_PARAM_CUTOFF        = 7,  /*! Only search for solutions with cost less-or-equal to this value. */
-        //     DBL_PARAM_ALLOWABLE_GAP = 8,  /*! Allowable gap between the lower and upper bound to conclude the search */
-        //     DBL_PARAM_GAP_RATIO     = 9   /*! Stops the search when the difference between the upper and lower bound is less than this fraction of the larger value */
-        // };
-        // #define N_DBL_PARAMS 10
+        /**
+         * enum DblParam {
+         *     DBL_PARAM_PRIMAL_TOL    = 0,  /*! Tollerance to consider a solution feasible in the linear programming solver. */
+         *     DBL_PARAM_DUAL_TOL      = 1,  /*! Tollerance for a solution to be considered optimal in the linear programming solver. */
+         *     DBL_PARAM_ZERO_TOL      = 2,  /*! Coefficients less that this value will be ignored when reading instances */
+         *     DBL_PARAM_INT_TOL       = 3,  /*! Maximum allowed distance from integer value for a variable to be considered integral */
+         *     DBL_PARAM_PRESOLVE_TOL  = 4,  /*! Tollerance used in the presolver, should be increased if the pre-solver is declaring infeasible a feasible problem */
+         *     DBL_PARAM_TIME_LIMIT    = 5,  /*! Time limit in seconds */
+         *     DBL_PARAM_PSI           = 6,  /*! Two dimensional princing factor in the Positive Edge pivot strategy. */
+         *     DBL_PARAM_CUTOFF        = 7,  /*! Only search for solutions with cost less-or-equal to this value. */
+         *     DBL_PARAM_ALLOWABLE_GAP = 8,  /*! Allowable gap between the lower and upper bound to conclude the search */
+         *     DBL_PARAM_GAP_RATIO     = 9   /*! Stops the search when the difference between the upper and lower bound is less than this fraction of the larger value */
+         * };
+         * #define N_DBL_PARAMS 10
+         */
         const val DBL_PARAM_PRIMAL_TOL = 0
         const val DBL_PARAM_DUAL_TOL = 1
         const val DBL_PARAM_ZERO_TOL = 2
@@ -93,27 +94,29 @@ interface CBCLibrary {
         const val DBL_PARAM_GAP_RATIO = 9
         const val N_DBL_PARAMS = 10
 
-        // /*! Integer parameters */
-        // enum IntParam {
-        //     INT_PARAM_PERT_VALUE          = 0,  /*! Method of perturbation, -5000 to 102, default 50 */
-        //     INT_PARAM_IDIOT               = 1,  /*! Parameter of the "idiot" method to try to produce an initial feasible basis. -1 let the solver decide if this should be applied; 0 deactivates it and >0 sets number of passes. */
-        //     INT_PARAM_STRONG_BRANCHING    = 2,  /*! Number of variables to be evaluated in strong branching. */
-        //     INT_PARAM_CUT_DEPTH           = 3,  /*! Sets the application of cuts to every depth multiple of this value. -1, the default value, let the solve decide. */
-        //     INT_PARAM_MAX_NODES           = 4,  /*! Maximum number of nodes to be explored in the search tree */
-        //     INT_PARAM_NUMBER_BEFORE       = 5,  /*! Number of branche before trusting pseudocodes computed in strong branching. */
-        //     INT_PARAM_FPUMP_ITS           = 6,  /*! Maximum number of iterations in the feasibility pump method. */
-        //     INT_PARAM_MAX_SOLS            = 7,  /*! Maximum number of solutions generated during the search. Stops the search when this number of solutions is found. */
-        //     INT_PARAM_CUT_PASS_IN_TREE    = 8, /*! Maxinum number of cuts passes in the search tree (with the exception of the root node). Default 1. */
-        //     INT_PARAM_THREADS             = 9, /*! Number of threads that can be used in the branch-and-bound method.*/
-        //     INT_PARAM_CUT_PASS            = 10, /*! Number of cut passes in the root node. Default -1, solver decides */
-        //     INT_PARAM_LOG_LEVEL           = 11, /*! Verbosity level, from 0 to 2 */
-        //     INT_PARAM_MAX_SAVED_SOLS      = 12, /*! Size of the pool to save the best solutions found during the search. */
-        //     INT_PARAM_MULTIPLE_ROOTS      = 13, /*! Multiple root passes to get additional cuts and solutions. */
-        //     INT_PARAM_ROUND_INT_VARS      = 14, /*! If integer variables should be round to remove small infeasibilities. This can increase the overall amount of infeasibilities in problems with both continuous and integer variables */
-        //     INT_PARAM_RANDOM_SEED         = 15, /*! When solving LP and MIP, randomization is used to break ties in some decisions. This changes the random seed so that multiple executions can produce different results */
-        //     INT_PARAM_ELAPSED_TIME        = 16  /*! When =1 use elapsed (wallclock) time, otherwise use CPU time */
-        // };
-        // #define N_INT_PARAMS 17
+        /**
+         * /*! Integer parameters */
+         * enum IntParam {
+         *     INT_PARAM_PERT_VALUE       = 0,  /*! Method of perturbation, -5000 to 102, default 50 */
+         *     INT_PARAM_IDIOT            = 1,  /*! Parameter of the "idiot" method to try to produce an initial feasible basis. -1 let the solver decide if this should be applied; 0 deactivates it and >0 sets number of passes. */
+         *     INT_PARAM_STRONG_BRANCHING = 2,  /*! Number of variables to be evaluated in strong branching. */
+         *     INT_PARAM_CUT_DEPTH        = 3,  /*! Sets the application of cuts to every depth multiple of this value. -1, the default value, let the solve decide. */
+         *     INT_PARAM_MAX_NODES        = 4,  /*! Maximum number of nodes to be explored in the search tree */
+         *     INT_PARAM_NUMBER_BEFORE    = 5,  /*! Number of branche before trusting pseudocodes computed in strong branching. */
+         *     INT_PARAM_FPUMP_ITS        = 6,  /*! Maximum number of iterations in the feasibility pump method. */
+         *     INT_PARAM_MAX_SOLS         = 7,  /*! Maximum number of solutions generated during the search. Stops the search when this number of solutions is found. */
+         *     INT_PARAM_CUT_PASS_IN_TREE = 8, /*! Maxinum number of cuts passes in the search tree (with the exception of the root node). Default 1. */
+         *     INT_PARAM_THREADS          = 9, /*! Number of threads that can be used in the branch-and-bound method.*/
+         *     INT_PARAM_CUT_PASS         = 10, /*! Number of cut passes in the root node. Default -1, solver decides */
+         *     INT_PARAM_LOG_LEVEL        = 11, /*! Verbosity level, from 0 to 2 */
+         *     INT_PARAM_MAX_SAVED_SOLS   = 12, /*! Size of the pool to save the best solutions found during the search. */
+         *     INT_PARAM_MULTIPLE_ROOTS   = 13, /*! Multiple root passes to get additional cuts and solutions. */
+         *     INT_PARAM_ROUND_INT_VARS   = 14, /*! If integer variables should be round to remove small infeasibilities. This can increase the overall amount of infeasibilities in problems with both continuous and integer variables */
+         *     INT_PARAM_RANDOM_SEED      = 15, /*! When solving LP and MIP, randomization is used to break ties in some decisions. This changes the random seed so that multiple executions can produce different results */
+         *     INT_PARAM_ELAPSED_TIME     = 16  /*! When =1 use elapsed (wallclock) time, otherwise use CPU time */
+         * };
+         * #define N_INT_PARAMS 17
+         */
         const val INT_PARAM_PERT_VALUE = 0
         const val INT_PARAM_IDIOT = 1
         const val INT_PARAM_STRONG_BRANCHING = 2
@@ -133,18 +136,21 @@ interface CBCLibrary {
         const val INT_PARAM_ELAPSED_TIME = 16
         const val N_INT_PARAMS = 17
 
-        // enum LPMethod {
-        //     LPM_Auto    = 0,  /*! Solver will decide automatically which method to use */
-        //     LPM_Dual    = 1,  /*! Dual simplex */
-        //     LPM_Primal  = 2,  /*! Primal simplex */
-        //     LPM_Barrier = 3   /*! The barrier algorithm. */
-        // };
+        /**
+         * enum LPMethod {
+         *     LPM_Auto    = 0,  /*! Solver will decide automatically which method to use */
+         *     LPM_Dual    = 1,  /*! Dual simplex */
+         *     LPM_Primal  = 2,  /*! Primal simplex */
+         *     LPM_Barrier = 3   /*! The barrier algorithm. */
+         * };
+         */
         const val LPM_Auto = 0
         const val LPM_Dual = 1
         const val LPM_Primal = 2
         const val LPM_Barrier = 3
 
-        /** enum CutType {
+        /**
+         * enum CutType {
          *     CT_Gomory         = 0,  /*! Gomory cuts obtained from the tableau */
          *     CT_MIR            = 1,  /*! Mixed integer rounding cuts */
          *     CT_ZeroHalf       = 2,  /*! Zero-half cuts */
@@ -161,40 +167,52 @@ interface CBCLibrary {
         const val CT_LiftAndProject = 5
     }
 
-    // typedef struct {
-    //     size_t n;
-    //     const size_t *neigh;
-    // } CGNeighbors;
-    class CGNeighbors(runtime: Runtime) : Struct(runtime) {
+    /**
+     * typedef struct {
+     *    size_t n;
+     *    const size_t *neigh;
+     * } CGNeighbors;
+     */
+    open class CGNeighbors(runtime: Runtime) : Struct(runtime) {
         val n: size_t = super.size_t()
         val neight: Pointer = super.Pointer()
     }
 
-    /** typedef int(*cbc_progress_callback)(void *model,
-     * int phase,
-     * int step,
-     * const char *phaseName,
-     * double seconds,
-     * double lb,
-     * double ub,
-     * int nint,
-     * int *vecint,
-     * void *cbData
-     * );
+    /**
+     * typedef int(*cbc_progress_callback)(void *model, int phase, int step, const char *phaseName,
+     *                                     double seconds, double lb, double ub, int nint,
+     *                                     int *vecint, void *cbData);
      */
-
-    // typedef void(*cbc_callback)(void *model, int msgno, int ndouble,
-    // const double *dvec, int nint, const int *ivec,
-    // int nchar, char **cvec);
-
-    // typedef void(*cbc_cut_callback)(void *osiSolver,
-    // void *osiCuts, void *appdata);
-
-    // typedef int (*cbc_incumbent_callback)(void *cbcModel, double obj, int nz, char **vnames,
-    //                                       double *x, void *appData);
-    interface CBCIncumbentCallback {
+    interface Cbc_ProgressCallback {
         @Delegate
-        fun incumbentCallback(cbcModel: Pointer, obj: Double, nz: Int, vnames: PointerByReference,
+        fun progressCallback(model: Pointer, phase: Int, step: Int, phaseName: String,
+                             seconds: Double, lb: Double, ub: Double, nint: Int, vecint: Int,
+                             cbData: Pointer)
+    }
+
+    /** typedef void(*cbc_callback)(void *model, int msgno, int ndouble, const double *dvec,
+     *                              int nint, const int *ivec, int nchar, char **cvec);
+     */
+    interface Cbc_Callback {
+        @Delegate
+        fun callback(model: Pointer, msgno: Int, nDouble: Int, dvec: Pointer?, nint: Int,
+                     ivec: Pointer?, nchar: Int, cvec: Pointer?)
+    }
+
+    /**
+     * typedef void(*cbc_cut_callback)(void *osiSolver, void *osiCuts, void *appdata);
+     */
+    interface Cbc_CutCallback {
+        @Delegate
+        fun cutCallback(osiSolver: Pointer, osiCuts: Pointer, appData: Pointer)
+    }
+
+    /** typedef int (*cbc_incumbent_callback)(void *cbcModel, double obj, int nz, char **vnames,
+     *                                        double *x, void *appData);
+     */
+    interface Cbc_IncumbentCallback {
+        @Delegate
+        fun incumbentCallback(cbcModel: Pointer, obj: Double, nz: Int, vnames: Pointer,
                               x: Pointer, appData: Pointer): Int
     }
 
@@ -259,7 +277,7 @@ interface CBCLibrary {
     fun Cbc_getColCoeffs(model: Pointer, col: Int): Pointer // -> double*
 
     // void Cbc_addCol(Cbc_Model *model, const char *name, double lb, double ub, double obj,
-    //                 char isInteger, int nz, int *rows, double *coefs);
+    //                 char isInteger, int nz, int *rows, double *coeffs);
     fun Cbc_addCol(model: Pointer, name: String, lb: Double, ub: Double, obj: Double,
                    isInteger: Byte, nz: Int, rows: Pointer?, coeffs: Pointer?)
 
@@ -387,25 +405,34 @@ interface CBCLibrary {
     fun Cbc_setAllowableFractionGap(model: Pointer, allowedFracionGap: Double)
 
     // double Cbc_getAllowablePercentageGap(Cbc_Model *model);
+    fun Cbc_getAllowablePercentageGap(model: Pointer): Double
 
     // void Cbc_setAllowablePercentageGap(Cbc_Model *model, double allowedPercentageGap);
+    fun Cbc_setAllowablePercentageGap(model: Pointer, allowedPercentageGap: Double)
 
     // double Cbc_getMaximumSeconds(Cbc_Model *model);
+    fun Cbc_getMaximumSeconds(model: Pointer): Double
 
     // void Cbc_setMaximumSeconds(Cbc_Model *model, double maxSeconds);
     fun Cbc_setMaximumSeconds(model: Pointer, maxSeconds: Double)
 
     // int Cbc_getMaximumNodes(Cbc_Model *model);
+    fun Cbc_getMaximumNodes(model: Pointer): Int
 
     // void Cbc_setMaximumNodes(Cbc_Model *model, int maxNodes);
+    fun Cbc_setMaximumNodes(model: Pointer, maxNodes: Int)
 
     // int Cbc_getMaximumSolutions(Cbc_Model *model);
+    fun Cbc_getMaximumSolutions(model: Pointer): Int
 
     // void Cbc_setMaximumSolutions(Cbc_Model *model, int maxSolutions);
+    fun Cbc_setMaximumSolutions(model: Pointer, maxSolutions: Int): Pointer
 
     // int Cbc_getLogLevel(Cbc_Model *model);
+    fun Cbc_getLogLevel(model: Pointer): Int
 
     // void Cbc_setLogLevel(Cbc_Model *model, int logLevel);
+    fun Cbc_setLogLevel(model: Pointer, logLevel: Int)
 
     // double Cbc_getBestPossibleObjValue(Cbc_Model *model);
     fun Cbc_getBestPossibleObjValue(model: Pointer): Double;
@@ -417,10 +444,13 @@ interface CBCLibrary {
     //                       const double colValues[]);
 
     // void Cbc_setLPmethod(Cbc_Model *model, enum LPMethod lpm );
+    fun Cbc_setLPmethod(model: Pointer, lpm: Int)
 
     // void Cbc_updateConflictGraph( Cbc_Model *model );
+    fun Cbc_updateConflictGraph(model: Pointer)
 
     // const void *Cbc_conflictGraph( Cbc_Model *model );
+    fun Cbc_conflictGraph(model: Pointer): Pointer
 
     // int Cbc_solve(Cbc_Model *model);
     fun Cbc_solve(model: Pointer): Int
@@ -544,7 +574,6 @@ interface CBCLibrary {
     fun OsiCuts_addRowCut(osiCuts: Pointer, nz: Int, idx: Pointer, coef: Pointer, sense: Byte,
                           rhs: Double)
 
-
     // void OsiCuts_addGlobalRowCut(void *osiCuts, int nz, const int *idx,
     //                              const double *coef, char sense, double rhs);
     fun OsiCuts_addGlobalRowCut(osiCuts: Pointer, nz: Int, idx: Pointer, coef: Pointer,
@@ -616,17 +645,17 @@ interface CBCLibrary {
 
     // void Cbc_addCutCallback(Cbc_Model *model, cbc_cut_callback cutcb,
     //                         const char *name, void *appData, int howOften, char atSolution );
-    // fun Cbc_addCutCallback(model: Pointer, cutcb: CBCCutCallback, name: String,
-    //                        appData: Pointer, howOften: Int, atSolution: Char)
+    fun Cbc_addCutCallback(model: Pointer, cutcb: Cbc_CutCallback, name: String,
+                           appData: Pointer, howOften: Int, atSolution: Byte)
 
     // void Cbc_addIncCallback(void *model, cbc_incumbent_callback inccb, void *appData);
-    // fun Cbc_addIncCallback(model: Pointer, inccb: CBCIncumbentCallback, appData: Pointer)
+    fun Cbc_addIncCallback(model: Pointer, inccb: Cbc_IncumbentCallback, appData: Pointer)
 
     // void Cbc_registerCallBack(Cbc_Model *model, cbc_callback userCallBack);
-    // fun Cbc_registerCallBack(model: Pointer, userCallBack: CBCCallback)
+    fun Cbc_registerCallBack(model: Pointer, userCallBack: Cbc_Callback)
 
     // void Cbc_addProgrCallback(void *model, cbc_progress_callback prgcbc, void *appData);
-    // fun Cbc_addProgrCallback(model: Pointer, prgcbc: CBCProgressCallback, appData: Pointer)
+    fun Cbc_addProgrCallback(model: Pointer, prgcbc: Cbc_ProgressCallback, appData: Pointer)
 
     // void Cbc_clearCallBack(Cbc_Model *model);
     fun Cbc_clearCallBack(model: Pointer)
@@ -647,13 +676,13 @@ interface CBCLibrary {
     fun Osi_CGraph(osi: Pointer): Pointer
 
     // size_t CG_nodes( void *cgraph );
-    fun CG_nodes(cgraph: Pointer): Int; // TODO("check @size_t")
+    fun CG_nodes(cgraph: Pointer): Int @size_t // TODO("check @size_t")
 
     // char CG_conflicting( void *cgraph, int n1, int n2 );
-    fun CG_conflicting(cgraph: Pointer, n1: Int, n2: Int): Byte
+    // fun CG_conflicting(cgraph: Pointer, n1: Int, n2: Int): Byte
 
     // double CG_density( void *cgraph );
-    fun Cbc_density(cgraph: Pointer)
+    fun Cbc_density(cgraph: Pointer): Double
 
     // CGNeighbors CG_conflictingNodes(Cbc_Model *model, void *cgraph, size_t node);
     fun CG_conflictingNodes(model: Pointer, cgraph: Pointer, @size_t node: Int): CGNeighbors
