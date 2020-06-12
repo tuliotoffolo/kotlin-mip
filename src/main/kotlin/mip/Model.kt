@@ -1,5 +1,6 @@
 package mip
 
+import mip.solvers.Gurobi
 import java.lang.Double.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -37,7 +38,7 @@ class Model(var name: String = "JMipModel", sense: String = MINIMIZE,
         solver = when (solverName.toUpperCase()) {
             CBC -> mip.solvers.CBC(this, name, sense)
             // CPLEX -> Cplex(this, name, sense)
-            // GUROBI -> Gurobi(this, name, sense)
+            GUROBI -> Gurobi(this, name, sense)
             else -> findSolver(sense)
         }
     }

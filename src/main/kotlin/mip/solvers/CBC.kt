@@ -174,13 +174,13 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
         }
     }
 
-
     override fun write(path: String) {
         if (path.endsWith(".lp"))
             lib.Cbc_writeLp(cbc, path)
         else if (path.endsWith(".mps"))
             lib.Cbc_writeMps(cbc, path)
     }
+
 
     // region constraints getters and setters
 
