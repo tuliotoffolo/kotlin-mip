@@ -1,9 +1,9 @@
 package mip
 
-import mip.solvers.Gurobi
 import java.lang.Double.*
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 
 /**
@@ -12,15 +12,15 @@ import kotlin.reflect.KProperty
  * Creates a Mixed-Integer Linear Programming Model. The default model optimization direction is
  * Minimization. To store and optimize the model the MIP package automatically searches and
  * connects in runtime to the dynamic library of some MIP solver installed on your computer.
- * Nowadays gurobi and cbc are supported. This solver is automatically selected, but you can
+ * Nowadays Gurobi and CBC are supported. The solver is automatically selected, but you can
  * force the selection of a specific solver with the parameter [solverName].
  *
  * @property name: model name
  * @property sense: minimization ("MIN") or maximization ("MAX")
  * @property solverName: solver name ("CBC" or "GUROBI")
  */
-class Model(var name: String = "JMipModel", sense: String = MINIMIZE,
-            var solverName: String = CBC) : Parameters() {
+class Model(var name: String = "Model", sense: String = MINIMIZE,
+            override var solverName: String = "") : Parameters() {
 
     // region main components
 
@@ -38,9 +38,12 @@ class Model(var name: String = "JMipModel", sense: String = MINIMIZE,
         solver = when (solverName.toUpperCase()) {
             CBC -> mip.solvers.CBC(this, name, sense)
             // CPLEX -> Cplex(this, name, sense)
-            GUROBI -> Gurobi(this, name, sense)
+            GUROBI -> mip.solvers.Gurobi(this, name, sense)
             else -> findSolver(sense)
         }
+
+        // updating solver name
+        solverName = solver.solverName
     }
 
     private fun findSolver(sense: String): Solver {
@@ -147,7 +150,7 @@ class Model(var name: String = "JMipModel", sense: String = MINIMIZE,
 
     // endregion addVar aliases
 
-    override inline fun get(param: String) = solver.get(param)
+    override fun get(property: KProperty<*>) = property.getter.call(solver)!!
 
     fun optimize(): OptimizationStatus {
         solver.optimize()
@@ -202,7 +205,7 @@ class Model(var name: String = "JMipModel", sense: String = MINIMIZE,
 
     inline fun remove(variable: Var) = remove(listOf(variable))
 
-    override inline fun <T> set(param: String, value: T) = solver.set(param, value)
+    override fun <T> set(property: KMutableProperty<*>, value: T) = property.setter.call(solver)
 
     /**
      * Checks the consistency of the optimization results, i.e., if the solution(s) produced by
@@ -257,15 +260,4 @@ class Model(var name: String = "JMipModel", sense: String = MINIMIZE,
     }
 
     fun write(path: String) = solver.write(path)
-
-    private class Param<T>(val default: T? = null) {
-
-        operator fun getValue(model: Model, property: KProperty<*>): T {
-            return model.solver.get(property.name) as T
-        }
-
-        operator fun setValue(model: Model, property: KProperty<*>, value: T) {
-            model.solver.set(property.name, value)
-        }
-    }
 }

@@ -1,8 +1,11 @@
 package mip
 
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 
 abstract class Parameters {
+
+    abstract val solverName: String
 
     open val gap by Param<Double>()
     open val nCols by Param<Int>()
@@ -36,19 +39,23 @@ abstract class Parameters {
     open var threads by Param<Int>()
     open var timeLimit by Param<Double>()
 
-    abstract fun get(param: String): Any
+    open fun get(property: KProperty<*>): Any {
+        throw NotImplementedError("Parameter or attribute '${property.name}' unavailable in solver $solverName")
+    }
 
-    abstract fun <T> set(param: String, value: T): Unit
+    open fun <T> set(property: KMutableProperty<*>, value: T) {
+        throw NotImplementedError("Parameter or attribute '${property.name}' unavailable in solver $solverName")
+    }
 
     @Suppress("NOTHING_TO_INLINE")
     private class Param<T>(val default: T? = null) {
 
         inline operator fun getValue(param: Parameters, property: KProperty<*>): T {
-            return param.get(property.name) as T
+            return param.get(property) as T
         }
 
         inline operator fun setValue(param: Parameters, property: KProperty<*>, value: T) {
-            param.set(property.name, value)
+            param.set(property as KMutableProperty<*>, value)
         }
     }
 }

@@ -22,6 +22,7 @@ configurations {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     implementation("com.github.jnr:jnr-ffi:2.1.14")
     // implementation("com.github.jnr:jnr-posix:3.0.54")

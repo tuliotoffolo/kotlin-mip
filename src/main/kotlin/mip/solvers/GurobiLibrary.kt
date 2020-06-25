@@ -43,7 +43,7 @@ interface GurobiLibrary {
             this.lib = LibraryLoader
                 .create(GurobiLibrary::class.java)
                 .failImmediately()
-                .load("/opt/gurobi900/mac64/lib/libgurobi90.dylib")
+                .load(library)
         }
 
         const val CHAR_ONE: Byte = 1.toByte()

@@ -22,12 +22,12 @@ interface CBCLibrary {
             val platform = Platform.getNativePlatform();
             when (platform.os) {
                 OS.DARWIN -> {
-                    library = "libCbcSolver.dylib"
-                    libLocation += "libraries/mac64"
+                    library = "cbc-c-darwin-x86-64.dylib"
+                    libLocation += "libraries"
                 }
                 OS.LINUX -> {
-                    library = "libCbcSolver.so"
-                    libLocation += "libraries/lin64"
+                    library = "cbc-c-linux-x86-64.so"
+                    libLocation += "libraries"
                 }
                 OS.WINDOWS -> {
                     library = "libCbcSolver-0.dll"

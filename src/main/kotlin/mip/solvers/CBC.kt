@@ -2,8 +2,12 @@ package mip.solvers
 
 import jnr.ffi.*
 import mip.*
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KProperty
 
 class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense) {
+
+    override val solverName = "CBC"
 
     override val hasSolution get() = nSolutions > 0
 
@@ -112,7 +116,7 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
         }
     }
 
-    override fun get(param: String): Any = when (param) {
+    override fun get(property: KProperty<*>): Any = when (property.name) {
         "cutoff" -> lib.Cbc_getCutoff(cbc)
         "maxMipGap" -> lib.Cbc_getAllowableFractionGap(cbc)
         "maxMipGapAbs" -> lib.Cbc_getAllowableGap(cbc)
@@ -160,8 +164,8 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
         }
     }
 
-    override fun <T> set(param: String, value: T) {
-        when (param) {
+    override fun <T> set(property: KMutableProperty<*>, value: T) {
+        when (property.name) {
             "cutoff" -> lib.Cbc_setCutoff(cbc, value as Double)
             "maxMipGap" -> lib.Cbc_setAllowableFractionGap(cbc, value as Double)
             "maxMipGapAbs" -> lib.Cbc_setAllowableGap(cbc, value as Double)
