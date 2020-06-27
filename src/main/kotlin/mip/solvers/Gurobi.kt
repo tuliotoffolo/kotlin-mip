@@ -1,6 +1,6 @@
 package mip.solvers
 
-import com.sun.tools.corba.se.idl.InvalidArgument
+import com.sun.javaws.exceptions.InvalidArgumentException
 import jnr.ffi.*
 import jnr.ffi.byref.PointerByReference
 import mip.*
@@ -13,14 +13,13 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     private var gurobi: Pointer
     private val lib = GurobiLibrary.lib
     private val runtime: Runtime = Runtime.getRuntime(lib)
-    private var nSolutions = 0
 
     override val solverName = "Gurobi"
-    override val hasSolution get() = nSolutions > 0
 
     // region properties override
 
     // override val gap by Param<Double>()
+    override val hasSolution get() = numSolutions > 0
     override val numCols get() = getIntAttr("NumVars")
     override val numRows get() = getIntAttr("NumRows")
     override val numSolutions get() = getIntAttr("SolCount")
@@ -115,7 +114,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         set(value) = when (value) {
             MINIMIZE -> setIntAttr("ModelSense", 1)
             MAXIMIZE -> setIntAttr("ModelSense", -1)
-            else -> throw InvalidArgument("Model sense '$value' is invalid.")
+            else -> throw IllegalArgumentException("Model sense '$value' is invalid.")
         }
 
     // override var solPoolSize: Boolean
