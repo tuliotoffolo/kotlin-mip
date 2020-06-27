@@ -25,6 +25,8 @@ abstract class Parameters {
      */
     open val numCols by Param<Int>()
 
+    open val numBins by Param<Int>()
+
     /**
      * Number of integer variables in the model
      */
@@ -220,6 +222,16 @@ abstract class Parameters {
     open var optTol by Param<Double>()
     open var plog by Param<Boolean>()
     open var preprocess by Param<Int>()
+
+    /**
+     * MIP solvers perform computations using *limited precision* arithmetic, meaning a variable
+     * with value 0 may appear in the solution with value 0.000000000001. Thus, comparing this var
+     * to zero would return `false`. The safest approach would be to use something like
+     * `abs(v.x) < 1e-7`. However, to simplify your code, the solution value of integer variables
+     * can be automatically rounded to the nearest integer, validating comparisons like `v.x == 0`.
+     * Note, however, that rounding is not always a good idea, particularly in models with
+     * numerical instability, since it can lead to infeasibility.
+     */
     open var roundIntVars by Param<Boolean>()
 
     /**
@@ -230,7 +242,7 @@ abstract class Parameters {
     open var seed by Param<Int>()
 
     /**
-     * The optimization sense.
+     * The optimization sense: either MINIMIZE or MAXIMIZE.
      */
     open var sense by Param<String>()
 
@@ -270,9 +282,9 @@ abstract class Parameters {
 
     /**
      * Number of threads to be used when solving the problem. 0 uses solver default configuration,
-     * -1 uses the number of available processing cores and :math:`\geq 1` uses the specified
-     * number of threads. An increased number of threads may improve the solution time but also
-     * increases the memory consumption.
+     * -1 uses the number of available processing cores and values greater than zero specify the
+     * number of threads. Note that while an increased number of threads may improve the solution
+     * time, it may also increase memory consumption.
      */
     open var threads by Param<Int>()
 
@@ -293,7 +305,7 @@ abstract class Parameters {
     }
 
     /**
-     * Delegate class which is used as default to manage properties of class [mip.Parameters].
+     * Delegate class which is used as the default manager for properties of class [Parameters].
      */
     @Suppress("NOTHING_TO_INLINE")
     private class Param<T>(val default: T? = null) {

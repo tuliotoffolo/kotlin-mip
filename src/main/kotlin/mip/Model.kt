@@ -52,8 +52,8 @@ class Model(var name: String = "Model", sense: String = MINIMIZE,
     }
 
     @JvmOverloads
-    fun addConstr(expr: LinExpr, name: String = "c_${constrs.size}"): Constr {
-        solver.addConstr(expr, name)
+    fun addConstr(expr: LinExpr, name: String? = "c_${constrs.size}"): Constr {
+        solver.addConstr(expr, name ?: "c_${constrs.size}")
         constrs.add(Constr(this, constrs.size))
         return constrs.last()
     }
@@ -63,49 +63,49 @@ class Model(var name: String = "Model", sense: String = MINIMIZE,
     fun addLe(lhs: LinExpr, rhs: LinExpr) = addConstr(lhs leq rhs)
     fun addGe(lhs: LinExpr, rhs: LinExpr) = addConstr(lhs geq rhs)
     fun addEq(lhs: LinExpr, rhs: LinExpr) = addConstr(lhs eq rhs)
-    fun addLe(lhs: LinExpr, rhs: LinExpr, name: String) = addConstr(lhs leq rhs, name)
-    fun addGe(lhs: LinExpr, rhs: LinExpr, name: String) = addConstr(lhs geq rhs, name)
-    fun addEq(lhs: LinExpr, rhs: LinExpr, name: String) = addConstr(lhs eq rhs, name)
+    fun addLe(lhs: LinExpr, rhs: LinExpr, name: String?) = addConstr(lhs leq rhs, name)
+    fun addGe(lhs: LinExpr, rhs: LinExpr, name: String?) = addConstr(lhs geq rhs, name)
+    fun addEq(lhs: LinExpr, rhs: LinExpr, name: String?) = addConstr(lhs eq rhs, name)
 
     fun addConstr(pair: NamedLinExpr) = addConstr(pair.first, pair.second)
 
-    fun addConstr(lhs: LinExpr, sense: Char, rhs: LinExpr, name: String = "c_${constrs.size}"):
+    fun addConstr(lhs: LinExpr, sense: Char, rhs: LinExpr, name: String? = "c_${constrs.size}"):
         Constr {
         val expr = (lhs - rhs).apply { this.sense = sense }
         return addConstr(expr, name)
     }
 
-    fun addConstr(lhs: LinExpr, sense: Char, rhs: Var, name: String = "c_${constrs.size}"): Constr {
+    fun addConstr(lhs: LinExpr, sense: Char, rhs: Var, name: String? = "c_${constrs.size}"): Constr {
         val expr = (lhs - rhs).apply { this.sense = sense }
         return addConstr(expr, name)
     }
 
-    fun addConstr(lhs: LinExpr, sense: Char, rhs: Number, name: String = "c_${constrs.size}"): Constr {
+    fun addConstr(lhs: LinExpr, sense: Char, rhs: Number, name: String? = "c_${constrs.size}"): Constr {
         val expr = (lhs - rhs).apply { this.sense = sense }
         return addConstr(expr, name)
     }
 
-    fun addConstr(lhs: Var, sense: Char, rhs: LinExpr, name: String = "c_${constrs.size}"): Constr {
+    fun addConstr(lhs: Var, sense: Char, rhs: LinExpr, name: String? = "c_${constrs.size}"): Constr {
         val expr = LinExpr(lhs).apply { sub(rhs); this.sense = sense }
         return addConstr(expr, name)
     }
 
-    fun addConstr(lhs: Var, sense: Char, rhs: Var, name: String = "c_${constrs.size}"): Constr {
+    fun addConstr(lhs: Var, sense: Char, rhs: Var, name: String? = "c_${constrs.size}"): Constr {
         val expr = LinExpr(lhs).apply { sub(rhs); this.sense = sense }
         return addConstr(expr, name)
     }
 
-    fun addConstr(lhs: Var, sense: Char, rhs: Number, name: String = "c_${constrs.size}"): Constr {
+    fun addConstr(lhs: Var, sense: Char, rhs: Number, name: String? = "c_${constrs.size}"): Constr {
         val expr = LinExpr(lhs).apply { sub(rhs); this.sense = sense }
         return addConstr(expr, name)
     }
 
-    fun addConstr(lhs: Number, sense: Char, rhs: LinExpr, name: String = "c_${constrs.size}"): Constr {
+    fun addConstr(lhs: Number, sense: Char, rhs: LinExpr, name: String? = "c_${constrs.size}"): Constr {
         val expr = LinExpr(lhs).apply { sub(rhs); this.sense = sense }
         return addConstr(expr, name)
     }
 
-    fun addConstr(lhs: Number, sense: Char, rhs: Var, name: String = "c_${constrs.size}"): Constr {
+    fun addConstr(lhs: Number, sense: Char, rhs: Var, name: String? = "c_${constrs.size}"): Constr {
         val expr = LinExpr(lhs).apply { sub(rhs); this.sense = sense }
         return addConstr(expr, name)
     }
@@ -113,38 +113,41 @@ class Model(var name: String = "Model", sense: String = MINIMIZE,
     // endregion aliases for addConstr
 
     @JvmOverloads
-    fun addVar(name: String = "v_${vars.size}", varType: VarType = VarType.Continuous,
-               obj: Number = 0.0, lb: Number = 0.0, ub: Number = INF,
-               column: Column = Column.EMPTY
+    fun addVar(name: String? = "v_${vars.size}", varType: VarType = VarType.Continuous,
+               obj: Number? = 0.0, lb: Number? = 0.0, ub: Number? = INF,
+               column: Column? = Column.EMPTY
     ): Var {
-        var lb = lb.toDouble()
-        var ub = ub.toDouble()
+        val name = name ?: "v_${vars.size}"
+        val obj = obj?.toDouble() ?: 0.0
+        var lb = lb?.toDouble() ?: 0.0
+        var ub = ub?.toDouble() ?: INF
+        val column = column ?: Column.EMPTY
 
         // ensuring binary variables have correct LB/UB
         if (varType == VarType.Binary) {
-            lb = max(lb.toDouble(), 0.0)
-            ub = min(ub.toDouble(), 1.0)
+            lb = max(lb, 0.0)
+            ub = min(ub, 1.0)
         }
 
-        solver.addVar(name, obj.toDouble(), lb, ub, varType, column)
+        solver.addVar(name, obj, lb, ub, varType, column)
         vars.add(Var(this, vars.size))
         return vars.last()
     }
 
     // region addVar aliases
 
-    fun addBinVar(name: String = "v_${vars.size}", obj: Number = 0.0,
-                  column: Column = Column.EMPTY): Var =
+    fun addBinVar(name: String? = "v_${vars.size}", obj: Number? = 0.0,
+                  column: Column? = Column.EMPTY): Var =
         addVar(name = name, varType = VarType.Binary, obj = obj, lb = 0.0, ub = 1.0,
             column = column)
 
-    fun addIntVar(name: String = "v_${vars.size}", obj: Number = 0.0, lb: Number = 0.0,
-                  ub: Number = INF, column: Column = Column.EMPTY): Var =
+    fun addIntVar(name: String? = "v_${vars.size}", obj: Number? = 0.0, lb: Number? = 0.0,
+                  ub: Number? = INF, column: Column? = Column.EMPTY): Var =
         addVar(name = name, varType = VarType.Binary, obj = obj, lb = lb, ub = ub,
             column = column)
 
-    fun addNumVar(name: String = "v_${vars.size}", obj: Number = 0.0, lb: Number = 0.0,
-                  ub: Number = INF, column: Column = Column.EMPTY): Var =
+    fun addNumVar(name: String? = "v_${vars.size}", obj: Number? = 0.0, lb: Number? = 0.0,
+                  ub: Number? = INF, column: Column? = Column.EMPTY): Var =
         addVar(name = name, varType = VarType.Continuous, obj = obj, lb = lb, ub = ub,
             column = column)
 
@@ -154,7 +157,7 @@ class Model(var name: String = "Model", sense: String = MINIMIZE,
 
     fun optimize(): OptimizationStatus {
         solver.optimize()
-        return OptimizationStatus.Optimal
+        return status
     }
 
     operator fun plusAssign(arg: Any?) {
@@ -171,7 +174,9 @@ class Model(var name: String = "Model", sense: String = MINIMIZE,
         }
     }
 
-    fun remove(iterable: Iterable<Any?>) {
+    fun remove(iterable: Iterable<Any?>?) {
+        if (iterable == null) return;
+
         val constrsToRemove = TreeSet<Constr>()
         val varsToRemove = TreeSet<Var>()
 
@@ -201,9 +206,9 @@ class Model(var name: String = "Model", sense: String = MINIMIZE,
         }
     }
 
-    inline fun remove(constr: Constr) = remove(listOf(constr))
+    inline fun remove(constr: Constr?) = remove(listOf(constr))
 
-    inline fun remove(variable: Var) = remove(listOf(variable))
+    inline fun remove(variable: Var?) = remove(listOf(variable))
 
     override fun <T> set(property: KMutableProperty<*>, value: T) = property.setter.call(solver)
 

@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
     // creating variables X
     for (i in V)
         for (j in V) if (i != j)
-            x[i to j] = model.addBinVar("x($i,$j)", obj = dist[i to j]!!)
+            x[i to j] = model.addBinVar("x($i,$j)", obj = dist[i to j])
 
     // creating variables Y
     for (i in V)

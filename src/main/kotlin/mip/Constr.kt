@@ -76,19 +76,19 @@ class Constr internal constructor(val model: Model, var idx: Int) : Comparable<C
         // region leq
 
         @JvmStatic
-        fun leq(lhs: Iterable<Any?>, rhs: Iterable<Any?>) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
+        fun leq(lhs: Iterable<Any?>?, rhs: Iterable<Any?>?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        fun leq(lhs: Iterable<Any?>, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
+        fun leq(lhs: Iterable<Any?>?, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        fun leq(lhs: Iterable<Any?>, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
+        fun leq(lhs: Iterable<Any?>?, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        fun leq(lhs: Iterable<Any?>, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
+        fun leq(lhs: Iterable<Any?>?, rhs: Number?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        fun leq(lhs: LinExpr?, rhs: Iterable<Any?>) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
+        fun leq(lhs: LinExpr?, rhs: Iterable<Any?>?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
         fun leq(lhs: LinExpr?, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
@@ -97,10 +97,10 @@ class Constr internal constructor(val model: Model, var idx: Int) : Comparable<C
         fun leq(lhs: LinExpr?, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        fun leq(lhs: LinExpr?, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
+        fun leq(lhs: LinExpr?, rhs: Number?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        fun leq(lhs: Var?, rhs: Iterable<Any?>) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
+        fun leq(lhs: Var?, rhs: Iterable<Any?>?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
         fun leq(lhs: Var?, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
@@ -109,35 +109,35 @@ class Constr internal constructor(val model: Model, var idx: Int) : Comparable<C
         fun leq(lhs: Var?, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        fun leq(lhs: Var?, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
+        fun leq(lhs: Var?, rhs: Number?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        fun leq(lhs: Number, rhs: Iterable<Any?>) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
+        fun leq(lhs: Number?, rhs: Iterable<Any?>?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        fun leq(lhs: Number, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
+        fun leq(lhs: Number?, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         @JvmStatic
-        fun leq(lhs: Number, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
+        fun leq(lhs: Number?, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '<' }
 
         // endregion leq
 
         // region geq
 
         @JvmStatic
-        fun geq(lhs: Iterable<Any?>, rhs: Iterable<Any?>) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
+        fun geq(lhs: Iterable<Any?>?, rhs: Iterable<Any?>?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        fun geq(lhs: Iterable<Any?>, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
+        fun geq(lhs: Iterable<Any?>?, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        fun geq(lhs: Iterable<Any?>, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
+        fun geq(lhs: Iterable<Any?>?, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        fun geq(lhs: Iterable<Any?>, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
+        fun geq(lhs: Iterable<Any?>?, rhs: Number?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        fun geq(lhs: LinExpr?, rhs: Iterable<Any?>) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
+        fun geq(lhs: LinExpr?, rhs: Iterable<Any?>?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
         fun geq(lhs: LinExpr?, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
@@ -146,10 +146,10 @@ class Constr internal constructor(val model: Model, var idx: Int) : Comparable<C
         fun geq(lhs: LinExpr?, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        fun geq(lhs: LinExpr?, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
+        fun geq(lhs: LinExpr?, rhs: Number?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        fun geq(lhs: Var?, rhs: Iterable<Any?>) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
+        fun geq(lhs: Var?, rhs: Iterable<Any?>?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
         fun geq(lhs: Var?, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
@@ -158,35 +158,35 @@ class Constr internal constructor(val model: Model, var idx: Int) : Comparable<C
         fun geq(lhs: Var?, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        fun geq(lhs: Var?, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
+        fun geq(lhs: Var?, rhs: Number?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        fun geq(lhs: Number, rhs: Iterable<Any?>) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
+        fun geq(lhs: Number?, rhs: Iterable<Any?>?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        fun geq(lhs: Number, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
+        fun geq(lhs: Number?, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         @JvmStatic
-        fun geq(lhs: Number, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
+        fun geq(lhs: Number?, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '>' }
 
         // endregion geq
 
         // region eq
 
         @JvmStatic
-        fun eq(lhs: Iterable<Any?>, rhs: Iterable<Any?>) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
+        fun eq(lhs: Iterable<Any?>?, rhs: Iterable<Any?>?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        fun eq(lhs: Iterable<Any?>, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
+        fun eq(lhs: Iterable<Any?>?, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        fun eq(lhs: Iterable<Any?>, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
+        fun eq(lhs: Iterable<Any?>?, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        fun eq(lhs: Iterable<Any?>, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
+        fun eq(lhs: Iterable<Any?>?, rhs: Number?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        fun eq(lhs: LinExpr?, rhs: Iterable<Any?>) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
+        fun eq(lhs: LinExpr?, rhs: Iterable<Any?>?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
         fun eq(lhs: LinExpr?, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
@@ -195,10 +195,10 @@ class Constr internal constructor(val model: Model, var idx: Int) : Comparable<C
         fun eq(lhs: LinExpr?, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        fun eq(lhs: LinExpr?, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
+        fun eq(lhs: LinExpr?, rhs: Number?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        fun eq(lhs: Var?, rhs: Iterable<Any?>) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
+        fun eq(lhs: Var?, rhs: Iterable<Any?>?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
         fun eq(lhs: Var?, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
@@ -207,16 +207,16 @@ class Constr internal constructor(val model: Model, var idx: Int) : Comparable<C
         fun eq(lhs: Var?, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        fun eq(lhs: Var?, rhs: Number) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
+        fun eq(lhs: Var?, rhs: Number?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        fun eq(lhs: Number, rhs: Iterable<Any?>) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
+        fun eq(lhs: Number?, rhs: Iterable<Any?>?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        fun eq(lhs: Number, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
+        fun eq(lhs: Number?, rhs: LinExpr?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         @JvmStatic
-        fun eq(lhs: Number, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
+        fun eq(lhs: Number?, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = '=' }
 
         // endregion eq
     }
@@ -224,52 +224,52 @@ class Constr internal constructor(val model: Model, var idx: Int) : Comparable<C
 
 // region aliases (inline functions)
 
-inline fun leq(lhs: Iterable<Any?>, rhs: Iterable<Any?>) = Constr.leq(lhs, rhs)
-inline fun leq(lhs: Iterable<Any?>, rhs: LinExpr?) = Constr.leq(lhs, rhs)
-inline fun leq(lhs: Iterable<Any?>, rhs: Var?) = Constr.leq(lhs, rhs)
-inline fun leq(lhs: Iterable<Any?>, rhs: Number) = Constr.leq(lhs, rhs)
-inline fun leq(lhs: LinExpr?, rhs: Iterable<Any?>) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Iterable<Any?>?, rhs: Iterable<Any?>?) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Iterable<Any?>?, rhs: LinExpr?) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Iterable<Any?>?, rhs: Var?) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Iterable<Any?>?, rhs: Number?) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: LinExpr?, rhs: Iterable<Any?>?) = Constr.leq(lhs, rhs)
 inline fun leq(lhs: LinExpr?, rhs: LinExpr?) = Constr.leq(lhs, rhs)
 inline fun leq(lhs: LinExpr?, rhs: Var?) = Constr.leq(lhs, rhs)
-inline fun leq(lhs: LinExpr?, rhs: Number) = Constr.leq(lhs, rhs)
-inline fun leq(lhs: Var?, rhs: Iterable<Any?>) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: LinExpr?, rhs: Number?) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Var?, rhs: Iterable<Any?>?) = Constr.leq(lhs, rhs)
 inline fun leq(lhs: Var?, rhs: LinExpr?) = Constr.leq(lhs, rhs)
 inline fun leq(lhs: Var?, rhs: Var?) = Constr.leq(lhs, rhs)
-inline fun leq(lhs: Var?, rhs: Number) = Constr.leq(lhs, rhs)
-inline fun leq(lhs: Number, rhs: Iterable<Any?>) = Constr.leq(lhs, rhs)
-inline fun leq(lhs: Number, rhs: LinExpr?) = Constr.leq(lhs, rhs)
-inline fun leq(lhs: Number, rhs: Var?) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Var?, rhs: Number?) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Number?, rhs: Iterable<Any?>?) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Number?, rhs: LinExpr?) = Constr.leq(lhs, rhs)
+inline fun leq(lhs: Number?, rhs: Var?) = Constr.leq(lhs, rhs)
 
-inline fun geq(lhs: Iterable<Any?>, rhs: Iterable<Any>) = Constr.geq(lhs, rhs)
-inline fun geq(lhs: Iterable<Any?>, rhs: LinExpr) = Constr.geq(lhs, rhs)
-inline fun geq(lhs: Iterable<Any?>, rhs: Var) = Constr.geq(lhs, rhs)
-inline fun geq(lhs: Iterable<Any?>, rhs: Number) = Constr.geq(lhs, rhs)
-inline fun geq(lhs: LinExpr?, rhs: Iterable<Any?>) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Iterable<Any?>?, rhs: Iterable<Any>?) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Iterable<Any?>?, rhs: LinExpr) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Iterable<Any?>?, rhs: Var) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Iterable<Any?>?, rhs: Number?) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: LinExpr?, rhs: Iterable<Any?>?) = Constr.geq(lhs, rhs)
 inline fun geq(lhs: LinExpr?, rhs: LinExpr?) = Constr.geq(lhs, rhs)
 inline fun geq(lhs: LinExpr?, rhs: Var?) = Constr.geq(lhs, rhs)
-inline fun geq(lhs: LinExpr?, rhs: Number) = Constr.geq(lhs, rhs)
-inline fun geq(lhs: Var?, rhs: Iterable<Any?>) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: LinExpr?, rhs: Number?) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Var?, rhs: Iterable<Any?>?) = Constr.geq(lhs, rhs)
 inline fun geq(lhs: Var?, rhs: LinExpr?) = Constr.geq(lhs, rhs)
 inline fun geq(lhs: Var?, rhs: Var?) = Constr.geq(lhs, rhs)
-inline fun geq(lhs: Var?, rhs: Number) = Constr.geq(lhs, rhs)
-inline fun geq(lhs: Number, rhs: Iterable<Any?>) = Constr.geq(lhs, rhs)
-inline fun geq(lhs: Number, rhs: LinExpr?) = Constr.geq(lhs, rhs)
-inline fun geq(lhs: Number, rhs: Var?) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Var?, rhs: Number?) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Number?, rhs: Iterable<Any?>?) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Number?, rhs: LinExpr?) = Constr.geq(lhs, rhs)
+inline fun geq(lhs: Number?, rhs: Var?) = Constr.geq(lhs, rhs)
 
-inline fun eq(lhs: Iterable<Any?>, rhs: Iterable<Any?>) = Constr.eq(lhs, rhs)
-inline fun eq(lhs: Iterable<Any?>, rhs: LinExpr?) = Constr.eq(lhs, rhs)
-inline fun eq(lhs: Iterable<Any?>, rhs: Var?) = Constr.eq(lhs, rhs)
-inline fun eq(lhs: Iterable<Any?>, rhs: Number) = Constr.eq(lhs, rhs)
-inline fun eq(lhs: LinExpr?, rhs: Iterable<Any?>) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Iterable<Any?>?, rhs: Iterable<Any?>?) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Iterable<Any?>?, rhs: LinExpr?) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Iterable<Any?>?, rhs: Var?) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Iterable<Any?>?, rhs: Number?) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: LinExpr?, rhs: Iterable<Any?>?) = Constr.eq(lhs, rhs)
 inline fun eq(lhs: LinExpr?, rhs: LinExpr?) = Constr.eq(lhs, rhs)
 inline fun eq(lhs: LinExpr?, rhs: Var?) = Constr.eq(lhs, rhs)
-inline fun eq(lhs: LinExpr?, rhs: Number) = Constr.eq(lhs, rhs)
-inline fun eq(lhs: Var?, rhs: Iterable<Any?>) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: LinExpr?, rhs: Number?) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Var?, rhs: Iterable<Any?>?) = Constr.eq(lhs, rhs)
 inline fun eq(lhs: Var?, rhs: LinExpr?) = Constr.eq(lhs, rhs)
 inline fun eq(lhs: Var?, rhs: Var?) = Constr.eq(lhs, rhs)
-inline fun eq(lhs: Var?, rhs: Number) = Constr.eq(lhs, rhs)
-inline fun eq(lhs: Number, rhs: Iterable<Any?>) = Constr.eq(lhs, rhs)
-inline fun eq(lhs: Number, rhs: LinExpr?) = Constr.eq(lhs, rhs)
-inline fun eq(lhs: Number, rhs: Var?) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Var?, rhs: Number?) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Number?, rhs: Iterable<Any?>?) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Number?, rhs: LinExpr?) = Constr.eq(lhs, rhs)
+inline fun eq(lhs: Number?, rhs: Var?) = Constr.eq(lhs, rhs)
 
 // endregion aliases (inline functions)
