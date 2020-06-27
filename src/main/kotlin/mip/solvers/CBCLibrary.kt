@@ -6,7 +6,7 @@ import jnr.ffi.types.*
 import jnr.ffi.annotations.Delegate
 import java.io.File
 
-interface CBCLibrary {
+internal interface CBCLibrary {
 
     fun fflush(stream: Pointer?) = CLibrary.lib.fflush(stream)
 

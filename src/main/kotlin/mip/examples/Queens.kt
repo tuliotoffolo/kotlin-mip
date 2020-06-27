@@ -1,7 +1,6 @@
 package mip.examples
 
 import mip.*
-import mip.solvers.CLibrary
 
 fun main(args: Array<String>) {
     val start = System.currentTimeMillis()
@@ -42,7 +41,7 @@ fun main(args: Array<String>) {
         val lhs = LinExpr()
         for (i in ns) for (j in ns) if (i - j == k)
             lhs += x[i][j]
-        queens += lhs le 1 named "diag1_${k.toString().replace("-", "m")}"
+        queens += lhs leq 1 named "diag1_${k.toString().replace("-", "m")}"
     }
 
     println("Second constraint set created in ${runtime(checkpoint)} seconds!")
@@ -53,7 +52,7 @@ fun main(args: Array<String>) {
         val lhs = LinExpr()
         for (i in ns) for (j in ns) if (i + j == k)
             lhs += x[i][j]
-        queens += lhs le 1 named "diag2_$k"
+        queens += lhs leq 1 named "diag2_$k"
     }
 
     println("Third constraint set created in ${runtime(checkpoint)} seconds!")

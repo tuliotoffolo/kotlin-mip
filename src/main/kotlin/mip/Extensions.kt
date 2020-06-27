@@ -14,13 +14,13 @@ operator fun Number.times(expr: Iterable<Any?>) = LinExpr(expr).also { it.multip
 operator fun Number.times(expr: LinExpr?) = LinExpr(expr).also { it.multiply(this) }
 operator fun Number.times(variable: Var?) = LinExpr(variable).also { it.multiply(this) }
 
-inline infix fun Number.le(other: Iterable<Any?>) = Constr.le(this, other)
-inline infix fun Number.le(other: LinExpr?) = Constr.le(this, other)
-inline infix fun Number.le(other: Var?) = Constr.le(this, other)
+inline infix fun Number.leq(other: Iterable<Any?>) = Constr.leq(this, other)
+inline infix fun Number.leq(other: LinExpr?) = Constr.leq(this, other)
+inline infix fun Number.leq(other: Var?) = Constr.leq(this, other)
 
-inline infix fun Number.ge(other: Iterable<Any?>) = Constr.ge(this, other)
-inline infix fun Number.ge(other: LinExpr?) = Constr.ge(this, other)
-inline infix fun Number.ge(other: Var?) = Constr.ge(this, other)
+inline infix fun Number.geq(other: Iterable<Any?>) = Constr.geq(this, other)
+inline infix fun Number.geq(other: LinExpr?) = Constr.geq(this, other)
+inline infix fun Number.geq(other: Var?) = Constr.geq(this, other)
 
 inline infix fun Number.eq(other: Iterable<Any?>) = Constr.eq(this, other)
 inline infix fun Number.eq(other: LinExpr?) = Constr.eq(this, other)
@@ -39,15 +39,15 @@ operator fun Iterable<Any?>.minus(number: Number) = LinExpr(this).apply { sub(nu
 
 operator fun Iterable<Any?>.times(number: Number) = LinExpr(this).apply { multiply(number) }
 
-inline infix fun Iterable<Any?>.le(other: Iterable<Any?>) = Constr.le(this, other)
-inline infix fun Iterable<Any?>.le(other: LinExpr?) = Constr.le(this, other)
-inline infix fun Iterable<Any?>.le(other: Var?) = Constr.le(this, other)
-inline infix fun Iterable<Any?>.le(other: Number) = Constr.le(this, other)
+inline infix fun Iterable<Any?>.leq(other: Iterable<Any?>) = Constr.leq(this, other)
+inline infix fun Iterable<Any?>.leq(other: LinExpr?) = Constr.leq(this, other)
+inline infix fun Iterable<Any?>.leq(other: Var?) = Constr.leq(this, other)
+inline infix fun Iterable<Any?>.leq(other: Number) = Constr.leq(this, other)
 
-inline infix fun Iterable<Any?>.ge(other: Iterable<Any?>) = Constr.ge(this, other)
-inline infix fun Iterable<Any?>.ge(other: LinExpr?) = Constr.ge(this, other)
-inline infix fun Iterable<Any?>.ge(other: Var?) = Constr.ge(this, other)
-inline infix fun Iterable<Any?>.ge(other: Number) = Constr.ge(this, other)
+inline infix fun Iterable<Any?>.geq(other: Iterable<Any?>) = Constr.geq(this, other)
+inline infix fun Iterable<Any?>.geq(other: LinExpr?) = Constr.geq(this, other)
+inline infix fun Iterable<Any?>.geq(other: Var?) = Constr.geq(this, other)
+inline infix fun Iterable<Any?>.geq(other: Number) = Constr.geq(this, other)
 
 inline infix fun Iterable<Any?>.eq(other: Iterable<Any?>) = Constr.eq(this, other)
 inline infix fun Iterable<Any?>.eq(other: LinExpr?) = Constr.eq(this, other)

@@ -42,7 +42,7 @@ fun main(args: Array<String>) {
     // creating MTZ constraints
     for (i in 2..n) {
         for (j in 2..n) if (i != j) {
-            model += y[i]!! - y[j] + n * x[i to j] le n - 1
+            model += y[i]!! - y[j] + n * x[i to j] leq n - 1
         }
     }
 

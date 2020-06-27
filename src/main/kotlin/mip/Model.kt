@@ -60,11 +60,11 @@ class Model(var name: String = "Model", sense: String = MINIMIZE,
 
     // region aliases for addConstr
 
-    fun addLe(lhs: LinExpr, rhs: LinExpr) = addConstr(lhs le rhs)
-    fun addGe(lhs: LinExpr, rhs: LinExpr) = addConstr(lhs ge rhs)
+    fun addLe(lhs: LinExpr, rhs: LinExpr) = addConstr(lhs leq rhs)
+    fun addGe(lhs: LinExpr, rhs: LinExpr) = addConstr(lhs geq rhs)
     fun addEq(lhs: LinExpr, rhs: LinExpr) = addConstr(lhs eq rhs)
-    fun addLe(lhs: LinExpr, rhs: LinExpr, name: String) = addConstr(lhs le rhs, name)
-    fun addGe(lhs: LinExpr, rhs: LinExpr, name: String) = addConstr(lhs ge rhs, name)
+    fun addLe(lhs: LinExpr, rhs: LinExpr, name: String) = addConstr(lhs leq rhs, name)
+    fun addGe(lhs: LinExpr, rhs: LinExpr, name: String) = addConstr(lhs geq rhs, name)
     fun addEq(lhs: LinExpr, rhs: LinExpr, name: String) = addConstr(lhs eq rhs, name)
 
     fun addConstr(pair: NamedLinExpr) = addConstr(pair.first, pair.second)

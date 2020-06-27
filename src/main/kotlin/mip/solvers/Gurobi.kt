@@ -1,5 +1,6 @@
 package mip.solvers
 
+import com.sun.tools.corba.se.idl.InvalidArgument
 import jnr.ffi.*
 import jnr.ffi.byref.PointerByReference
 import mip.*
@@ -8,37 +9,83 @@ import kotlin.reflect.KProperty
 
 class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, sense) {
 
-    override val solverName = "Gurobi"
-
-    override val hasSolution get() = nSolutions > 0
-
     private var env: Pointer
     private var gurobi: Pointer
     private val lib = GurobiLibrary.lib
     private val runtime: Runtime = Runtime.getRuntime(lib)
     private var nSolutions = 0
 
+    override val solverName = "Gurobi"
+    override val hasSolution get() = nSolutions > 0
+
     // region properties override
 
     // override val gap by Param<Double>()
-    override val nCols get() = getIntAttr("NumVars")
-    override val nRows get() = getIntAttr("NumRows")
-    // override val numSolutions by Param<Int>()
-    // override val objectiveBound by Param<Double>()
-    // override val objectiveValue by Param<Double>()
-    override val status get() = OptimizationStatus.Loaded
+    override val numCols get() = getIntAttr("NumVars")
+    override val numRows get() = getIntAttr("NumRows")
+    override val numSolutions get() = getIntAttr("SolCount")
+    override val objectiveBound get() = getDblAttr("ObjBound")
+    override val objectiveValue get() = getDblAttr("ObjVal")
 
-    // override var clique by Param<Int>()
-    // override var cutoff by Param<Double>()
-    // override var cutPasses by Param<Int>()
-    // override var cuts by Param<Int>()
-    // override var cutsGenerator by Param<Int>()
-    // override var infeasTol by Param<Double>()
-    // override var integerTol by Param<Int>()
-    // override var lazyConstrsGenerator by Param<Int>()
-    // override var lpMethod by Param<LPMethod>()
-    // override var maxMipGap by Param<Double>()
-    // override var maxMipGapAbs by Param<Double>()
+    override val status
+        get(): OptimizationStatus = when (getIntAttr("Status")) {
+            // LOADED
+            1 -> OptimizationStatus.Loaded
+            // OPTIMAL
+            2 -> OptimizationStatus.Optimal
+            // INFEASIBLE
+            3 -> OptimizationStatus.Infeasible
+            // INF_OR_UNDB, INFEASIBLE
+            4, 5 -> OptimizationStatus.Unbounded
+            // CUTOFF
+            6 -> OptimizationStatus.Cutoff
+            // ITERATION_LIMIT, NODE_LIMIT, TIME_LIMIT, SOLUTION_LIMIT, INTERRUPTED, NUMERIC
+            // ≈, INPROGRESS
+            7, 8, 9, 10, 11, 12, 13, 14 ->
+                if (numSolutions >= 1) OptimizationStatus.Feasible
+                else OptimizationStatus.NoSolutionFound
+            // USER_OBJ_LIMIT
+            15 -> OptimizationStatus.Feasible
+            else -> OptimizationStatus.Other
+        }
+
+    // override var clique: Int
+    override var cutoff: Double
+        get() = getDblParam("Cutoff")
+        set(value) = setDblParam("Cutoff", value)
+
+    // override var cutPasses: Int
+    // override var cuts: Int
+    // override var cutsGenerator: Int
+
+    override var infeasTol: Double
+        get() = getDblParam("FeasibilityTol")
+        set(value) = setDblParam("FeasibilityTol", value)
+
+    // override var integerTol: Int
+    // override var lazyConstrsGenerator: Int
+    // override var lpMethod: LPMethod
+
+    override var maxMipGap: Double
+        get() = getDblParam("MIPGap")
+        set(value) = setDblParam("MIPGap", value)
+
+    override var maxMipGapAbs: Double
+        get() = getDblParam("MIPGapAbs")
+        set(value) = setDblParam("MIPGapAbs", value)
+
+    override var maxNodes: Int
+        get() = getIntParam("NodeLimit")
+        set(value) = setIntParam("NodeLimit", value)
+
+    override var maxSeconds: Double
+        get() = getDblParam("TimeLimit")
+        set(value) = setDblParam("TimeLimit", value)
+
+    override var maxSolutions: Int
+        get() = getIntAttr("SolutionLimit")
+        set(value) = setIntAttr("SolutionLimit", value)
+
     override var objective: LinExpr
         get() {
             TODO("Not yet implemented")
@@ -47,17 +94,37 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
             TODO("Not yet implemented")
         }
 
-    // override var optTol by Param<Double>()
-    // override var plog by Param<Boolean>()
-    // override var preprocess by Param<Int>()
-    // override var roundIntVars by Param<Boolean>()
-    // override var seed by Param<Int>()
-    // override var sense by Param<String>()
-    // override var solPoolSize by Param<Boolean>()
-    // override var start by Param<Int>()
-    // override var storeSearchProgressLog by Param<Double>()
-    // override var threads by Param<Int>()
-    // override var timeLimit by Param<Double>()
+    override var objectiveConst: Double
+        get() = getDblParam("ObjCon")
+        set(value) = setDblParam("ObjCon", value)
+
+    override var optTol: Double
+        get() = getDblParam("OptimalityTol")
+        set(value) = setDblParam("OptimalityTol", value)
+
+    // override var plog: Boolean
+    // override var preprocess: Int
+    // override var roundIntVars: Boolean
+
+    override var seed: Int
+        get() = getIntParam("Seed")
+        set(value) = setIntParam("Seed", value)
+
+    override var sense: String
+        get() = if (getIntAttr("ModelSense") >= 0) MINIMIZE else MAXIMIZE
+        set(value) = when (value) {
+            MINIMIZE -> setIntAttr("ModelSense", 1)
+            MAXIMIZE -> setIntAttr("ModelSense", -1)
+            else -> throw InvalidArgument("Model sense '$value' is invalid.")
+        }
+
+    // override var solPoolSize: Boolean
+    // override var start: Int
+    // override var storeSearchProgressLog: Double
+
+    override var threads: Int
+        get() = getIntParam("Threads")
+        set(value) = setIntParam("Threads", value)
 
     // endregion properties override
 
@@ -71,8 +138,8 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     private var pi: Pointer? = null
         get() {
             if (field == null && hasSolution) {
-                field = Memory.allocateDirect(runtime, 8 * nRows)
-                val res = lib.GRBgetdblattrarray(gurobi, "Pi", 0, nRows, field)
+                field = Memory.allocateDirect(runtime, 8 * numRows)
+                val res = lib.GRBgetdblattrarray(gurobi, "Pi", 0, numRows, field)
             }
             return field
         }
@@ -80,8 +147,8 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     private var rc: Pointer? = null
         get() {
             if (field == null && hasSolution) {
-                field = Memory.allocateDirect(runtime, 8 * nCols)
-                val res = lib.GRBgetdblattrarray(gurobi, "RC", 0, nCols, field)
+                field = Memory.allocateDirect(runtime, 8 * numCols)
+                val res = lib.GRBgetdblattrarray(gurobi, "RC", 0, numCols, field)
             }
             return field
         }
@@ -89,8 +156,8 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     private var solution: Pointer? = null
         get() {
             if (field == null && hasSolution) {
-                field = Memory.allocateDirect(runtime, 8 * nCols)
-                val res = lib.GRBgetdblattrarray(gurobi, "X", 0, nCols, field)
+                field = Memory.allocateDirect(runtime, 8 * numCols)
+                val res = lib.GRBgetdblattrarray(gurobi, "X", 0, numCols, field)
             }
             return field
         }
@@ -169,6 +236,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         "objectiveBound" -> getDblAttr("ObjBound")
         "objectiveValue" -> getDblAttr("ObjVal")
         "sense" -> if (getIntAttr("ModelSense") >= 0) MINIMIZE else MAXIMIZE
+        "status" -> status
         "threads" -> getIntParam("Threads")
         "timeLimit" -> getDblParam("TimeLimit")
 
@@ -179,24 +247,11 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         // resetting buffers
         removeSolution()
 
-        // optimizing...
+        // optimizing... and flushing stdout
         lib.GRBoptimize(gurobi)
-
-        // capturing number of solutions
-        lib.GRBgetintattr(gurobi, "SolCount", intBuffer)
-        nSolutions = intBuffer.getInt(0)
-
         lib.fflush(null)
 
-        // lib.Cbc_solve(gurobi)
-        // if (lib.Cbc_isProvenOptimal(gurobi) != 0 || lib.Cbc_getNumIntegers(gurobi) > 0) {
-        //     nSolutions = lib.Cbc_numberSavedSolutions(gurobi)
-        // }
-
-        // flushing stdout
-        lib.fflush(null)
-
-        return OptimizationStatus.Other
+        return status
     }
 
     override fun removeConstrs(constrs: Iterable<Constr>) {
@@ -359,17 +414,13 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         }
     }
 
-    // private fun getSolutionIdx(idx: Int): Pointer? {
-    //     if (idx in solutions) return solutions[idx]
-    //
-    //     val sol = lib.Cbc_savedSolution(gurobi, idx)
-    //     solutions[idx] = sol
-    //     return sol
-    // }
-
     private fun getDblAttr(attr: String): Double {
         lib.GRBgetdblattr(gurobi, attr, dblBuffer)
         return dblBuffer.getDouble(0)
+    }
+
+    private fun setDblAttr(attr: String, value: Double): Unit {
+        lib.GRBsetdblattr(gurobi, attr, value)
     }
 
     private fun getDblParam(param: String): Double {
@@ -377,14 +428,26 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         return dblBuffer.getDouble(0)
     }
 
+    private fun setDblParam(param: String, value: Double): Unit {
+        lib.GRBsetdblparam(gurobi, param, value)
+    }
+
     private fun getIntAttr(attr: String): Int {
         lib.GRBgetintattr(gurobi, attr, intBuffer)
         return intBuffer.getInt(0)
     }
 
+    private fun setIntAttr(param: String, value: Int): Unit {
+        lib.GRBsetintattr(gurobi, param, value)
+    }
+
     private fun getIntParam(param: String): Int {
         lib.GRBgetintparam(gurobi, param, intBuffer)
         return intBuffer.getInt(0)
+    }
+
+    private fun setIntParam(param: String, value: Int): Unit {
+        lib.GRBsetintparam(gurobi, param, value)
     }
 
     private fun removeSolution() {

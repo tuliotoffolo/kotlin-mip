@@ -12,7 +12,7 @@ import jnr.ffi.byref.IntByReference
 import jnr.ffi.byref.PointerByReference
 import java.io.File
 
-interface GurobiLibrary {
+internal interface GurobiLibrary {
 
     fun fflush(stream: Pointer?) = CLibrary.lib.fflush(stream)
 

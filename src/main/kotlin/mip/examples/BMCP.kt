@@ -46,13 +46,13 @@ fun main() {
 
     for (i in N) for (j in N) if (i != j) {
         for (c1 in U) for (c2 in U) if (c1 <= c2 && c2 < c1 + d[i][j]) {
-            m += x[i][c1] + x[j][c2] le 1
+            m += x[i][c1] + x[j][c2] leq 1
         }
     }
 
     for (i in N) {
         for (c1 in U) for (c2 in U) if (c1 < c2 && c2 < c1 + d[i][i]) {
-            m += x[i][c1] + x[i][c2] le 1
+            m += x[i][c1] + x[i][c2] leq 1
         }
     }
 

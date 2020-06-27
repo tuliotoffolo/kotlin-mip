@@ -9,8 +9,15 @@ class LinExpr {
     var sense = ' '
     val terms = HashMap<Var, Double>()
 
-    val isAffine: Boolean get() = sense == ' '
-    val size: Int get() = terms.size
+    /**
+     * Returns if this linear expression is affine, i.e. if it has no sense.
+     */
+    val isAffine get() = sense == ' '
+
+    /**
+     * Returns the number of variables within the linear expression.
+     */
+    val size get() = terms.size
 
     constructor(linExpr: LinExpr?) {
         if (linExpr != null) {
@@ -148,12 +155,12 @@ class LinExpr {
     fun sub(variable: Var?) = add(variable, -1.0)
     fun sub(const: Number) = add(const.toDouble() * -1.0)
 
-    inline infix fun le(other: LinExpr?) = Constr.le(this, other)
-    inline infix fun le(other: Var?) = Constr.le(this, other)
-    inline infix fun le(other: Number) = Constr.le(this, other)
-    inline infix fun ge(other: LinExpr?) = Constr.ge(this, other)
-    inline infix fun ge(other: Var?) = Constr.ge(this, other)
-    inline infix fun ge(other: Number) = Constr.ge(this, other)
+    inline infix fun leq(other: LinExpr?) = Constr.leq(this, other)
+    inline infix fun leq(other: Var?) = Constr.leq(this, other)
+    inline infix fun leq(other: Number) = Constr.leq(this, other)
+    inline infix fun geq(other: LinExpr?) = Constr.geq(this, other)
+    inline infix fun geq(other: Var?) = Constr.geq(this, other)
+    inline infix fun geq(other: Number) = Constr.geq(this, other)
     inline infix fun eq(other: LinExpr?) = Constr.eq(this, other)
     inline infix fun eq(other: Var?) = Constr.eq(this, other)
     inline infix fun eq(other: Number) = Constr.eq(this, other)

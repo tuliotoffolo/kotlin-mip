@@ -22,12 +22,12 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
         get() {
             TODO("Not yet implemented")
         }
-        set(value:LinExpr) {
+        set(value: LinExpr) {
             TODO("Not yet implemented")
         }
 
     override var status = OptimizationStatus.Loaded
-        private set // TODO("Implement this...")
+        private set
 
     // endregion properties override
 
