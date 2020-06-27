@@ -15,9 +15,9 @@ import kotlin.reflect.KProperty
  * Nowadays Gurobi and CBC are supported. The solver is automatically selected, but you can
  * force the selection of a specific solver with the parameter [solverName].
  *
- * @property name: model name
- * @property sense: minimization ("MIN") or maximization ("MAX")
- * @property solverName: solver name ("CBC" or "GUROBI")
+ * @param name: model name
+ * @param sense: minimization ("MIN") or maximization ("MAX")
+ * @param solverName: solver name ("CBC" or "GUROBI")
  */
 class Model(var name: String = "Model", sense: String = MINIMIZE,
             override var solverName: String = "") : Parameters() {
@@ -48,105 +48,193 @@ class Model(var name: String = "Model", sense: String = MINIMIZE,
 
     private fun findSolver(sense: String): Solver {
         return mip.solvers.CBC(this, name, sense)
-        TODO("Find an available solver")
+        // TODO("Find an available solver")
     }
 
     @JvmOverloads
-    fun addConstr(expr: LinExpr, name: String? = "c_${constrs.size}"): Constr {
+    fun addConstr(expr: LinExpr, name: String? = null): Constr {
         solver.addConstr(expr, name ?: "c_${constrs.size}")
         constrs.add(Constr(this, constrs.size))
         return constrs.last()
     }
 
-    // region aliases for addConstr
+    // region aliases for addConstr: addLeq, addGeq, addEq
 
-    fun addLe(lhs: LinExpr, rhs: LinExpr) = addConstr(lhs leq rhs)
-    fun addGe(lhs: LinExpr, rhs: LinExpr) = addConstr(lhs geq rhs)
-    fun addEq(lhs: LinExpr, rhs: LinExpr) = addConstr(lhs eq rhs)
-    fun addLe(lhs: LinExpr, rhs: LinExpr, name: String?) = addConstr(lhs leq rhs, name)
-    fun addGe(lhs: LinExpr, rhs: LinExpr, name: String?) = addConstr(lhs geq rhs, name)
-    fun addEq(lhs: LinExpr, rhs: LinExpr, name: String?) = addConstr(lhs eq rhs, name)
+    inline fun addConstr(pair: NamedLinExpr) = addConstr(pair.first, pair.second)
 
-    fun addConstr(pair: NamedLinExpr) = addConstr(pair.first, pair.second)
+    @JvmOverloads
+    inline fun addLeq(lhs: Iterable<Any?>?, rhs: Iterable<Any?>?, name: String? = null) = addConstr(leq(lhs, rhs), name)
 
-    fun addConstr(lhs: LinExpr, sense: Char, rhs: LinExpr, name: String? = "c_${constrs.size}"):
-        Constr {
-        val expr = (lhs - rhs).apply { this.sense = sense }
-        return addConstr(expr, name)
-    }
+    @JvmOverloads
+    inline fun addLeq(lhs: Iterable<Any?>?, rhs: LinExpr?, name: String? = null) = addConstr(leq(lhs, rhs), name)
 
-    fun addConstr(lhs: LinExpr, sense: Char, rhs: Var, name: String? = "c_${constrs.size}"): Constr {
-        val expr = (lhs - rhs).apply { this.sense = sense }
-        return addConstr(expr, name)
-    }
+    @JvmOverloads
+    inline fun addLeq(lhs: Iterable<Any?>?, rhs: Var?, name: String? = null) = addConstr(leq(lhs, rhs), name)
 
-    fun addConstr(lhs: LinExpr, sense: Char, rhs: Number, name: String? = "c_${constrs.size}"): Constr {
-        val expr = (lhs - rhs).apply { this.sense = sense }
-        return addConstr(expr, name)
-    }
+    @JvmOverloads
+    inline fun addLeq(lhs: Iterable<Any?>?, rhs: Number?, name: String? = null) = addConstr(leq(lhs, rhs), name)
 
-    fun addConstr(lhs: Var, sense: Char, rhs: LinExpr, name: String? = "c_${constrs.size}"): Constr {
-        val expr = LinExpr(lhs).apply { sub(rhs); this.sense = sense }
-        return addConstr(expr, name)
-    }
+    @JvmOverloads
+    inline fun addLeq(lhs: LinExpr?, rhs: Iterable<Any?>?, name: String? = null) = addConstr(leq(lhs, rhs), name)
 
-    fun addConstr(lhs: Var, sense: Char, rhs: Var, name: String? = "c_${constrs.size}"): Constr {
-        val expr = LinExpr(lhs).apply { sub(rhs); this.sense = sense }
-        return addConstr(expr, name)
-    }
+    @JvmOverloads
+    inline fun addLeq(lhs: LinExpr?, rhs: LinExpr?, name: String? = null) = addConstr(leq(lhs, rhs), name)
 
-    fun addConstr(lhs: Var, sense: Char, rhs: Number, name: String? = "c_${constrs.size}"): Constr {
-        val expr = LinExpr(lhs).apply { sub(rhs); this.sense = sense }
-        return addConstr(expr, name)
-    }
+    @JvmOverloads
+    inline fun addLeq(lhs: LinExpr?, rhs: Var?, name: String? = null) = addConstr(leq(lhs, rhs), name)
 
-    fun addConstr(lhs: Number, sense: Char, rhs: LinExpr, name: String? = "c_${constrs.size}"): Constr {
-        val expr = LinExpr(lhs).apply { sub(rhs); this.sense = sense }
-        return addConstr(expr, name)
-    }
+    @JvmOverloads
+    inline fun addLeq(lhs: LinExpr?, rhs: Number?, name: String? = null) = addConstr(leq(lhs, rhs), name)
 
-    fun addConstr(lhs: Number, sense: Char, rhs: Var, name: String? = "c_${constrs.size}"): Constr {
-        val expr = LinExpr(lhs).apply { sub(rhs); this.sense = sense }
-        return addConstr(expr, name)
-    }
+    @JvmOverloads
+    inline fun addLeq(lhs: Var?, rhs: Iterable<Any?>?, name: String? = null) = addConstr(leq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addLeq(lhs: Var?, rhs: LinExpr?, name: String? = null) = addConstr(leq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addLeq(lhs: Var?, rhs: Var?, name: String? = null) = addConstr(leq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addLeq(lhs: Var?, rhs: Number?, name: String? = null) = addConstr(leq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addLeq(lhs: Number?, rhs: Iterable<Any?>?, name: String? = null) = addConstr(leq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addLeq(lhs: Number?, rhs: LinExpr?, name: String? = null) = addConstr(leq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addLeq(lhs: Number?, rhs: Var?, name: String? = null) = addConstr(leq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addGeq(lhs: Iterable<Any?>?, rhs: Iterable<Any?>?, name: String? = null) = addConstr(geq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addGeq(lhs: Iterable<Any?>?, rhs: LinExpr?, name: String? = null) = addConstr(geq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addGeq(lhs: Iterable<Any?>?, rhs: Var?, name: String? = null) = addConstr(geq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addGeq(lhs: Iterable<Any?>?, rhs: Number?, name: String? = null) = addConstr(geq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addGeq(lhs: LinExpr?, rhs: Iterable<Any?>?, name: String? = null) = addConstr(geq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addGeq(lhs: LinExpr?, rhs: LinExpr?, name: String? = null) = addConstr(geq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addGeq(lhs: LinExpr?, rhs: Var?, name: String? = null) = addConstr(geq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addGeq(lhs: LinExpr?, rhs: Number?, name: String? = null) = addConstr(geq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addGeq(lhs: Var?, rhs: Iterable<Any?>?, name: String? = null) = addConstr(geq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addGeq(lhs: Var?, rhs: LinExpr?, name: String? = null) = addConstr(geq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addGeq(lhs: Var?, rhs: Var?, name: String? = null) = addConstr(geq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addGeq(lhs: Var?, rhs: Number?, name: String? = null) = addConstr(geq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addGeq(lhs: Number?, rhs: Iterable<Any?>?, name: String? = null) = addConstr(geq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addGeq(lhs: Number?, rhs: LinExpr?, name: String? = null) = addConstr(geq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addGeq(lhs: Number?, rhs: Var?, name: String? = null) = addConstr(geq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addEq(lhs: Iterable<Any?>?, rhs: Iterable<Any?>?, name: String? = null) = addConstr(eq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addEq(lhs: Iterable<Any?>?, rhs: LinExpr?, name: String? = null) = addConstr(eq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addEq(lhs: Iterable<Any?>?, rhs: Var?, name: String? = null) = addConstr(eq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addEq(lhs: Iterable<Any?>?, rhs: Number?, name: String? = null) = addConstr(eq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addEq(lhs: LinExpr?, rhs: Iterable<Any?>?, name: String? = null) = addConstr(eq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addEq(lhs: LinExpr?, rhs: LinExpr?, name: String? = null) = addConstr(eq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addEq(lhs: LinExpr?, rhs: Var?, name: String? = null) = addConstr(eq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addEq(lhs: LinExpr?, rhs: Number?, name: String? = null) = addConstr(eq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addEq(lhs: Var?, rhs: Iterable<Any?>?, name: String? = null) = addConstr(eq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addEq(lhs: Var?, rhs: LinExpr?, name: String? = null) = addConstr(eq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addEq(lhs: Var?, rhs: Var?, name: String? = null) = addConstr(eq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addEq(lhs: Var?, rhs: Number?, name: String? = null) = addConstr(eq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addEq(lhs: Number?, rhs: Iterable<Any?>?, name: String? = null) = addConstr(eq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addEq(lhs: Number?, rhs: LinExpr?, name: String? = null) = addConstr(eq(lhs, rhs), name)
+
+    @JvmOverloads
+    inline fun addEq(lhs: Number?, rhs: Var?, name: String? = null) = addConstr(eq(lhs, rhs), name)
 
     // endregion aliases for addConstr
 
     @JvmOverloads
-    fun addVar(name: String? = "v_${vars.size}", varType: VarType = VarType.Continuous,
+    fun addVar(name: String? = null, varType: VarType = VarType.Continuous,
                obj: Number? = 0.0, lb: Number? = 0.0, ub: Number? = INF,
                column: Column? = Column.EMPTY
     ): Var {
-        val name = name ?: "v_${vars.size}"
-        val obj = obj?.toDouble() ?: 0.0
-        var lb = lb?.toDouble() ?: 0.0
-        var ub = ub?.toDouble() ?: INF
-        val column = column ?: Column.EMPTY
+        var lbComputed = lb?.toDouble() ?: 0.0
+        var ubComputed = ub?.toDouble() ?: INF
 
         // ensuring binary variables have correct LB/UB
         if (varType == VarType.Binary) {
-            lb = max(lb, 0.0)
-            ub = min(ub, 1.0)
+            lbComputed = max(lbComputed, 0.0)
+            ubComputed = min(ubComputed, 1.0)
         }
 
-        solver.addVar(name, obj, lb, ub, varType, column)
+        solver.addVar(name ?: "v_${vars.size}", obj?.toDouble() ?: 0.0, lbComputed, ubComputed,
+            varType, column ?: Column.EMPTY)
         vars.add(Var(this, vars.size))
         return vars.last()
     }
 
     // region addVar aliases
 
-    fun addBinVar(name: String? = "v_${vars.size}", obj: Number? = 0.0,
+    @JvmOverloads
+    fun addBinVar(name: String? = null, obj: Number? = 0.0,
                   column: Column? = Column.EMPTY): Var =
         addVar(name = name, varType = VarType.Binary, obj = obj, lb = 0.0, ub = 1.0,
             column = column)
 
-    fun addIntVar(name: String? = "v_${vars.size}", obj: Number? = 0.0, lb: Number? = 0.0,
+    @JvmOverloads
+    fun addIntVar(name: String? = null, obj: Number? = 0.0, lb: Number? = 0.0,
                   ub: Number? = INF, column: Column? = Column.EMPTY): Var =
-        addVar(name = name, varType = VarType.Binary, obj = obj, lb = lb, ub = ub,
+        addVar(name = name, varType = VarType.Integer, obj = obj, lb = lb, ub = ub,
             column = column)
 
-    fun addNumVar(name: String? = "v_${vars.size}", obj: Number? = 0.0, lb: Number? = 0.0,
+    @JvmOverloads
+    fun addNumVar(name: String? = null, obj: Number? = 0.0, lb: Number? = 0.0,
                   ub: Number? = INF, column: Column? = Column.EMPTY): Var =
         addVar(name = name, varType = VarType.Continuous, obj = obj, lb = lb, ub = ub,
             column = column)

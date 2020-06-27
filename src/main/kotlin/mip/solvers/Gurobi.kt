@@ -203,6 +203,8 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     override fun addVar(name: String, obj: Double, lb: Double, ub: Double, varType: VarType,
                         column: Column) {
         val nz = column.size
+        val lowerBound = if (lb == -INF) -GurobiLibrary.GRB_INFINITY else lb
+        val upperBound = if (ub == INF) GurobiLibrary.GRB_INFINITY else ub
 
         val vtype = when (varType) {
             VarType.Binary -> 'B'.toByte()
@@ -218,10 +220,10 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
                 dblBuffer.putDouble(8 * i, coeff)
                 i++
             }
-            lib.GRBaddvar(gurobi, nz, intBuffer, dblBuffer, obj, lb, ub, vtype, name)
+            lib.GRBaddvar(gurobi, nz, intBuffer, dblBuffer, obj, lowerBound, upperBound, vtype, name)
         }
         else {
-            lib.GRBaddvar(gurobi, nz, null, null, obj, lb, ub, vtype, name)
+            lib.GRBaddvar(gurobi, nz, null, null, obj, lowerBound, upperBound, vtype, name)
         }
     }
 
@@ -300,8 +302,9 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     override fun setConstrExpr(idx: Int, value: LinExpr): Unit = throw NotImplementedError()
 
     override fun getConstrName(idx: Int): String {
-        lib.GRBgetstrattr(gurobi, "VarName", PointerByReference(strBuffer))
-        return strBuffer.getString(0)
+        val pointer = PointerByReference()
+        lib.GRBgetstrattrelement(gurobi, "VarName", idx, pointer)
+        return pointer.value.getString(0)
     }
 
     override fun getConstrPi(idx: Int): Double =
@@ -346,8 +349,9 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     }
 
     override fun getVarName(idx: Int): String {
-        lib.GRBgetstrattr(gurobi, "VarName", PointerByReference(strBuffer))
-        return strBuffer.getString(0)
+        val pointer = PointerByReference()
+        lib.GRBgetstrattrelement(gurobi, "VarName", idx, pointer)
+        return pointer.value.getString(0)
     }
 
     override fun getVarObj(idx: Int): Double {

@@ -49,6 +49,10 @@ internal interface GurobiLibrary {
         const val CHAR_ONE: Byte = 1.toByte()
         const val CHAR_ZERO: Byte = 0.toByte()
 
+        const val GRB_INFINITY = 1e100
+        const val GRB_UNDEFINED = 1e101
+        const val GRB_MAXINT = 2000000000
+
         /**
          * enum DblParam {
          *     DBL_PARAM_PRIMAL_TOL    = 0,  /*! Tollerance to consider a solution feasible in the linear programming solver. */
