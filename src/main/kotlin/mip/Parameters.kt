@@ -25,8 +25,6 @@ abstract class Parameters {
      */
     open val numCols by Param<Int>()
 
-    open val numBins by Param<Int>()
-
     /**
      * Number of integer variables in the model
      */
@@ -219,8 +217,23 @@ abstract class Parameters {
      */
     open var objectiveConst by Param<Double>()
 
+    /**
+     * Maximum reduced cost value for a solution of the LP relaxation to be considered optimal.
+     * Default value: 1e-6.
+     *
+     * Tightening this value can increase the numerical precision but also probably increase the
+     * running time. As floating point computations always involve some loss of precision, values
+     * too close to zero will likely render some models impossible to optimize.
+     */
     open var optTol by Param<Double>()
-    open var plog by Param<Boolean>()
+
+    /**
+     * Status of the preprocessing.
+     *
+     *     - -1 means the solver decides whether to apply it or not, i.e. automatically.
+     *     - 0 means disabled.
+     *     - 1 means enabled.
+     */
     open var preprocess by Param<Int>()
 
     /**
@@ -287,6 +300,15 @@ abstract class Parameters {
      * time, it may also increase memory consumption.
      */
     open var threads by Param<Int>()
+
+    /**
+     * The level of verbosity:
+     *
+     *     - 0: disable solver output messages (note that some solvers prohibit the omition of
+     *     specific messages related to licenses).
+     *     - 1: enable solver output messages.
+     */
+    open var verbose by Param<Boolean>()
 
     // endregion vars
 
