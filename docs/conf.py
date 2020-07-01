@@ -40,7 +40,6 @@ release = ""
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
-    "sphinx_autodoc_typehints",
     "sphinx.ext.mathjax",
     "sphinx.ext.intersphinx",
 ]
