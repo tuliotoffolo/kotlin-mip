@@ -3,6 +3,12 @@ package mip
 import kotlin.math.abs
 
 @Suppress("NOTHING_TO_INLINE")
+/**
+ * This class represents a linear expression, which may be affine or not. Basic operations are
+ * implemented and a number of overloaded methods are included as to facilitate using the class.
+ *
+ * @author Túlio Toffolo
+ */
 class LinExpr {
 
     var const = 0.0

@@ -3,6 +3,7 @@ package mip.solvers
 import jnr.ffi.*
 import jnr.ffi.byref.*
 import mip.*
+import java.nio.charset.Charset
 
 class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sense) {
 
@@ -201,7 +202,32 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     }
 
     override fun addConstr(linExpr: LinExpr, name: String) {
-        TODO("Not yet implemented")
+        val nz = linExpr.size
+        dblByRef1.putDouble(0, -linExpr.const)
+
+        val sense = when (linExpr.sense) {
+            '<' -> 'L'.toByte()
+            '=' -> 'E'.toByte()
+            '>' -> 'G'.toByte()
+            else -> throw IllegalArgumentException("Invalid sense")
+        }
+        chrByRef1.putByte(0, sense)
+
+        // matbeg array (one item with value 0)
+        intByRef2.putInt(0, 0)
+
+        checkBuffer(nz)
+        var i = 0L
+        for ((v, coeff) in linExpr.terms) {
+            intBuffer.putInt(4L * i, v.idx)
+            dblBuffer.putDouble(8L * i, coeff)
+            i++
+        }
+
+        strBuffer.putString(0, name, name.length, Charset.defaultCharset())
+
+        lib.CPXaddrows(env, lp, 0, 1, nz, dblByRef1, chrByRef1, intByRef1, intBuffer, dblBuffer,
+            null, PointerByReference(strBuffer))
     }
 
     override fun addVar(name: String, obj: Double, lb: Double, ub: Double, varType: VarType,
@@ -233,9 +259,15 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     }
 
     override fun optimize(): OptimizationStatus {
+        // resetting buffers
+        removeSolution()
+
+        // optimizing... and flushing stdout
         statusInt = lib.CPXlpopt(env, lp)
         assert(statusInt != 0)
-        return this.status
+        lib.fflush(null)
+
+        return status
     }
 
     override fun removeConstrs(constrs: Iterable<Constr>) {

@@ -1,5 +1,11 @@
 @file:JvmName("MIP")
 
+/**
+ * Constants used by the package.
+ *
+ * @author Túlio Toffolo
+ */
+
 package mip
 
 /** Epsilon number (practical zero) */

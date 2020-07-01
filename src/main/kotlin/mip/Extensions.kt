@@ -1,5 +1,11 @@
 @file:Suppress("NOTHING_TO_INLINE")
 
+/**
+ * Useful extensions to quickly create linear expressions and constraints in Kotlin.
+ *
+ * @author Túlio Toffolo
+ */
+
 package mip
 
 operator fun Number.plus(expr: Iterable<Any?>) = LinExpr(expr).also { it.add(this) }

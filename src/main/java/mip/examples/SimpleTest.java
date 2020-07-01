@@ -13,6 +13,10 @@ public class SimpleTest {
         vars.add(model.addIntVar("x1", 1.0));
         vars.add(model.addIntVar("x2", 2.0));
 
+        LinExpr expr = new LinExpr(vars.get(0));
+        expr.add(vars.get(1));
+        model.addConstr(Constr.leq(expr, 1));
+
         model.optimize();
         model.write("x.lp");
 

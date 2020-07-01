@@ -495,34 +495,51 @@ internal interface CplexLibrary {
     fun CPXgetbestobjval(env: Pointer, lp: Pointer, value: Pointer?): Int
 
     /**
-     * CPXgetdj (CPXCENVptr env, CPXCLPptr lp, double *dj, int begin, int end);
+     * int CPXgetdj (CPXCENVptr env, CPXCLPptr lp, double *dj, int begin, int end);
      */
-    fun CPXgetdj(env: Pointer, lp: Pointer, values: Pointer?, begin: Int, end: Int)
+    fun CPXgetdj(env: Pointer, lp: Pointer, values: Pointer?, begin: Int, end: Int): Int
 
     /**
-     * CPXgetpi (CPXCENVptr env, CPXCLPptr lp, double *pi, int begin, int end);
+     * int CPXgetpi (CPXCENVptr env, CPXCLPptr lp, double *pi, int begin, int end);
      */
-    fun CPXgetpi(env: Pointer, lp: Pointer, values: Pointer?, begin: Int, end: Int)
+    fun CPXgetpi(env: Pointer, lp: Pointer, values: Pointer?, begin: Int, end: Int): Int
 
     /**
-     * CPXgetx (CPXCENVptr env, CPXCLPptr lp, double *x, int begin, int end);
+     * int CPXgetx (CPXCENVptr env, CPXCLPptr lp, double *x, int begin, int end);
      */
-    fun CPXgetx(env: Pointer, lp: Pointer, values: Pointer?, begin: Int, end: Int)
-
-    /**
-     * CPXsolution (CPXCENVptr env, CPXCLPptr lp, int *lpstat_p, double *objval_p, double *x,
-     *              double *pi, double *slack, double *dj);
-     */
-    fun CPXsolution(env: Pointer, lp: Pointer, lpstat_p: Pointer, objval_p: Pointer, x: Pointer,
-                    pi: Pointer, slack: Pointer, dj: Pointer)
+    fun CPXgetx(env: Pointer, lp: Pointer, values: Pointer?, begin: Int, end: Int): Int
 
 
     /**
-     * CPXnewcols (CPXCENVptr env, CPXLPptr lp, int ccnt, double const *obj, double const *lb,
-     *             double const *ub, char const *xctype, char **colname);
+     * int CPXnewcols (CPXCENVptr env, CPXLPptr lp, int ccnt, double const *obj, double const *lb,
+     *                 double const *ub, char const *xctype, char **colname);
      */
     fun CPXnewcols(env: Pointer, lp: Pointer, ccnt: Int, obj: Pointer, lb: Pointer, ub: Pointer,
-                   xctype: Pointer, colname: PointerByReference)
+                   xctype: Pointer, colname: PointerByReference): Int
+
+    /**
+     * int CPXaddrows (CPXCENVptr env, CPXLPptr lp, int ccnt, int rcnt, int nzcnt,
+     *                 double const *rhs, char const *sense, int const *rmatbeg,
+     *                 int const *rmatind, double const *rmatval, char **colname, char **rowname);
+     */
+    fun CPXaddrows(env: Pointer, lp: Pointer, ccnt: Int, rcnt: Int, nzcnt: Int, rhs: Pointer,
+                   sense: Pointer, rmatbeg: Pointer, rmatind: Pointer, rmatval: Pointer,
+                   colname: PointerByReference?, rowname: PointerByReference?): Int
+
+    /**
+     *  int CPXgetcolname (CPXCENVptr env, CPXCLPptr lp, char  **name, char *namestore,
+     *                     int storespace, int *surplus_p, int begin, int end);
+     */
+    fun CPXgetcolname(env: Pointer, lp: Pointer, name: PointerByReference?, namestore: String,
+                      storeespace: Int, surplus_p: Pointer, begin: Int, end: Int): Int
+
+
+    /**
+     * int CPXsolution (CPXCENVptr env, CPXCLPptr lp, int *lpstat_p, double *objval_p, double *x,
+     *                  double *pi, double *slack, double *dj);
+     */
+    fun CPXsolution(env: Pointer, lp: Pointer, lpstat_p: Pointer, objval_p: Pointer, x: Pointer,
+                    pi: Pointer, slack: Pointer, dj: Pointer): Int
 
 
     /**
@@ -550,17 +567,4 @@ internal interface CplexLibrary {
      * int CPXwriteprob (CPXCENVptr env, CPXCLPptr lp, char const *filename_str, char const *filetype);
      */
     fun CPXwriteprob(env: Pointer, lp: Pointer, filename_str: String, filetype: String): Int
-}
-
-fun main(args: Array<String>) {
-    val lib = CplexLibrary.lib
-    val runtime: Runtime = Runtime.getRuntime(lib)
-
-    var statusP = Memory.allocateDirect(runtime, 8)
-    var status = 0
-
-    val env = lib.CPXopenCPLEX(statusP)
-    val lp = lib.CPXcreateprob(env, statusP, "Teste")
-
-    status = lib.CPXlpopt(env, lp);
 }

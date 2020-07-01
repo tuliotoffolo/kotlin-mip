@@ -5,6 +5,8 @@ import kotlin.reflect.KProperty
 
 /**
  * Abstract class used to map all parameters inherited by both Model and Solver classes.
+ *
+ * @author Túlio A. M. Toffolo
  */
 abstract class Parameters {
 

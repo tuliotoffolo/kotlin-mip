@@ -18,6 +18,8 @@ import kotlin.reflect.KProperty
  * @param name: model name
  * @param sense: minimization ("MIN") or maximization ("MAX")
  * @param solverName: solver name ("CBC" or "GUROBI")
+ *
+ * @author Túlio Toffolo
  */
 class Model(var name: String = "Model", sense: String = MINIMIZE,
             override var solverName: String = "") : Parameters() {

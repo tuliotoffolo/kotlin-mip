@@ -1,5 +1,12 @@
 package mip
 
+/**
+ * This class represents a Column, i.e. a set of non-null row coefficients of a variable. This
+ * class is particularly useful for creating variables after all constraints were created. A
+ * typical example is the implementation of column generation approaches.
+ *
+ * @author Túlio Toffolo
+ */
 class Column{
 
     var obj = 0.0
