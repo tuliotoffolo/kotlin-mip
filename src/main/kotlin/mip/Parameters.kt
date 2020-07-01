@@ -21,6 +21,11 @@ abstract class Parameters {
     open val gap by Param<Double>()
 
     /**
+     * Returns if the model/solver has a feasible solution
+     */
+    open val hasSolution by Param<Boolean>()
+
+    /**
      * Number of columns (variables) in the model.
      */
     open val numCols by Param<Int>()

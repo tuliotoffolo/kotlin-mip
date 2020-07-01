@@ -24,8 +24,6 @@ class Model(var name: String = "Model", sense: String = MINIMIZE,
 
     // region main components
 
-    val hasSolution: Boolean get() = solver.hasSolution
-
     val constrs = ArrayList<Constr>()
     val vars = ArrayList<Var>()
 
@@ -37,7 +35,7 @@ class Model(var name: String = "Model", sense: String = MINIMIZE,
         // creating a solver instance
         solver = when (solverName.toUpperCase()) {
             CBC -> mip.solvers.CBC(this, name, sense)
-            // CPLEX -> Cplex(this, name, sense)
+            CPLEX -> mip.solvers.Cplex(this, name, sense)
             GUROBI -> mip.solvers.Gurobi(this, name, sense)
             else -> findSolver(sense)
         }

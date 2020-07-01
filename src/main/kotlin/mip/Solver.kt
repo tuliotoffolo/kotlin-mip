@@ -4,8 +4,6 @@ import kotlin.reflect.KProperty
 
 abstract class Solver(val model: Model, var name: String, sense: String = MINIMIZE) : Parameters() {
 
-    abstract val hasSolution: Boolean
-
     abstract fun addConstr(linExpr: LinExpr, name: String): Unit
 
     abstract fun addVar(name: String, obj: Double, lb: Double, ub: Double, varType: VarType,

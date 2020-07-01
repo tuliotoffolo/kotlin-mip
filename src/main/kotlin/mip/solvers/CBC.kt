@@ -9,14 +9,14 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     override val solverName = "CBC"
 
-    override val hasSolution get() = nSolutions > 0
-
     private var cbc: Pointer
     private val lib = CBCLibrary.lib
     private val runtime: Runtime = Runtime.getRuntime(lib)
     private var nSolutions = 0
 
     // region properties override
+
+    override val hasSolution get() = nSolutions > 0
 
     override var objective: LinExpr
         get() {
