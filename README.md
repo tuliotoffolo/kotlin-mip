@@ -1,6 +1,6 @@
 # J-MIP (JVM Mixed-Integer Linear Programming) Tools
 
-**Package is currently under construction and has limited functionality**
+🛑 **Package is currently under construction and has limited functionality**
 
 Package website: **http://j-mip.com**
 
