@@ -6,5 +6,6 @@ Python MIP Documentation
    :caption: Contents:
     
    intro
+   classes
    bibliography
 
