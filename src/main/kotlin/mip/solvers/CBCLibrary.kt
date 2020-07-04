@@ -468,103 +468,103 @@ internal interface CBCLibrary {
     fun Cbc_deleteModel(model: Pointer): Pointer
 
     // int Osi_getNumIntegers( void *osi );
-    fun Osi_getNumIntegers(osi: Pointer): Int
+    // fun Osi_getNumIntegers(osi: Pointer): Int
 
     // const double *Osi_getReducedCost( void *osi );
-    fun Osi_getReducedCost(osi: Pointer): Pointer
+    // fun Osi_getReducedCost(osi: Pointer): Pointer
 
     // const double *Osi_getObjCoefficients();
-    fun Osi_getObjCoefficients(): Pointer
+    // fun Osi_getObjCoefficients(): Pointer
 
     // double Osi_getObjSense();
-    fun Osi_getObjSense(): Double
+    // fun Osi_getObjSense(): Double
 
     // void *Osi_newSolver();
-    fun Osi_newSolver(): Pointer
+    // fun Osi_newSolver(): Pointer
 
     // void Osi_deleteSolver( void *osi );
-    fun Osi_deleteSolver(osi: Pointer)
+    // fun Osi_deleteSolver(osi: Pointer)
 
     // void Osi_initialSolve(void *osi);
-    fun Osi_initialSolve(osi: Pointer)
+    // fun Osi_initialSolve(osi: Pointer)
 
     // void Osi_resolve(void *osi);
-    fun Osi_resolve(osi: Pointer)
+    // fun Osi_resolve(osi: Pointer)
 
     // void Osi_branchAndBound(void *osi);
-    fun Osi_branchAndBound(osi: Pointer)
+    // fun Osi_branchAndBound(osi: Pointer)
 
     // char Osi_isAbandoned(void *osi);
-    fun Osi_isAbandoned(osi: Pointer): Byte
+    // fun Osi_isAbandoned(osi: Pointer): Byte
 
     // char Osi_isProvenOptimal(void *osi);
-    fun Osi_isProvenOptimal(osi: Pointer): Byte
+    // fun Osi_isProvenOptimal(osi: Pointer): Byte
 
     // char Osi_isProvenPrimalInfeasible(void *osi);
-    fun Osi_isProvenPrimalInfeasible(osi: Pointer): Byte
+    // fun Osi_isProvenPrimalInfeasible(osi: Pointer): Byte
 
     // char Osi_isProvenDualInfeasible(void *osi);
-    fun Osi_isProvenDualInfeasible(osi: Pointer): Byte
+    // fun Osi_isProvenDualInfeasible(osi: Pointer): Byte
 
     // char Osi_isPrimalObjectiveLimitReached(void *osi);
-    fun Osi_isPrimalObjectiveLimitReached(osi: Pointer): Byte
+    // fun Osi_isPrimalObjectiveLimitReached(osi: Pointer): Byte
 
     // char Osi_isDualObjectiveLimitReached(void *osi);
-    fun Osi_isDualObjectiveLimitReached(osi: Pointer): Byte
+    // fun Osi_isDualObjectiveLimitReached(osi: Pointer): Byte
 
     // char Osi_isIterationLimitReached(void *osi);
-    fun Osi_isIterationLimitReached(osi: Pointer): Byte
+    // fun Osi_isIterationLimitReached(osi: Pointer): Byte
 
     // double Osi_getObjValue( void *osi );
-    fun Osi_getObjValue(osi: Pointer): Double
+    // fun Osi_getObjValue(osi: Pointer): Double
 
     // void Osi_setColUpper (void *osi, int elementIndex, double ub);
-    fun Osi_setColUpper(osi: Pointer, elementIndex: Int, ub: Double)
+    // fun Osi_setColUpper(osi: Pointer, elementIndex: Int, ub: Double)
 
     // void Osi_setColLower(void *osi, int elementIndex, double lb);
-    fun Osi_setColLower(osi: Pointer, elementIndex: Int, lb: Double)
+    // fun Osi_setColLower(osi: Pointer, elementIndex: Int, lb: Double)
 
     // int Osi_getNumCols( void *osi );
-    fun Osi_getNumCols(osi: Pointer): Int
+    // fun Osi_getNumCols(osi: Pointer): Int
 
     // void Osi_getColName( void *osi, int i, char *name, int maxLen );
-    fun Osi_getColName(osi: Pointer, i: Int, name: String, maxLen: Int)
+    // fun Osi_getColName(osi: Pointer, i: Int, name: String, maxLen: Int)
 
     // const double *Osi_getColLower( void *osi );
-    fun Osi_getColLower(osi: Pointer): Pointer
+    // fun Osi_getColLower(osi: Pointer): Pointer
 
     // const double *Osi_getColUpper( void *osi );
-    fun Osi_getColUpper(osi: Pointer): Pointer
+    // fun Osi_getColUpper(osi: Pointer): Pointer
 
     // int Osi_isInteger( void *osi, int col );
-    fun Osi_isInteger(osi: Pointer, col: Int): Int
+    // fun Osi_isInteger(osi: Pointer, col: Int): Int
 
     // int Osi_getNumRows( void *osi );
-    fun Osi_getNumRows(osi: Pointer): Int
+    // fun Osi_getNumRows(osi: Pointer): Int
 
     // int Osi_getRowNz(void *osi, int row);
-    fun Osi_getRowNz(osi: Pointer, row: Int): Int
+    // fun Osi_getRowNz(osi: Pointer, row: Int): Int
 
     // const int *Osi_getRowIndices(void *osi, int row);
-    fun Osi_getRowIndices(osi: Pointer, row: Int): Pointer
+    // fun Osi_getRowIndices(osi: Pointer, row: Int): Pointer
 
     // const double *Osi_getRowCoeffs(void *osi, int row);
-    fun Osi_getRowCoeffs(osi: Pointer, row: Int): Pointer
+    // fun Osi_getRowCoeffs(osi: Pointer, row: Int): Pointer
 
     // double Osi_getRowRHS(void *osi, int row);
-    fun Osi_getRowRHS(osi: Pointer, row: Int): Double
+    // fun Osi_getRowRHS(osi: Pointer, row: Int): Double
 
     // char Osi_getRowSense(void *osi, int row);
-    fun Osi_getRowSense(osi: Pointer, row: Int): Byte
+    // fun Osi_getRowSense(osi: Pointer, row: Int): Byte
 
     // void Osi_setObjCoef(void *osi, int index, double obj);
-    fun Osi_setObjCoef(osi: Pointer, index: Int, obj: Double)
+    // fun Osi_setObjCoef(osi: Pointer, index: Int, obj: Double)
 
     // void Osi_setObjSense(void *osi, double sense);
-    fun Osi_setObjSense(osi: Pointer, sense: Double)
+    // fun Osi_setObjSense(osi: Pointer, sense: Double)
 
     // const double *Osi_getColSolution(void *osi);
-    fun Osi_getColSolution(osi: Pointer): Pointer
+    // fun Osi_getColSolution(osi: Pointer): Pointer
 
     // void *OsiCuts_new();
     fun OsiCuts_new(): Pointer
@@ -602,13 +602,13 @@ internal interface CBCLibrary {
 
     // void Osi_addCol(void *osi, const char *name, double lb, double ub, double obj,
     //                 char isInteger, int nz, int *rows, double *coefs);
-    fun Osi_addCol(osi: Pointer, name: String, lb: Double, ub: Double, obj: Double,
-                   isInteger: Byte, nz: Int, rows: Pointer, coefs: Pointer)
+    // fun Osi_addCol(osi: Pointer, name: String, lb: Double, ub: Double, obj: Double,
+    //                isInteger: Byte, nz: Int, rows: Pointer, coefs: Pointer)
 
     // void Osi_addRow(void *osi, const char *name, int nz, const int *cols, const double *coefs,
     //                 char sense, double rhs);
-    fun Osi_addRow(osi: Pointer, name: String, nz: Int, cols: Pointer, coefs: Pointer,
-                   sense: Byte, rhs: Double)
+    // fun Osi_addRow(osi: Pointer, name: String, nz: Int, cols: Pointer, coefs: Pointer,
+    //                sense: Byte, rhs: Double)
 
     // void Cbc_deleteRows(Cbc_Model *model, int numRows, const int rows[]);
     fun Cbc_deleteRows(model: Pointer, numRows: Int, rows: Pointer)
@@ -664,26 +664,26 @@ internal interface CBCLibrary {
     fun Cbc_getRowPrice(model: Pointer): Pointer
 
     // const double *Osi_getRowPrice(void *osi);
-    fun Cbc_Osi_getRowPrice(osi: Pointer): DoubleArray
+    // fun Cbc_Osi_getRowPrice(osi: Pointer): DoubleArray
 
     // double Osi_getIntegerTolerance(void *osi);
-    fun Osi_getIntegerTolerance(osi: Pointer): Double
+    // fun Osi_getIntegerTolerance(osi: Pointer): Double
 
     // void Osi_checkCGraph( void *osi );
-    fun Osi_checkCGraph(osi: Pointer)
+    // fun Osi_checkCGraph(osi: Pointer)
 
     // const void * Osi_CGraph( void *osi );
-    fun Osi_CGraph(osi: Pointer): Pointer
+    // fun Osi_CGraph(osi: Pointer): Pointer
 
     // size_t CG_nodes( void *cgraph );
-    fun CG_nodes(cgraph: Pointer): Int @size_t // TODO("check @size_t")
+    // fun CG_nodes(cgraph: Pointer): Int @size_t // TODO("check @size_t")
 
     // char CG_conflicting( void *cgraph, int n1, int n2 );
     // fun CG_conflicting(cgraph: Pointer, n1: Int, n2: Int): Byte
 
     // double CG_density( void *cgraph );
-    fun Cbc_density(cgraph: Pointer): Double
+    // fun Cbc_density(cgraph: Pointer): Double
 
     // CGNeighbors CG_conflictingNodes(Cbc_Model *model, void *cgraph, size_t node);
-    fun CG_conflictingNodes(model: Pointer, cgraph: Pointer, @size_t node: Int): CGNeighbors
+    // fun CG_conflictingNodes(model: Pointer, cgraph: Pointer, @size_t node: Int): CGNeighbors
 }

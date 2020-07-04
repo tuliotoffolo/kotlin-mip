@@ -1,66 +1,56 @@
+/**
+ * Bandwidth multi coloring problem, more specifically the Frequency assignment problem as
+ * described in http://fap.zib.de/problems/Philadelphia/
+ */
+
 package mip.examples
 
 import mip.*
 import kotlin.math.roundToInt
 
-/**
- * Bandwidth multi coloring problem, more specifically the Frequency assignment problem as
- * described in http://fap.zib.de/problems/Philadelphia/
- */
 fun main() {
-    val start = System.currentTimeMillis()
-    val runtime: (Long) -> Double = { (System.currentTimeMillis() - it) / 1000.0 }
-
-    val m = Model(solverName = GUROBI)
-    println("Model started in ${runtime(start)} seconds!")
-
-    // number of channels per node
+    // number of channels per node (r) and range of channels (N)
     val r = intArrayOf(3, 5, 8, 3, 6, 5, 7, 3)
+    val N = 0 until r.size
 
     // distance between channels in the same node (i, i) and in adjacent nodes
     val d = arrayOf(
-        intArrayOf(3, 2, 0, 0, 2, 2, 0, 0),
-        intArrayOf(2, 3, 2, 0, 0, 2, 2, 0),
-        intArrayOf(0, 2, 3, 0, 0, 0, 3, 0),
-        intArrayOf(0, 0, 0, 3, 2, 0, 0, 2),
-        intArrayOf(2, 0, 0, 2, 3, 2, 0, 0),
-        intArrayOf(2, 2, 0, 0, 2, 3, 2, 0),
-        intArrayOf(0, 2, 2, 0, 0, 2, 3, 0),
-        intArrayOf(0, 0, 0, 2, 0, 0, 0, 3),
+        arrayOf(3, 2, 0, 0, 2, 2, 0, 0),
+        arrayOf(2, 3, 2, 0, 0, 2, 2, 0),
+        arrayOf(0, 2, 3, 0, 0, 0, 3, 0),
+        arrayOf(0, 0, 0, 3, 2, 0, 0, 2),
+        arrayOf(2, 0, 0, 2, 3, 2, 0, 0),
+        arrayOf(2, 2, 0, 0, 2, 3, 2, 0),
+        arrayOf(0, 2, 2, 0, 0, 2, 3, 0),
+        arrayOf(0, 0, 0, 2, 0, 0, 0, 3),
     )
-
-    val N = 0 until r.size
 
     // in complete applications this upper bound should be obtained from a feasible solution
     // produced with some heuristic
     val U = 0 until N.sumBy { i -> N.sumBy { j -> d[i][j] } } + r.sum()
 
-    val x = N.map { i ->
-        U.map { c -> m.addBinVar("x($i,$c)") }
-    }
-
+    // creating model and variables
+    val m = Model("BMCP")
+    val x = N.map { i -> U.map { c -> m.addBinVar("x($i,$c)") } }
     val z = m.addVar("z", obj = 1.0)
 
+    // creating constraints
     for (i in N)
         m += U.map { c -> x[i][c] } eq r[i]
 
-    for (i in N) for (j in N) if (i != j) {
-        for (c1 in U) for (c2 in U) if (c1 <= c2 && c2 < c1 + d[i][j]) {
+    for (i in N) for (j in N) if (i != j)
+        for (c1 in U) for (c2 in U) if (c1 <= c2 && c2 < c1 + d[i][j])
             m += x[i][c1] + x[j][c2] leq 1
-        }
-    }
 
-    for (i in N) {
-        for (c1 in U) for (c2 in U) if (c1 < c2 && c2 < c1 + d[i][i]) {
+    for (i in N)
+        for (c1 in U) for (c2 in U) if (c1 < c2 && c2 < c1 + d[i][i])
             m += x[i][c1] + x[i][c2] leq 1
-        }
-    }
 
-    for (i in N) for (c in U) {
-        m += z ge (c + 1) * x[i][c]
-    }
+    for (i in N)
+        for (c in U)
+            m += z ge (c + 1) * x[i][c]
 
-    m.write("bmcp.lp")
+    m.maxNodes = 30
     m.optimize()
 
     if (m.hasSolution)
@@ -74,8 +64,6 @@ fun main() {
     else if (m.status == OptimizationStatus.Feasible)
         assert(m.objectiveValue >= 41 - 1e-10)
     // m.validateOptimizationResult() TODO("Finish validation..")
-
-    println("Total runtime = ${(System.currentTimeMillis() - start) / 1000.0} seconds.")
 }
 
 /*

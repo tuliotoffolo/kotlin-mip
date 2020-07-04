@@ -88,9 +88,13 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
 
     override var objective: LinExpr
         get() {
-            TODO("Not yet implemented")
+            val obj = LinExpr(objectiveConst)
+            obj.sense = sense
+            for (v in model.vars)
+                obj += v.obj * v
+            return obj
         }
-        set(value: LinExpr) {
+        set(linExpr: LinExpr) {
             TODO("Not yet implemented")
         }
 
@@ -206,9 +210,9 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         dblByRef1.putDouble(0, -linExpr.const)
 
         val sense = when (linExpr.sense) {
-            '<' -> 'L'.toByte()
-            '=' -> 'E'.toByte()
-            '>' -> 'G'.toByte()
+            LEQ -> 'L'.toByte()
+            EQ -> 'E'.toByte()
+            GEQ -> 'G'.toByte()
             else -> throw IllegalArgumentException("Invalid sense")
         }
         chrByRef1.putByte(0, sense)

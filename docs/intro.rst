@@ -15,7 +15,7 @@ also works with the state-of-the-art `Gurobi <http://www.gurobi.com/>`_
 MIP solver. J-MIP was written in Kotlin in a way to ensure it can be easily
 used by Java programmers.
 
-Modeling examples for some applications can be viewed in :ref:`<chapExamples>`.
+Modeling mip.examples for some applications can be viewed in :ref:`<chapExamples>`.
 
 J-MIP eases the development of high-performance MIP based solvers for
 custom applications by providing a tight integration with the

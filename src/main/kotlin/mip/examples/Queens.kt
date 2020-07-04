@@ -2,69 +2,47 @@ package mip.examples
 
 import mip.*
 
-fun main(args: Array<String>) {
-    val start = System.currentTimeMillis()
-    var checkpoint = System.currentTimeMillis()
-    val runtime: (Long) -> Double = { (System.currentTimeMillis() - it) / 1000.0 }
-
-    // number of queens
+fun main() {
+    // number of queens (n) and range of queens (ns)
     val n = 16
     val ns = 0 until n
 
-    val queens = Model("NQueens", MINIMIZE, GUROBI)
+    val queens = Model("NQueens")
 
-    println("Model started in ${runtime(checkpoint)} seconds!")
-    checkpoint = System.currentTimeMillis()
+    // creating variables
+    val x = ns.map { i -> ns.map { j -> queens.addBinVar("x($i,$j)") } }
 
-    val x = Array(n) { i ->
-        Array(n) { j ->
-            queens.addBinVar("x($i,$j)")
-        }
-    }
-
-    println("Variables created in ${runtime(checkpoint)} seconds!")
-    checkpoint = System.currentTimeMillis()
-
-    // one per row
+    // one queen per row
     for (i in ns)
-        queens += ns.map { j -> x[i][j] } eq 1 named "row_$i"
+        queens += ns.map { j -> x[i][j] } eq 1
 
     // one per column
     for (j in ns)
-        queens += ns.map { i -> x[i][j] } eq 1 named "col_$j"
-
-    println("First constraint set created in ${runtime(checkpoint)} seconds!")
-    checkpoint = System.currentTimeMillis()
+        queens += ns.map { i -> x[i][j] } eq 1
 
     // diagonal \
     for (k in 2 - n until n - 1) {
         val lhs = LinExpr()
         for (i in ns) for (j in ns) if (i - j == k)
             lhs += x[i][j]
-        queens += lhs leq 1 named "diag1_${k.toString().replace("-", "m")}"
+        queens += lhs leq 1
     }
-
-    println("Second constraint set created in ${runtime(checkpoint)} seconds!")
-    checkpoint = System.currentTimeMillis()
 
     // diagonal \
     for (k in 3 until n + n) {
         val lhs = LinExpr()
         for (i in ns) for (j in ns) if (i + j == k)
             lhs += x[i][j]
-        queens += lhs leq 1 named "diag2_$k"
+        queens += lhs leq 1
     }
 
-    println("Third constraint set created in ${runtime(checkpoint)} seconds!")
-
-    // queens.write("queens.lp")
     queens.optimize()
 
-    for (i in ns) {
-        for (j in ns)
-            print(if (x[i][j].x >= EPS) "O " else ". ")
-        println()
+    if (queens.hasSolution) {
+        for (i in ns) {
+            for (j in ns)
+                print(if (x[i][j].x >= EPS) "O " else ". ")
+            println()
+        }
     }
-    println()
-    println("Total runtime: ${runtime(start)} seconds!")
 }

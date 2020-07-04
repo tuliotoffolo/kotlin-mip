@@ -21,8 +21,11 @@ import kotlin.reflect.KProperty
  *
  * @author Túlio Toffolo
  */
-class Model(var name: String = "Model", sense: String = MINIMIZE,
-            override var solverName: String = "") : Parameters() {
+class Model : Parameters {
+
+    var name: String
+    override var sense: String
+    override var solverName: String
 
     // region main components
 
@@ -33,7 +36,11 @@ class Model(var name: String = "Model", sense: String = MINIMIZE,
 
     // endregion main components
 
-    init {
+    @JvmOverloads
+    constructor(name: String = "Model", sense: String = MINIMIZE, solverName: String = "") {
+        this.name = name
+        this.sense = sense
+
         // creating a solver instance
         solver = when (solverName.toUpperCase()) {
             CBC -> mip.solvers.CBC(this, name, sense)
@@ -43,7 +50,7 @@ class Model(var name: String = "Model", sense: String = MINIMIZE,
         }
 
         // updating solver name
-        solverName = solver.solverName
+        this.solverName = solver.solverName
     }
 
     private fun findSolver(sense: String): Solver {
@@ -298,7 +305,7 @@ class Model(var name: String = "Model", sense: String = MINIMIZE,
 
     inline fun remove(variable: Var?) = remove(listOf(variable))
 
-    override fun <T> set(property: KMutableProperty<*>, value: T) = property.setter.call(solver)
+    override fun <T> set(property: KMutableProperty<*>, value: T) = property.setter.call(solver, value)
 
     /**
      * Checks the consistency of the optimization results, i.e., if the solution(s) produced by

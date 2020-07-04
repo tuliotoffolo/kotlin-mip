@@ -36,29 +36,48 @@ inline infix fun Number.eq(other: Var?) = Constr.eq(this, other)
 operator fun Iterable<Any?>.plus(expr: Iterable<Any?>) = LinExpr(this).apply { add(expr) }
 operator fun Iterable<Any?>.plus(expr: LinExpr?) = LinExpr(this).apply { add(expr) }
 operator fun Iterable<Any?>.plus(variable: Var?) = LinExpr(this).apply { add(variable) }
-operator fun Iterable<Any?>.plus(number: Number) = LinExpr(this).apply { add(number) }
+operator fun Iterable<Any?>.plus(number: Number?) = LinExpr(this).apply { add(number) }
 
 operator fun Iterable<Any?>.minus(expr: Iterable<Any?>) = LinExpr(this).apply { sub(expr) }
 operator fun Iterable<Any?>.minus(expr: LinExpr?) = LinExpr(this).apply { sub(expr) }
 operator fun Iterable<Any?>.minus(variable: Var?) = LinExpr(this).apply { sub(variable) }
-operator fun Iterable<Any?>.minus(number: Number) = LinExpr(this).apply { sub(number) }
+operator fun Iterable<Any?>.minus(number: Number?) = LinExpr(this).apply { sub(number) }
 
-operator fun Iterable<Any?>.times(number: Number) = LinExpr(this).apply { multiply(number) }
+operator fun Iterable<Any?>.times(number: Number?) = LinExpr(this).apply { multiply(number) }
 
 inline infix fun Iterable<Any?>.leq(other: Iterable<Any?>) = Constr.leq(this, other)
 inline infix fun Iterable<Any?>.leq(other: LinExpr?) = Constr.leq(this, other)
 inline infix fun Iterable<Any?>.leq(other: Var?) = Constr.leq(this, other)
-inline infix fun Iterable<Any?>.leq(other: Number) = Constr.leq(this, other)
+inline infix fun Iterable<Any?>.leq(other: Number?) = Constr.leq(this, other)
 
 inline infix fun Iterable<Any?>.geq(other: Iterable<Any?>) = Constr.geq(this, other)
 inline infix fun Iterable<Any?>.geq(other: LinExpr?) = Constr.geq(this, other)
 inline infix fun Iterable<Any?>.geq(other: Var?) = Constr.geq(this, other)
-inline infix fun Iterable<Any?>.geq(other: Number) = Constr.geq(this, other)
+inline infix fun Iterable<Any?>.geq(other: Number?) = Constr.geq(this, other)
 
 inline infix fun Iterable<Any?>.eq(other: Iterable<Any?>) = Constr.eq(this, other)
 inline infix fun Iterable<Any?>.eq(other: LinExpr?) = Constr.eq(this, other)
 inline infix fun Iterable<Any?>.eq(other: Var?) = Constr.eq(this, other)
-inline infix fun Iterable<Any?>.eq(other: Number) = Constr.eq(this, other)
+inline infix fun Iterable<Any?>.eq(other: Number?) = Constr.eq(this, other)
 
-inline fun xsum(iterable: Iterable<Any?>): LinExpr = LinExpr(iterable)
-inline fun xsum(vararg elements: Any?): LinExpr = LinExpr(elements.asIterable())
+// region objective helpers (inline functions)
+
+inline fun min(lhs: Iterable<Any?>?) = LinExpr(lhs).apply{sense = MINIMIZE}
+inline fun min(lhs: LinExpr?) = LinExpr(lhs).apply{sense = MINIMIZE}
+inline fun min(lhs: Var?) = LinExpr(lhs).apply{sense = MINIMIZE}
+inline fun min(lhs: Number?) = LinExpr(lhs).apply{sense = MINIMIZE}
+inline fun minimize(lhs: Iterable<Any?>?) = LinExpr(lhs).apply{sense = MINIMIZE}
+inline fun minimize(lhs: LinExpr?) = LinExpr(lhs).apply{sense = MINIMIZE}
+inline fun minimize(lhs: Var?) = LinExpr(lhs).apply{sense = MINIMIZE}
+inline fun minimize(lhs: Number?) = LinExpr(lhs).apply{sense = MINIMIZE}
+
+inline fun max(lhs: Iterable<Any?>?) = LinExpr(lhs).apply{sense = MAXIMIZE}
+inline fun max(lhs: LinExpr?) = LinExpr(lhs).apply{sense = MAXIMIZE}
+inline fun max(lhs: Var?) = LinExpr(lhs).apply{sense = MAXIMIZE}
+inline fun max(lhs: Number?) = LinExpr(lhs).apply{sense = MAXIMIZE}
+inline fun maximize(lhs: Iterable<Any?>?) = LinExpr(lhs).apply{sense = MAXIMIZE}
+inline fun maximize(lhs: LinExpr?) = LinExpr(lhs).apply{sense = MAXIMIZE}
+inline fun maximize(lhs: Var?) = LinExpr(lhs).apply{sense = MAXIMIZE}
+inline fun maximize(lhs: Number?) = LinExpr(lhs).apply{sense = MAXIMIZE}
+
+// endregion

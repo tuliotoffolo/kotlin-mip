@@ -1,4 +1,4 @@
-Documentation for mip/Model.kt
+Model
 ==============================
 
 

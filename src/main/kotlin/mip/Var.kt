@@ -76,13 +76,13 @@ class Var internal constructor(val model: Model, idx: Int) : Comparable<Var> {
     // region kotlin operators
 
     operator fun plus(iterable: Iterable<Any>) = toLinExpr().apply { add(iterable) }
-    operator fun plus(linExpr: LinExpr?) = LinExpr(linExpr).apply { add(this) }
+    operator fun plus(linExpr: LinExpr?) = LinExpr(linExpr).also { it.add(this) }
     operator fun plus(variable: Var?) = toLinExpr().apply { add(variable) }
     operator fun plus(const: Number) = toLinExpr().apply { add(const) }
     operator fun unaryPlus() = this
 
     operator fun minus(iterable: Iterable<Any?>) = toLinExpr().apply { sub(iterable) }
-    operator fun minus(linExpr: LinExpr?) = LinExpr(linExpr).apply { multiply(-1.0); add(this) }
+    operator fun minus(linExpr: LinExpr?) = LinExpr(linExpr).also { it.multiply(-1.0); it.add(this) }
     operator fun minus(variable: Var?) = toLinExpr().apply { sub(variable) }
     operator fun minus(const: Number) = toLinExpr().apply { sub(const) }
     operator fun unaryMinus() = toLinExpr(-1.0)

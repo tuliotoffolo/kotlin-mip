@@ -209,11 +209,11 @@ abstract class Parameters {
      * The following code adds all `x` variables `x[0], ..., x[n-1]`, to the objective function of
      * model `m` with the same cost `w`:
      *
-     *     m.objective = xsum(w*x[i] for i in range(n))
+     *     m.objective = minimize(w * x)
      *
      * A simpler way to define the objective function is the use of the model operator `+=`
      *
-     *     m += xsum(w*x[i] for i in range(n))
+     *     m += minimize(w * x)
      *
      * Note that the only difference of adding a constraint is the lack of *sense* and *rhs*.
      */

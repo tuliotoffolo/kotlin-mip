@@ -2,6 +2,7 @@ package mip.solvers
 
 import jnr.ffi.*
 import mip.*
+import java.lang.Exception
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 
@@ -20,11 +21,24 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     override var objective: LinExpr
         get() {
-            TODO("Not yet implemented")
+            val obj = LinExpr(objectiveConst)
+            obj.sense = sense
+            for (v in model.vars)
+                obj += v.obj * v
+            return obj
         }
-        set(value: LinExpr) {
-            TODO("Not yet implemented")
+        set(linExpr: LinExpr) {
+            if (linExpr.sense == MINIMIZE || linExpr.sense == MAXIMIZE)
+                this.sense = linExpr.sense
+            else if (!linExpr.isAffine)
+                throw Error("Only affine expressions are acceptable in objective functions.")
+
+            this.objectiveConst = linExpr.const
+            for ((v, coeff) in linExpr.terms)
+                lib.Cbc_setObjCoeff(cbc, v.idx, coeff)
         }
+
+    override var objectiveConst: Double = 0.0
 
     override var status = OptimizationStatus.Loaded
         private set
@@ -66,6 +80,7 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
     init {
         // initializing the solver/model
         this.cbc = lib.Cbc_newModel()
+        lib.Cbc_storeNameIndexes(cbc, CBCLibrary.CHAR_ONE)
 
         // setting sense (if needed)
         if (sense == MAXIMIZE)
@@ -78,7 +93,7 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
     override fun addConstr(linExpr: LinExpr, name: String) {
         val nz = linExpr.size
         val rhs = -linExpr.const
-        val sense = linExpr.sense.toByte()
+        val sense = linExpr.sense[0].toByte()
 
         checkBuffer(nz)
         var i = 0L
@@ -174,7 +189,7 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
             "threads" -> lib.Cbc_setParameter(cbc, "threads", value.toString())
             "timeLimit" -> lib.Cbc_setMaximumSeconds(cbc, value as Double)
 
-            else -> throw NotImplementedError("Parameter currently unavailable in CBC interface")
+            else -> throw NotImplementedError("Parameter ${property.name} is currently unavailable in CBC interface")
         }
     }
 

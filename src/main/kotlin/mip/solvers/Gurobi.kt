@@ -1,6 +1,5 @@
 package mip.solvers
 
-import com.sun.javaws.exceptions.InvalidArgumentException
 import jnr.ffi.*
 import jnr.ffi.byref.PointerByReference
 import mip.*
@@ -87,10 +86,14 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
 
     override var objective: LinExpr
         get() {
-            TODO("Not yet implemented")
+            val obj = LinExpr(objectiveConst)
+            obj.sense = sense
+            for (v in model.vars)
+                obj += v.obj * v
+            return obj
         }
-        set(value: LinExpr) {
-            TODO("Not yet implemented")
+        set(linExpr: LinExpr) {
+
         }
 
     override var objectiveConst: Double
@@ -187,7 +190,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     override fun addConstr(linExpr: LinExpr, name: String) {
         val nz = linExpr.size
         val rhs = -linExpr.const
-        val sense = linExpr.sense.toByte()
+        val sense = linExpr.sense[0].toByte()
 
         checkBuffer(nz)
         var i = 0L

@@ -3,7 +3,7 @@ package mip.examples
 import mip.*
 import kotlin.random.Random
 
-fun main(args: Array<String>) {
+fun main() {
     val random = Random(0)
 
     // reading problem data

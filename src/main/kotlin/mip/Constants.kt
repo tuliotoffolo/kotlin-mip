@@ -15,28 +15,29 @@ const val EPS = 10e-64
 const val INF = 1.0 / 0.0
 
 // constraint senses
-const val EQUAL = "="
-const val LESS_OR_EQUAL = "<"
-const val GREATER_OR_EQUAL = ">"
+const val EQ = "=="
+const val LEQ = "<="
+const val GEQ = ">="
 
 // optimization directions
 const val MIN = "MIN"
 const val MAX = "MAX"
-const val MINIMIZE = "MIN"
-const val MAXIMIZE = "MAX"
+const val MINIMIZE = MIN
+const val MAXIMIZE = MAX
 
 // solvers
 const val CBC = "CBC"
 const val CPX = "CPX"    // we plan to support CPLEX in the future
-const val CPLEX = "CPX"  // we plan to support CPLEX in the future
+const val CPLEX = CPX  // we plan to support CPLEX in the future
 const val GRB = "GRB"
-const val GUROBI = "GRB"
+const val GUROBI = GRB
 const val SCIP = "SCIP"  // we plan to support SCIP in the future
 
 // variable types
 const val BINARY = 'B'
 const val CONTINUOUS = 'C'
 const val INTEGER = 'I'
+
 
 /**
  * Different type of cuts (for enabling/disabling)

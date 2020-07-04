@@ -12,13 +12,13 @@ import kotlin.math.abs
 class LinExpr {
 
     var const = 0.0
-    var sense = ' '
+    var sense = ""
     val terms = HashMap<Var, Double>()
 
     /**
      * Returns if this linear expression is affine, i.e. if it has no sense.
      */
-    val isAffine get() = sense == ' '
+    val isAffine get() = sense == "" || sense == MINIMIZE || sense == MAXIMIZE
 
     /**
      * Returns the number of variables within the linear expression.
