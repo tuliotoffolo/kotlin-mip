@@ -2,16 +2,15 @@ package mip.solvers
 
 import jnr.ffi.*
 import mip.*
-import java.lang.Exception
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 
-class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense) {
+class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense) {
 
     override val solverName = "CBC"
 
     private var cbc: Pointer
-    private val lib = CBCLibrary.lib
+    private val lib = CbcJNR.lib
     private val runtime: Runtime = Runtime.getRuntime(lib)
     private var nSolutions = 0
 
@@ -80,7 +79,7 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
     init {
         // initializing the solver/model
         this.cbc = lib.Cbc_newModel()
-        lib.Cbc_storeNameIndexes(cbc, CBCLibrary.CHAR_ONE)
+        lib.Cbc_storeNameIndexes(cbc, CbcJNR.CHAR_ONE)
 
         // setting sense (if needed)
         if (sense == MAXIMIZE)
@@ -89,6 +88,9 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
         lib.fflush(null)
     }
 
+    fun finalize() {
+        // lib.Cbc_deleteModel(cbc)
+    }
 
     override fun addConstr(linExpr: LinExpr, name: String) {
         val nz = linExpr.size
@@ -111,9 +113,9 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
         val nz = column.size
 
         val isInteger = when (varType) {
-            VarType.Binary -> CBCLibrary.CHAR_ONE
-            VarType.Continuous -> CBCLibrary.CHAR_ZERO
-            VarType.Integer -> CBCLibrary.CHAR_ONE
+            VarType.Binary -> CbcJNR.CHAR_ONE
+            VarType.Continuous -> CbcJNR.CHAR_ZERO
+            VarType.Integer -> CbcJNR.CHAR_ONE
         }
 
         if (nz > 0) {
@@ -135,6 +137,8 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
         "cutoff" -> lib.Cbc_getCutoff(cbc)
         "maxMipGap" -> lib.Cbc_getAllowableFractionGap(cbc)
         "maxMipGapAbs" -> lib.Cbc_getAllowableGap(cbc)
+        "maxNodes" -> lib.Cbc_getMaximumNodes(cbc)
+        "maxSeconds" -> lib.Cbc_getMaximumSeconds(cbc)
         "numSolutions" -> lib.Cbc_numberSavedSolutions(cbc)
         "objectiveBound" -> lib.Cbc_getBestPossibleObjValue(cbc)
         "objectiveValue" -> lib.Cbc_getObjValue(cbc)
@@ -184,7 +188,9 @@ class CBC(model: Model, name: String, sense: String) : Solver(model, name, sense
             "cutoff" -> lib.Cbc_setCutoff(cbc, value as Double)
             "maxMipGap" -> lib.Cbc_setAllowableFractionGap(cbc, value as Double)
             "maxMipGapAbs" -> lib.Cbc_setAllowableGap(cbc, value as Double)
-            "seed" -> lib.Cbc_setIntParam(cbc, CBCLibrary.INT_PARAM_RANDOM_SEED, value as Int)
+            "maxNodes" -> lib.Cbc_setMaximumNodes(cbc, value as Int)
+            "maxSeconds" -> lib.Cbc_setMaximumSeconds(cbc, value as Double)
+            "seed" -> lib.Cbc_setIntParam(cbc, CbcJNR.INT_PARAM_RANDOM_SEED, value as Int)
             "sense" -> lib.Cbc_setObjSense(cbc, if (value == MAXIMIZE) -1.0 else 1.0)
             "threads" -> lib.Cbc_setParameter(cbc, "threads", value.toString())
             "timeLimit" -> lib.Cbc_setMaximumSeconds(cbc, value as Double)

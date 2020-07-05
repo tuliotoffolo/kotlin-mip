@@ -8,12 +8,12 @@ import kotlin.reflect.KProperty
 
 class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, sense) {
 
+    override val solverName = "Gurobi"
+
     private var env: Pointer
     private var gurobi: Pointer
-    private val lib = GurobiLibrary.lib
+    private val lib = GurobiJNR.lib
     private val runtime: Runtime = Runtime.getRuntime(lib)
-
-    override val solverName = "Gurobi"
 
     // region properties override
 
@@ -142,6 +142,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
             if (field == null && hasSolution) {
                 field = Memory.allocateDirect(runtime, 8 * numRows)
                 val res = lib.GRBgetdblattrarray(gurobi, "Pi", 0, numRows, field)
+                assert(res == 0)
             }
             return field
         }
@@ -151,6 +152,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
             if (field == null && hasSolution) {
                 field = Memory.allocateDirect(runtime, 8 * numCols)
                 val res = lib.GRBgetdblattrarray(gurobi, "RC", 0, numCols, field)
+                assert(res == 0)
             }
             return field
         }
@@ -160,6 +162,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
             if (field == null && hasSolution) {
                 field = Memory.allocateDirect(runtime, 8 * numCols)
                 val res = lib.GRBgetdblattrarray(gurobi, "X", 0, numCols, field)
+                assert(res == 0)
             }
             return field
         }
@@ -206,8 +209,8 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     override fun addVar(name: String, obj: Double, lb: Double, ub: Double, varType: VarType,
                         column: Column) {
         val nz = column.size
-        val lowerBound = if (lb == -INF) -GurobiLibrary.GRB_INFINITY else lb
-        val upperBound = if (ub == INF) GurobiLibrary.GRB_INFINITY else ub
+        val lowerBound = if (lb == -INF) -GurobiJNR.GRB_INFINITY else lb
+        val upperBound = if (ub == INF) GurobiJNR.GRB_INFINITY else ub
 
         val vtype = when (varType) {
             VarType.Binary -> 'B'.toByte()

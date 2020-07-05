@@ -3,6 +3,7 @@ package mip.examples
 import mip.*
 import kotlin.math.*
 
+private
 fun main() {
     // resource capacities (c), processing times (p), and resource consumptions (u)
     val c = arrayOf(6, 8)
@@ -28,7 +29,7 @@ fun main() {
 
     val x = J.map { j -> T.map { t -> model.addBinVar("x($j, $t") } }
 
-    model += T.map { t -> x[J.last][t] }
+    model.objective = minimize(T.map { t -> x[J.last][t] })
 
     for (j in J)
         model += T.map { t -> x[j][t] } eq 1
@@ -57,3 +58,5 @@ fun main() {
     assert(abs(model.objectiveValue - 21) <= 1e-4)
     // TODO model.check_optimization_results()
 }
+
+fun RCPSP() = main()

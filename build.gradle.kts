@@ -31,8 +31,8 @@ dependencies {
     // implementation("com.kyonifer:koma-core-ejml:0.12")
     // implementation("com.kyonifer:koma-plotting:0.12")
 
-    // testImplementation("org.jetbrains.kotlin:kotlin-test")
-    // testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }
 
 
@@ -78,6 +78,10 @@ tasks {
         configuration {
             includes = listOf("README.md")
         }
+    }
+
+    test {
+        jvmArgs = listOf("-Xss4096k")
     }
 }
 

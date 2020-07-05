@@ -3,6 +3,7 @@ package mip.examples
 import mip.*
 import kotlin.math.roundToInt
 
+private
 fun main() {
     // problem's input data
     val p = arrayOf(10, 13, 18, 31, 7, 15)
@@ -29,3 +30,5 @@ fun main() {
     assert(m.objectiveValue.roundToInt() == 41)
     assert(m.constrs[0].slack.roundToInt() == 1)
 }
+
+fun Knapsack() = main()

@@ -2,6 +2,7 @@ package mip.examples
 
 import mip.*
 
+private
 fun main() {
     val start = System.currentTimeMillis()
     var checkpoint = System.currentTimeMillis()

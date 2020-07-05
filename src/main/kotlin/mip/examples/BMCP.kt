@@ -8,6 +8,7 @@ package mip.examples
 import mip.*
 import kotlin.math.roundToInt
 
+private
 fun main() {
     // number of channels per node (r) and range of channels (N)
     val r = intArrayOf(3, 5, 8, 3, 6, 5, 7, 3)
@@ -65,6 +66,8 @@ fun main() {
         assert(m.objectiveValue >= 41 - 1e-10)
     // m.validateOptimizationResult() TODO("Finish validation..")
 }
+
+fun BMCP() = main()
 
 /*
 

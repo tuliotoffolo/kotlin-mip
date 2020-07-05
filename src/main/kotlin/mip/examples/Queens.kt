@@ -2,6 +2,7 @@ package mip.examples
 
 import mip.*
 
+private
 fun main() {
     // number of queens (n) and range of queens (ns)
     val n = 16
@@ -46,3 +47,5 @@ fun main() {
         }
     }
 }
+
+fun Queens() = main()

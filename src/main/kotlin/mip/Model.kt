@@ -43,7 +43,7 @@ class Model : Parameters {
 
         // creating a solver instance
         solver = when (solverName.toUpperCase()) {
-            CBC -> mip.solvers.CBC(this, name, sense)
+            CBC -> mip.solvers.Cbc(this, name, sense)
             CPLEX -> mip.solvers.Cplex(this, name, sense)
             GUROBI -> mip.solvers.Gurobi(this, name, sense)
             else -> findSolver(sense)
@@ -54,7 +54,7 @@ class Model : Parameters {
     }
 
     private fun findSolver(sense: String): Solver {
-        return mip.solvers.CBC(this, name, sense)
+        return mip.solvers.Cbc(this, name, sense)
         // TODO("Find an available solver")
     }
 

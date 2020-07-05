@@ -3,6 +3,8 @@ package mip.examples
 import mip.*
 import kotlin.math.roundToInt
 
+private
+
 fun main() {
     // names of places to visit
     val places = arrayOf(
@@ -53,7 +55,6 @@ fun main() {
         for (j in 1 until n) if (i != j)
             model += y[i] - n * x[i][j] geq y[j] - (n - 1)
 
-    model.maxSeconds = 30.0
     model.optimize()
 
     // checking if a solution was found and printing it
@@ -71,8 +72,8 @@ fun main() {
     }
 
     // sanity tests
-    if (model.status == OptimizationStatus.Optimal) {
-        assert(model.objectiveValue.roundToInt() == 547)
-        // TODO model.checkOptimizationStatus()
-    }
+    assert(model.objectiveValue.roundToInt() == 547)
+    // TODO model.checkOptimizationStatus()
 }
+
+fun TSPCompact() = main()

@@ -6,17 +6,17 @@ import jnr.ffi.types.*
 import jnr.ffi.annotations.Delegate
 import java.io.File
 
-internal interface CBCLibrary {
+internal interface CbcJNR {
 
     fun fflush(stream: Pointer?) = CLibrary.lib.fflush(stream)
 
     companion object {
 
         @JvmStatic
-        val lib: CBCLibrary
+        val lib: CbcJNR
 
         init {
-            var library: String? = null
+            var library: String?
             var libLocation: String? = System.getProperty("user.dir") + File.separatorChar
 
             val platform = Platform.getNativePlatform();
@@ -40,7 +40,7 @@ internal interface CBCLibrary {
             }
 
             this.lib = LibraryLoader
-                .create(CBCLibrary::class.java)
+                .create(CbcJNR::class.java)
                 .failImmediately()
                 .load(libLocation + File.separatorChar + library)
 

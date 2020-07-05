@@ -1,17 +1,16 @@
 package mip.solvers
 
 import jnr.ffi.*
-import jnr.ffi.byref.ByteByReference
 import jnr.ffi.byref.PointerByReference
 
-internal interface CplexLibrary {
+internal interface CplexJNR {
 
     fun fflush(stream: Pointer?) = CLibrary.lib.fflush(stream)
 
     companion object {
 
         @JvmStatic
-        val lib: CplexLibrary
+        val lib: CplexJNR
 
         init {
             val platform = Platform.getNativePlatform();
@@ -24,11 +23,11 @@ internal interface CplexLibrary {
                 else -> emptyList()
             }
 
-            var lib: CplexLibrary? = null
+            var lib: CplexJNR? = null
             for (library in libNames) {
                 try {
                     lib = LibraryLoader
-                        .create(CplexLibrary::class.java)
+                        .create(CplexJNR::class.java)
                         .failImmediately()
                         .load(library)
                 }

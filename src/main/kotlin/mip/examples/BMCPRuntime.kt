@@ -8,6 +8,7 @@ package mip.examples
 import mip.*
 import kotlin.math.roundToInt
 
+private
 fun main() {
     val start = System.currentTimeMillis()
     val runtime: (Long) -> Double = { (System.currentTimeMillis() - it) / 1000.0 }

@@ -3,6 +3,8 @@ package mip.examples
 import mip.*
 import kotlin.random.Random
 
+private
+
 fun main() {
     val random = Random(0)
 

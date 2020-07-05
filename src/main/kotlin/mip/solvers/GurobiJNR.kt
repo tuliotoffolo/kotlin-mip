@@ -1,26 +1,17 @@
 package mip.solvers
 
-import com.sun.xml.internal.fastinfoset.util.StringArray
 import jnr.ffi.*
-import jnr.ffi.types.*
 import jnr.ffi.annotations.Out
-import jnr.ffi.annotations.Transient
-import jnr.ffi.Struct.SignedLong
-import jnr.ffi.Struct.time_t
-import jnr.ffi.byref.ByReference
-import jnr.ffi.byref.DoubleByReference
-import jnr.ffi.byref.IntByReference
 import jnr.ffi.byref.PointerByReference
-import java.io.File
 
-internal interface GurobiLibrary {
+internal interface GurobiJNR {
 
     fun fflush(stream: Pointer?) = CLibrary.lib.fflush(stream)
 
     companion object {
 
         @JvmStatic
-        val lib: GurobiLibrary
+        val lib: GurobiJNR
 
         init {
             val platform = Platform.getNativePlatform();
@@ -32,11 +23,11 @@ internal interface GurobiLibrary {
                 else -> emptyList()
             }
 
-            var lib: GurobiLibrary? = null
+            var lib: GurobiJNR? = null
             for (library in libNames) {
                 try {
                     lib = LibraryLoader
-                        .create(GurobiLibrary::class.java)
+                        .create(GurobiJNR::class.java)
                         .failImmediately()
                         .load(library)
                 }
