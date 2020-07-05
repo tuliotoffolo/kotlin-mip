@@ -81,7 +81,7 @@ tasks {
     }
 
     test {
-        jvmArgs = listOf("-Xss4096k")
+        jvmArgs = listOf("-Xss4m")
     }
 }
 
