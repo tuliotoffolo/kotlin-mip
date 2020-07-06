@@ -10,7 +10,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     override val solverName = "CBC"
 
     private var cbc: Pointer
-    private val lib = CbcJNR.lib
+    private val lib = CbcLibrary.lib
     private val runtime: Runtime = Runtime.getRuntime(lib)
     private var nSolutions = 0
 
@@ -63,7 +63,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     // region buffers
 
-    private var bufferLength = 8192
+    private var bufferLength = 1024
     private var dblBuffer = Memory.allocateDirect(runtime, bufferLength * 8)
     private var intBuffer = Memory.allocateDirect(runtime, bufferLength * 4)
     private var strBuffer = Memory.allocateDirect(runtime, bufferLength * 1)
@@ -96,7 +96,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     init {
         // initializing the solver/model
         this.cbc = lib.Cbc_newModel()
-        lib.Cbc_storeNameIndexes(cbc, CbcJNR.CHAR_ONE)
+        lib.Cbc_storeNameIndexes(cbc, CbcLibrary.CHAR_ONE)
 
         // setting sense (if needed)
         if (sense == MAXIMIZE)
@@ -130,9 +130,9 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         val nz = column.size
 
         val isInteger = when (varType) {
-            VarType.Binary -> CbcJNR.CHAR_ONE
-            VarType.Continuous -> CbcJNR.CHAR_ZERO
-            VarType.Integer -> CbcJNR.CHAR_ONE
+            VarType.Binary -> CbcLibrary.CHAR_ONE
+            VarType.Continuous -> CbcLibrary.CHAR_ZERO
+            VarType.Integer -> CbcLibrary.CHAR_ONE
         }
 
         if (nz > 0) {
@@ -207,7 +207,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
             "maxMipGapAbs" -> lib.Cbc_setAllowableGap(cbc, value as Double)
             "maxNodes" -> lib.Cbc_setMaximumNodes(cbc, value as Int)
             "maxSeconds" -> lib.Cbc_setMaximumSeconds(cbc, value as Double)
-            "seed" -> lib.Cbc_setIntParam(cbc, CbcJNR.INT_PARAM_RANDOM_SEED, value as Int)
+            "seed" -> lib.Cbc_setIntParam(cbc, CbcLibrary.INT_PARAM_RANDOM_SEED, value as Int)
             "sense" -> lib.Cbc_setObjSense(cbc, if (value == MAXIMIZE) -1.0 else 1.0)
             "threads" -> lib.Cbc_setParameter(cbc, "threads", value.toString())
             "timeLimit" -> lib.Cbc_setMaximumSeconds(cbc, value as Double)

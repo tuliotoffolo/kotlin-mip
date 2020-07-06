@@ -4,14 +4,14 @@ import jnr.ffi.*
 import jnr.ffi.annotations.Out
 import jnr.ffi.byref.PointerByReference
 
-internal interface GurobiJNR {
+internal interface GurobiLibrary {
 
     fun fflush(stream: Pointer?) = CLibrary.lib.fflush(stream)
 
     companion object {
 
         @JvmStatic
-        val lib: GurobiJNR
+        val lib: GurobiLibrary
 
         init {
             val platform = Platform.getNativePlatform();
@@ -23,11 +23,11 @@ internal interface GurobiJNR {
                 else -> emptyList()
             }
 
-            var lib: GurobiJNR? = null
+            var lib: GurobiLibrary? = null
             for (library in libNames) {
                 try {
                     lib = LibraryLoader
-                        .create(GurobiJNR::class.java)
+                        .create(GurobiLibrary::class.java)
                         .failImmediately()
                         .load(library)
                 }
