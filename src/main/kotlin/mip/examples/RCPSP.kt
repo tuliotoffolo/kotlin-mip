@@ -29,7 +29,7 @@ fun main() {
 
     val x = J.map { j -> T.map { t -> model.addBinVar("x($j, $t") } }
 
-    model.objective = minimize(T.map { t -> x[J.last][t] })
+    model.objective = minimize(T.map { t -> t * x[J.last][t] })
 
     for (j in J)
         model += T.map { t -> x[j][t] } eq 1

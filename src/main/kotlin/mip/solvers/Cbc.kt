@@ -39,8 +39,25 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     override var objectiveConst: Double = 0.0
 
-    override var status = OptimizationStatus.Loaded
-        private set
+    override val status: OptimizationStatus
+        get() {
+            if (lib.Cbc_isProvenOptimal(cbc) != 0)
+                return OptimizationStatus.Optimal
+
+            if (lib.Cbc_isAbandoned(cbc) != 0)
+                return OptimizationStatus.Error
+
+            if (lib.Cbc_isProvenInfeasible(cbc) != 0)
+                return OptimizationStatus.Infeasible
+
+            if (lib.Cbc_isContinuousUnbounded(cbc) != 0)
+                return OptimizationStatus.Unbounded
+
+            if (lib.Cbc_getNumIntegers(cbc) != 0)
+                return OptimizationStatus.Feasible
+
+            return OptimizationStatus.Other
+        }
 
     // endregion properties override
 
@@ -89,7 +106,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     }
 
     fun finalize() {
-        // lib.Cbc_deleteModel(cbc)
+        lib.Cbc_deleteModel(cbc)
     }
 
     override fun addConstr(linExpr: LinExpr, name: String) {
