@@ -22,7 +22,6 @@ configurations {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     implementation("com.github.jnr:jnr-ffi:2.1.14")
     // implementation("com.github.jnr:jnr-posix:3.0.54")
@@ -30,6 +29,8 @@ dependencies {
 
     // implementation("com.kyonifer:koma-core-ejml:0.12")
     // implementation("com.kyonifer:koma-plotting:0.12")
+
+    // implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
@@ -95,6 +96,6 @@ tasks.register<Jar>("queens") {
     )
     from(sourceSets.main.get().output)
     manifest {
-        attributes["Main-Class"] = "mip.examples.QueensKt"
+        attributes["Main-Class"] = "mip.examples.QueensRuntimeKt"
     }
 }

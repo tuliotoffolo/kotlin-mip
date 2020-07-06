@@ -21,20 +21,16 @@ import kotlin.reflect.KProperty
  *
  * @author Túlio Toffolo
  */
-class Model : Parameters {
+class Model : ModelParameters {
 
     var name: String
     override var sense: String
     override var solverName: String
 
-    // region main components
-
     val constrs = ArrayList<Constr>()
     val vars = ArrayList<Var>()
 
-    val solver: Solver
-
-    // endregion main components
+    override var solver: Solver
 
     @JvmOverloads
     constructor(name: String = "Model", sense: String = MINIMIZE, solverName: String = "") {
@@ -248,8 +244,6 @@ class Model : Parameters {
 
     // endregion addVar aliases
 
-    override fun get(property: KProperty<*>) = property.getter.call(solver)!!
-
     fun optimize(): OptimizationStatus {
         solver.optimize()
         return status
@@ -304,8 +298,6 @@ class Model : Parameters {
     inline fun remove(constr: Constr?) = remove(listOf(constr))
 
     inline fun remove(variable: Var?) = remove(listOf(variable))
-
-    override fun <T> set(property: KMutableProperty<*>, value: T) = property.setter.call(solver, value)
 
     /**
      * Checks the consistency of the optimization results, i.e., if the solution(s) produced by
