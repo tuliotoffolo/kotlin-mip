@@ -11,7 +11,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
 
     private var env: Pointer
     private var lp: Pointer
-    private val lib = CplexJNR.lib
+    private val lib = CplexJnr.lib
     private val runtime: Runtime = Runtime.getRuntime(lib)
 
     // region properties override
@@ -51,40 +51,40 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
 
     // override var clique: Int
     override var cutoff: Double
-        get() = getDblParam(if (sense == MAXIMIZE) CplexJNR.CPX_PARAM_CUTUP else CplexJNR.CPX_PARAM_CUTLO)
-        set(value) = setDblParam(if (sense == MAXIMIZE) CplexJNR.CPX_PARAM_CUTUP else CplexJNR.CPX_PARAM_CUTLO, value)
+        get() = getDblParam(if (sense == MAXIMIZE) CplexJnr.CPX_PARAM_CUTUP else CplexJnr.CPX_PARAM_CUTLO)
+        set(value) = setDblParam(if (sense == MAXIMIZE) CplexJnr.CPX_PARAM_CUTUP else CplexJnr.CPX_PARAM_CUTLO, value)
 
     // override var cutPasses: Int
     // override var cuts: Int
     // override var cutsGenerator: Int
 
     override var infeasTol: Double
-        get() = getDblParam(CplexJNR.CPXPARAM_Feasopt_Tolerance)
-        set(value) = setDblParam(CplexJNR.CPXPARAM_Feasopt_Tolerance, value)
+        get() = getDblParam(CplexJnr.CPXPARAM_Feasopt_Tolerance)
+        set(value) = setDblParam(CplexJnr.CPXPARAM_Feasopt_Tolerance, value)
 
     // override var integerTol: Int
     // override var lazyConstrsGenerator: Int
     // override var lpMethod: LPMethod
 
     override var maxMipGap: Double
-        get() = getDblParam(CplexJNR.CPXPARAM_MIP_Tolerances_MIPGap)
-        set(value) = setDblParam(CplexJNR.CPXPARAM_MIP_Tolerances_MIPGap, value)
+        get() = getDblParam(CplexJnr.CPXPARAM_MIP_Tolerances_MIPGap)
+        set(value) = setDblParam(CplexJnr.CPXPARAM_MIP_Tolerances_MIPGap, value)
 
     override var maxMipGapAbs: Double
-        get() = getDblParam(CplexJNR.CPXPARAM_MIP_Tolerances_AbsMIPGap)
-        set(value) = setDblParam(CplexJNR.CPXPARAM_MIP_Tolerances_AbsMIPGap, value)
+        get() = getDblParam(CplexJnr.CPXPARAM_MIP_Tolerances_AbsMIPGap)
+        set(value) = setDblParam(CplexJnr.CPXPARAM_MIP_Tolerances_AbsMIPGap, value)
 
     override var maxNodes: Int
-        get() = getIntParam(CplexJNR.CPXPARAM_MIP_Limits_Nodes)
-        set(value) = setIntParam(CplexJNR.CPXPARAM_MIP_Limits_Nodes, value)
+        get() = getIntParam(CplexJnr.CPXPARAM_MIP_Limits_Nodes)
+        set(value) = setIntParam(CplexJnr.CPXPARAM_MIP_Limits_Nodes, value)
 
     override var maxSeconds: Double
-        get() = getDblParam(CplexJNR.CPXPARAM_TimeLimit)
-        set(value) = setDblParam(CplexJNR.CPXPARAM_TimeLimit, value)
+        get() = getDblParam(CplexJnr.CPXPARAM_TimeLimit)
+        set(value) = setDblParam(CplexJnr.CPXPARAM_TimeLimit, value)
 
     override var maxSolutions: Int
-        get() = getIntParam(CplexJNR.CPXPARAM_MIP_Limits_Solutions)
-        set(value) = setIntParam(CplexJNR.CPXPARAM_MIP_Limits_Solutions, value)
+        get() = getIntParam(CplexJnr.CPXPARAM_MIP_Limits_Solutions)
+        set(value) = setIntParam(CplexJnr.CPXPARAM_MIP_Limits_Solutions, value)
 
     override var objective: LinExpr
         get() {
@@ -108,23 +108,23 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         }
 
     override var optTol: Double
-        get() = getDblParam(CplexJNR.CPXPARAM_MIP_Tolerances_RelObjDifference)
-        set(value) = setDblParam(CplexJNR.CPXPARAM_MIP_Tolerances_RelObjDifference, value)
+        get() = getDblParam(CplexJnr.CPXPARAM_MIP_Tolerances_RelObjDifference)
+        set(value) = setDblParam(CplexJnr.CPXPARAM_MIP_Tolerances_RelObjDifference, value)
 
     // override var plog: Boolean
     // override var preprocess: Int
     // override var roundIntVars: Boolean
 
     override var seed: Int
-        get() = getIntParam(CplexJNR.CPXPARAM_RandomSeed)
-        set(value) = setIntParam(CplexJNR.CPXPARAM_RandomSeed, value)
+        get() = getIntParam(CplexJnr.CPXPARAM_RandomSeed)
+        set(value) = setIntParam(CplexJnr.CPXPARAM_RandomSeed, value)
 
     override var sense: String
-        get() = if (lib.CPXgetobjsen(env, lp) == CplexJNR.CPX_MIN) MINIMIZE else MAXIMIZE
+        get() = if (lib.CPXgetobjsen(env, lp) == CplexJnr.CPX_MIN) MINIMIZE else MAXIMIZE
         set(value) {
             when (value) {
-                MINIMIZE -> lib.CPXchgobjsen(env, lp, CplexJNR.CPX_MIN)
-                MAXIMIZE -> lib.CPXchgobjsen(env, lp, CplexJNR.CPX_MAX)
+                MINIMIZE -> lib.CPXchgobjsen(env, lp, CplexJnr.CPX_MIN)
+                MAXIMIZE -> lib.CPXchgobjsen(env, lp, CplexJnr.CPX_MAX)
                 else -> throw IllegalArgumentException("Model sense '$value' is invalid.")
             }
         }
@@ -134,8 +134,8 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     // override var storeSearchProgressLog: Double
 
     override var threads: Int
-        get() = getIntParam(CplexJNR.CPXPARAM_Threads)
-        set(value) = setIntParam(CplexJNR.CPXPARAM_Threads, value)
+        get() = getIntParam(CplexJnr.CPXPARAM_Threads)
+        set(value) = setIntParam(CplexJnr.CPXPARAM_Threads, value)
 
     // endregion properties override
 
@@ -203,7 +203,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
 
         // setting sense (if needed)
         if (sense == MAXIMIZE)
-            lib.CPXchgobjsen(env, lp, CplexJNR.CPX_MAX)
+            lib.CPXchgobjsen(env, lp, CplexJnr.CPX_MAX)
 
         lib.fflush(null)
     }
@@ -241,8 +241,8 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
                         column: Column) {
         // val nz = column.size
         dblByRef1.putDouble(0, obj)
-        dblByRef2.putDouble(0, if (lb == -INF) -GurobiJNR.GRB_INFINITY else lb)
-        dblByRef3.putDouble(0, if (ub == INF) GurobiJNR.GRB_INFINITY else ub)
+        dblByRef2.putDouble(0, if (lb == -INF) -GurobiJnr.GRB_INFINITY else lb)
+        dblByRef3.putDouble(0, if (ub == INF) GurobiJnr.GRB_INFINITY else ub)
 
         val vtype = when (varType) {
             VarType.Binary -> 'B'.toByte()

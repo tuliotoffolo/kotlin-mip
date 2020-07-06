@@ -6,14 +6,14 @@ import jnr.ffi.types.*
 import jnr.ffi.annotations.Delegate
 import java.io.File
 
-internal interface CbcJNR {
+internal interface CbcJnr {
 
     fun fflush(stream: Pointer?) = CLibrary.lib.fflush(stream)
 
     companion object {
 
         @JvmStatic
-        val lib: CbcJNR
+        val lib: CbcJnr
 
         init {
             var library: String?
@@ -40,7 +40,7 @@ internal interface CbcJNR {
             }
 
             this.lib = LibraryLoader
-                .create(CbcJNR::class.java)
+                .create(CbcJnr::class.java)
                 .failImmediately()
                 .load(libLocation + File.separatorChar + library)
 

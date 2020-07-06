@@ -12,7 +12,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
 
     private var env: Pointer
     private var gurobi: Pointer
-    private val lib = GurobiJNR.lib
+    private val lib = GurobiJnr.lib
     private val runtime: Runtime = Runtime.getRuntime(lib)
 
     // region properties override
@@ -209,8 +209,8 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     override fun addVar(name: String, obj: Double, lb: Double, ub: Double, varType: VarType,
                         column: Column) {
         val nz = column.size
-        val lowerBound = if (lb == -INF) -GurobiJNR.GRB_INFINITY else lb
-        val upperBound = if (ub == INF) GurobiJNR.GRB_INFINITY else ub
+        val lowerBound = if (lb == -INF) -GurobiJnr.GRB_INFINITY else lb
+        val upperBound = if (ub == INF) GurobiJnr.GRB_INFINITY else ub
 
         val vtype = when (varType) {
             VarType.Binary -> 'B'.toByte()
