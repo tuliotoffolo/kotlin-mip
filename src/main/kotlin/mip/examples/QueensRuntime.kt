@@ -4,14 +4,14 @@ import mip.*
 
 private
 fun main() {
-    val temp = readLine()
+    // val temp = readLine()
 
     val start = System.currentTimeMillis()
     var checkpoint = System.currentTimeMillis()
     val runtime: (Long) -> Double = { (System.currentTimeMillis() - it) / 1000.0 }
 
     // number of queens
-    val n = 250
+    val n = 1000
     val ns = 0 until n
 
     val queens = Model("NQueens", MINIMIZE)
@@ -60,9 +60,9 @@ fun main() {
 
     println("Third constraint set created in ${runtime(checkpoint)} seconds!")
 
-    // queens.write("queens.lp")
+    queens.write("queens.lp")
     // queens.optimize()
-    //
+
     // for (i in ns) {
     //     for (j in ns)
     //         print(if (x[i][j].x >= EPS) "O " else ". ")
@@ -71,3 +71,5 @@ fun main() {
     println()
     println("Total runtime: ${runtime(start)} seconds!")
 }
+
+fun QueensRuntime() = main()

@@ -10,7 +10,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     override val solverName = "CBC"
 
     private var cbc: Pointer
-    private val lib = CbcLibrary.lib
+    private val lib = CbcJnr.loadLibrary()
     private val runtime: Runtime = Runtime.getRuntime(lib)
     private var nSolutions = 0
 
@@ -63,10 +63,10 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     // region buffers
 
-    private var bufferLength = 1024
-    private var dblBuffer = Memory.allocateDirect(runtime, bufferLength * 8)
-    private var intBuffer = Memory.allocateDirect(runtime, bufferLength * 4)
-    private var strBuffer = Memory.allocateDirect(runtime, bufferLength * 1)
+    // private var bufferLength = 1024
+    // private var dblBuffer = Memory.allocateDirect(runtime, bufferLength * 8)
+    // private var intBuffer = Memory.allocateDirect(runtime, bufferLength * 4)
+    // private var strBuffer = Memory.allocateDirect(runtime, bufferLength * 1)
 
     private var pi: Pointer? = null
         get() {
@@ -102,11 +102,11 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         if (sense == MAXIMIZE)
             this.sense = MAXIMIZE
 
-        lib.fflush(null)
+        // lib.fflush(null)
     }
 
     fun finalize() {
-        lib.Cbc_deleteModel(cbc)
+        // lib.Cbc_deleteModel(cbc)
     }
 
     override fun addConstr(linExpr: LinExpr, name: String) {
@@ -114,11 +114,12 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         val rhs = -linExpr.const
         val sense = linExpr.sense[0].toByte()
 
-        checkBuffer(nz)
-        var i = 0L
+        val intBuffer = IntArray(nz)
+        val dblBuffer = DoubleArray(nz)
+        var i = 0
         for ((v, coeff) in linExpr.terms) {
-            intBuffer.putInt(4L * i, v.idx)
-            dblBuffer.putDouble(8L * i, coeff)
+            intBuffer[i] = v.idx
+            dblBuffer[i] = coeff
             i++
         }
 
@@ -136,11 +137,12 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         }
 
         if (nz > 0) {
-            checkBuffer(nz)
-            var i = 0L
+            val intBuffer = IntArray(nz)
+            val dblBuffer = DoubleArray(nz)
+            var i = 0
             for ((constr, coeff) in column.terms) {
-                intBuffer.putInt(4 * i, constr.idx)
-                dblBuffer.putDouble(8 * i, coeff)
+                intBuffer[i] = constr.idx
+                dblBuffer[i] = coeff
                 i++
             }
             lib.Cbc_addCol(cbc, name, lb, ub, obj, isInteger, nz, intBuffer, dblBuffer)
@@ -175,7 +177,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         }
 
         // flushing stdout
-        lib.fflush(null)
+        // lib.fflush(null)
 
         return OptimizationStatus.Other
     }
@@ -183,9 +185,9 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     override fun removeConstrs(constrs: Iterable<Constr>) {
         val size = if (constrs is Collection<*>) constrs.size else constrs.count()
         if (size > 0) {
-            checkBuffer(size)
+            val intBuffer = IntArray(size)
             for ((i, constr) in constrs.withIndex())
-                intBuffer.putInt(4 * i.toLong(), constr.idx)
+                intBuffer[i] = constr.idx
             lib.Cbc_deleteRows(cbc, size, intBuffer)
         }
     }
@@ -193,9 +195,9 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     override fun removeVars(vars: Iterable<Var>) {
         val size = if (vars is Collection<*>) vars.size else vars.count()
         if (size > 0) {
-            checkBuffer(size)
+            val intBuffer = IntArray(size)
             for ((i, variable) in vars.withIndex())
-                intBuffer.putInt(4 * i.toLong(), variable.idx)
+                intBuffer[i] = variable.idx
             lib.Cbc_deleteCols(cbc, size, intBuffer)
         }
     }
@@ -230,8 +232,9 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     override fun setConstrExpr(idx: Int, value: LinExpr): Unit = throw NotImplementedError()
 
     override fun getConstrName(idx: Int): String {
+        val strBuffer = String()
         lib.Cbc_getRowName(cbc, idx, strBuffer, 1024)
-        return strBuffer.getString(0)
+        return strBuffer
     }
 
     override fun getConstrPi(idx: Int): Double =
@@ -247,19 +250,21 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     // region variable getters and setters
 
     override fun getVarColumn(idx: Int): Column {
-        val nz = lib.Cbc_getColNz(cbc, idx)
-        if (nz == 0) return Column()
-
-        val cidx = lib.Cbc_getColIndices(cbc, idx)
-        val ccoeff = lib.Cbc_getColCoeffs(cbc, idx)
-
-        if (cidx.getPointer(0) == null || ccoeff.getPointer(0) == null)
-            throw Error("Error getting column indices and/or column coefficients")
-
-        val constrs = List<Constr>(nz) { model.constrs[cidx.getInt(4 * it.toLong())] }
-        val coeffs = List<Double>(nz) { ccoeff.getDouble(8 * it.toLong()) }
-
-        return Column(constrs, coeffs)
+        // TODO
+        // val nz = lib.Cbc_getColNz(cbc, idx)
+        // if (nz == 0) return Column()
+        //
+        // val cidx = lib.Cbc_getColIndices(cbc, idx)
+        // val ccoeff = lib.Cbc_getColCoeffs(cbc, idx)
+        //
+        // if (cidx.getPointer(0) == null || ccoeff.getPointer(0) == null)
+        //     throw Error("Error getting column indices and/or column coefficients")
+        //
+        // val constrs = List<Constr>(nz) { model.constrs[cidx.getInt(4 * it.toLong())] }
+        // val coeffs = List<Double>(nz) { ccoeff.getDouble(8 * it.toLong()) }
+        //
+        // return Column(constrs, coeffs)
+        return Column.EMPTY
     }
 
     override fun setVarColumn(idx: Int, value: Column) =
@@ -269,8 +274,9 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     override fun setVarLB(idx: Int, value: Double) = lib.Cbc_setColLower(cbc, idx, value)
 
     override fun getVarName(idx: Int): String {
+        val strBuffer = String()
         lib.Cbc_getColName(cbc, idx, strBuffer, 1024)
-        return strBuffer.getString(0)
+        return strBuffer
     }
 
     override fun getVarObj(idx: Int): Double = lib.Cbc_getColObj(cbc, idx)
@@ -310,7 +316,6 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         if (idx == 0) return getVarX(idx)
 
         return getSolutionIdx(i)?.getDouble(8 * idx.toLong())
-            ?: throw Error("Solution $i not available")
     }
 
     // endregion variable getters and setters
@@ -318,15 +323,15 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     // region private useful functions
 
     private fun checkBuffer(nz: Int) {
-        if (nz > bufferLength) {
-            bufferLength = nz
-            dblBuffer = Memory.allocateDirect(runtime, bufferLength * 8)
-            intBuffer = Memory.allocateDirect(runtime, bufferLength * 4)
-        }
+        // if (nz > bufferLength) {
+        //     bufferLength = nz
+        //     dblBuffer = Memory.allocateDirect(runtime, bufferLength * 8)
+        //     intBuffer = Memory.allocateDirect(runtime, bufferLength * 4)
+        // }
     }
 
-    private fun getSolutionIdx(idx: Int): Pointer? {
-        if (idx in solutions) return solutions[idx]
+    private fun getSolutionIdx(idx: Int): Pointer {
+        if (idx in solutions) return solutions[idx]!!
 
         val sol = lib.Cbc_savedSolution(cbc, idx)
         solutions[idx] = sol
