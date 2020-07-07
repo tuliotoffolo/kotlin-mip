@@ -19,12 +19,12 @@ interface CbcJnrLibrary {
     /**
      * void Cbc_readLp(Cbc_Model *model, const char *file);
      */
-    fun Cbc_readLp(@In model: Pointer, @In @Transient file: String)
+    fun Cbc_readLp(@Pinned @In model: Pointer, @Pinned @In @Transient file: String)
 
     /**
      * void Cbc_readMps(Cbc_Model *model, const char *file);
      */
-    fun Cbc_readMps(@In model: Pointer, @In @Transient file: String)
+    fun Cbc_readMps(@Pinned @In model: Pointer, @Pinned @In @Transient file: String)
 
     /**
      * char Cbc_supportsGzip();
@@ -39,251 +39,251 @@ interface CbcJnrLibrary {
     /**
      * void Cbc_writeLp(Cbc_Model *model, const char *file);
      */
-    fun Cbc_writeLp(@In model: Pointer, @In @Transient file: String)
+    fun Cbc_writeLp(@Pinned @In model: Pointer, @Pinned @In @Transient file: String)
 
     /**
      * void Cbc_writeMps(Cbc_Model *model, const char *file);
      */
-    fun Cbc_writeMps(@In model: Pointer, @In @Transient file: String)
+    fun Cbc_writeMps(@Pinned @In model: Pointer, @Pinned @In @Transient file: String)
 
     /**
      * int Cbc_getNumCols(Cbc_Model *model);
      */
-    fun Cbc_getNumCols(@In model: Pointer): Int
+    fun Cbc_getNumCols(@Pinned @In model: Pointer): Int
 
     /**
      * int Cbc_getNumRows(Cbc_Model *model);
      */
-    fun Cbc_getNumRows(@In model: Pointer): Int
+    fun Cbc_getNumRows(@Pinned @In model: Pointer): Int
 
     /**
      * int Cbc_getNumIntegers(Cbc_Model *model);
      */
-    fun Cbc_getNumIntegers(@In model: Pointer): Int
+    fun Cbc_getNumIntegers(@Pinned @In model: Pointer): Int
 
     /**
      * int Cbc_getNumElements(Cbc_Model *model);
      */
-    fun Cbc_getNumElements(@In model: Pointer): Int
+    fun Cbc_getNumElements(@Pinned @In model: Pointer): Int
 
     /**
      * int Cbc_getRowNz(Cbc_Model *model, int row);
      */
-    fun Cbc_getRowNz(@In model: Pointer, row: Int): Int
+    fun Cbc_getRowNz(@Pinned @In model: Pointer, row: Int): Int
 
     /**
      * int *Cbc_getRowIndices(Cbc_Model *model, int row);
      */
-    fun Cbc_getRowIndices(@In model: Pointer, row: Int): Pointer
+    fun Cbc_getRowIndices(@Pinned @In model: Pointer, row: Int): Pointer
 
     /**
      * double *Cbc_getRowCoeffs(Cbc_Model *model, int row);
      */
-    fun Cbc_getRowCoeffs(@In model: Pointer, row: Int): Pointer
+    fun Cbc_getRowCoeffs(@Pinned @In model: Pointer, row: Int): Pointer
 
     /**
      * double Cbc_getRowRHS(Cbc_Model *model, int row);
      */
-    fun Cbc_getRowRHS(@In model: Pointer, row: Int): Double
+    fun Cbc_getRowRHS(@Pinned @In model: Pointer, row: Int): Double
 
     /**
      * void Cbc_setRowRHS(Cbc_Model *model, int row, double rhs);
      */
-    fun Cbc_setRowRHS(@In model: Pointer, row: Int, rhs: Double)
+    fun Cbc_setRowRHS(@Pinned @In model: Pointer, row: Int, rhs: Double)
 
     /**
      * char Cbc_getRowSense(Cbc_Model *model, int row);
      */
-    fun Cbc_getRowSense(@In model: Pointer, row: Int): Byte
+    fun Cbc_getRowSense(@Pinned @In model: Pointer, row: Int): Byte
 
     /**
      * const double *Cbc_getRowActivity(Cbc_Model *model);
      */
-    fun Cbc_getRowActivity(@In model: Pointer): Pointer
+    fun Cbc_getRowActivity(@Pinned @In model: Pointer): Pointer
 
     /**
      * const double *Cbc_getRowSlack(Cbc_Model *model);
      */
-    fun Cbc_getRowSlack(@In model: Pointer): Pointer
+    fun Cbc_getRowSlack(@Pinned @In model: Pointer): Pointer
 
     /**
      * int Cbc_getColNz(Cbc_Model *model, int col);
      */
-    fun Cbc_getColNz(@In model: Pointer, col: Int): Int
+    fun Cbc_getColNz(@Pinned @In model: Pointer, col: Int): Int
 
     /**
      * int *Cbc_getColIndices(Cbc_Model *model, int col);
      */
-    fun Cbc_getColIndices(@In model: Pointer, col: Int): Pointer
+    fun Cbc_getColIndices(@Pinned @In model: Pointer, col: Int): Pointer
 
     /**
      * double *Cbc_getColCoeffs(Cbc_Model *model, int col);
      */
-    fun Cbc_getColCoeffs(@In model: Pointer, col: Int): Pointer
+    fun Cbc_getColCoeffs(@Pinned @In model: Pointer, col: Int): Pointer
 
     /**
      * void Cbc_addCol(Cbc_Model *model, const char *name, double lb, double ub, double obj, char
      * isInteger, int nz, int *rows, double *coefs);
      */
-    fun Cbc_addCol(@In model: Pointer, @In @Transient name: String, lb: Double, ub: Double, obj: Double, isInteger: Byte, nz: Int, @In @Transient rows: IntArray, @In @Transient coefs: DoubleArray)
+    fun Cbc_addCol(@Pinned @In model: Pointer, @Pinned @In @Transient name: String, lb: Double, ub: Double, obj: Double, isInteger: Byte, nz: Int, @Pinned @In @Transient rows: IntArray, @Pinned @In @Transient coefs: DoubleArray)
 
     /**
      * void Cbc_addRow(Cbc_Model *model, const char *name, int nz, const int *cols, const double
      * *coefs, char sense, double rhs);
      */
-    fun Cbc_addRow(@In model: Pointer, @In @Transient name: String, nz: Int, @In @Transient cols: IntArray, @In @Transient coefs: DoubleArray, sense: Byte, rhs: Double)
+    fun Cbc_addRow(@Pinned @In model: Pointer, @Pinned @In @Transient name: String, nz: Int, @Pinned @In @Transient cols: IntArray, @Pinned @In @Transient coefs: DoubleArray, sense: Byte, rhs: Double)
 
     /**
      * void Cbc_addLazyConstraint(Cbc_Model *model, int nz, int *cols, double *coefs, char sense,
      * double rhs);
      */
-    fun Cbc_addLazyConstraint(@In model: Pointer, nz: Int, @In @Transient cols: IntArray, @In @Transient coefs: DoubleArray, sense: Byte, rhs: Double)
+    fun Cbc_addLazyConstraint(@Pinned @In model: Pointer, nz: Int, @Pinned @In @Transient cols: IntArray, @Pinned @In @Transient coefs: DoubleArray, sense: Byte, rhs: Double)
 
     /**
      * void Cbc_addSOS(Cbc_Model *model, int numRows, const int *rowStarts, const int *colIndices,
      * const double *weights, const int type);
      */
-    fun Cbc_addSOS(@In model: Pointer, numRows: Int, @In @Transient rowStarts: IntArray, @In @Transient colIndices: IntArray, @In @Transient weights: DoubleArray, @In @Transient type: Int)
+    fun Cbc_addSOS(@Pinned @In model: Pointer, numRows: Int, @Pinned @In @Transient rowStarts: IntArray, @Pinned @In @Transient colIndices: IntArray, @Pinned @In @Transient weights: DoubleArray, @In @Transient type: Int)
 
     /**
      * int Cbc_numberSOS(Cbc_Model *model);
      */
-    fun Cbc_numberSOS(@In model: Pointer): Int
+    fun Cbc_numberSOS(@Pinned @In model: Pointer): Int
 
     /**
      * void Cbc_setObjCoeff(Cbc_Model *model, int index, double value);
      */
-    fun Cbc_setObjCoeff(@In model: Pointer, index: Int, value: Double)
+    fun Cbc_setObjCoeff(@Pinned @In model: Pointer, index: Int, value: Double)
 
     /**
      * double Cbc_getObjSense(Cbc_Model *model);
      */
-    fun Cbc_getObjSense(@In model: Pointer): Double
+    fun Cbc_getObjSense(@Pinned @In model: Pointer): Double
 
     /**
      * const double *Cbc_getObjCoefficients(Cbc_Model *model);
      */
-    fun Cbc_getObjCoefficients(@In model: Pointer): Pointer
+    fun Cbc_getObjCoefficients(@Pinned @In model: Pointer): Pointer
 
     /**
      * const double *Cbc_getColSolution(Cbc_Model *model);
      */
-    fun Cbc_getColSolution(@In model: Pointer): Pointer
+    fun Cbc_getColSolution(@Pinned @In model: Pointer): Pointer
 
     /**
      * const double *Cbc_getReducedCost(Cbc_Model *model);
      */
-    fun Cbc_getReducedCost(@In model: Pointer): Pointer
+    fun Cbc_getReducedCost(@Pinned @In model: Pointer): Pointer
 
     /**
      * double *Cbc_bestSolution(Cbc_Model *model);
      */
-    fun Cbc_bestSolution(@In model: Pointer): Pointer
+    fun Cbc_bestSolution(@Pinned @In model: Pointer): Pointer
 
     /**
      * int Cbc_numberSavedSolutions(Cbc_Model *model);
      */
-    fun Cbc_numberSavedSolutions(@In model: Pointer): Int
+    fun Cbc_numberSavedSolutions(@Pinned @In model: Pointer): Int
 
     /**
      * const double *Cbc_savedSolution(Cbc_Model *model, int whichSol);
      */
-    fun Cbc_savedSolution(@In model: Pointer, whichSol: Int): Pointer
+    fun Cbc_savedSolution(@Pinned @In model: Pointer, whichSol: Int): Pointer
 
     /**
      * double Cbc_savedSolutionObj(Cbc_Model *model, int whichSol);
      */
-    fun Cbc_savedSolutionObj(@In model: Pointer, whichSol: Int): Double
+    fun Cbc_savedSolutionObj(@Pinned @In model: Pointer, whichSol: Int): Double
 
     /**
      * double Cbc_getObjValue(Cbc_Model *model);
      */
-    fun Cbc_getObjValue(@In model: Pointer): Double
+    fun Cbc_getObjValue(@Pinned @In model: Pointer): Double
 
     /**
      * void Cbc_setObjSense(Cbc_Model *model, double sense);
      */
-    fun Cbc_setObjSense(@In model: Pointer, sense: Double)
+    fun Cbc_setObjSense(@Pinned @In model: Pointer, sense: Double)
 
     /**
      * int Cbc_isProvenOptimal(Cbc_Model *model);
      */
-    fun Cbc_isProvenOptimal(@In model: Pointer): Int
+    fun Cbc_isProvenOptimal(@Pinned @In model: Pointer): Int
 
     /**
      * int Cbc_isProvenInfeasible(Cbc_Model *model);
      */
-    fun Cbc_isProvenInfeasible(@In model: Pointer): Int
+    fun Cbc_isProvenInfeasible(@Pinned @In model: Pointer): Int
 
     /**
      * int Cbc_isContinuousUnbounded(Cbc_Model *model);
      */
-    fun Cbc_isContinuousUnbounded(@In model: Pointer): Int
+    fun Cbc_isContinuousUnbounded(@Pinned @In model: Pointer): Int
 
     /**
      * int Cbc_isAbandoned(Cbc_Model *model);
      */
-    fun Cbc_isAbandoned(@In model: Pointer): Int
+    fun Cbc_isAbandoned(@Pinned @In model: Pointer): Int
 
     /**
      * const double *Cbc_getColLower(Cbc_Model *model);
      */
-    fun Cbc_getColLower(@In model: Pointer): Pointer
+    fun Cbc_getColLower(@Pinned @In model: Pointer): Pointer
 
     /**
      * const double *Cbc_getColUpper(Cbc_Model *model);
      */
-    fun Cbc_getColUpper(@In model: Pointer): Pointer
+    fun Cbc_getColUpper(@Pinned @In model: Pointer): Pointer
 
     /**
      * double Cbc_getColObj(Cbc_Model *model, int colIdx);
      */
-    fun Cbc_getColObj(@In model: Pointer, colIdx: Int): Double
+    fun Cbc_getColObj(@Pinned @In model: Pointer, colIdx: Int): Double
 
     /**
      * double Cbc_getColLB(Cbc_Model *model, int colIdx);
      */
-    fun Cbc_getColLB(@In model: Pointer, colIdx: Int): Double
+    fun Cbc_getColLB(@Pinned @In model: Pointer, colIdx: Int): Double
 
     /**
      * double Cbc_getColUB(Cbc_Model *model, int colIdx);
      */
-    fun Cbc_getColUB(@In model: Pointer, colIdx: Int): Double
+    fun Cbc_getColUB(@Pinned @In model: Pointer, colIdx: Int): Double
 
     /**
      * void Cbc_setColLower(Cbc_Model *model, int index, double value);
      */
-    fun Cbc_setColLower(@In model: Pointer, index: Int, value: Double)
+    fun Cbc_setColLower(@Pinned @In model: Pointer, index: Int, value: Double)
 
     /**
      * void Cbc_setColUpper(Cbc_Model *model, int index, double value);
      */
-    fun Cbc_setColUpper(@In model: Pointer, index: Int, value: Double)
+    fun Cbc_setColUpper(@Pinned @In model: Pointer, index: Int, value: Double)
 
     /**
      * int Cbc_isInteger(Cbc_Model *model, int i);
      */
-    fun Cbc_isInteger(@In model: Pointer, i: Int): Int
+    fun Cbc_isInteger(@Pinned @In model: Pointer, i: Int): Int
 
     /**
      * void Cbc_getColName(Cbc_Model *model, int iColumn, char *name, size_t maxLength);
      */
-    fun Cbc_getColName(@In model: Pointer, iColumn: Int, name: String, @size_t maxLength: Long)
+    fun Cbc_getColName(@Pinned @In model: Pointer, iColumn: Int, @Pinned name: String, @size_t maxLength: Long)
 
     /**
      * void Cbc_getRowName(Cbc_Model *model, int iRow, char *name, size_t maxLength);
      */
-    fun Cbc_getRowName(@In model: Pointer, iRow: Int, @Out name: String, @size_t maxLength: Long)
+    fun Cbc_getRowName(@Pinned @In model: Pointer, iRow: Int, @Pinned @Out name: String, @size_t maxLength: Long)
 
     /**
      * void Cbc_setContinuous(Cbc_Model *model, int iColumn);
      */
-    fun Cbc_setContinuous(@In model: Pointer, iColumn: Int)
+    fun Cbc_setContinuous(@Pinned @In model: Pointer, iColumn: Int)
 
     /**
      * void Cbc_setInteger(Cbc_Model *model, int iColumn);
      */
-    fun Cbc_setInteger(@In model: Pointer, iColumn: Int)
+    fun Cbc_setInteger(@Pinned @In model: Pointer, iColumn: Int)
 
     /**
      * void Cbc_setIntParam(Cbc_Model *model, enum IntParam which, const int val);
@@ -293,128 +293,128 @@ interface CbcJnrLibrary {
     /**
      * void Cbc_setDblParam(Cbc_Model *model, enum DblParam which, const double val);
      */
-    fun Cbc_setDblParam(@In model: Pointer, which: Int, @In @Transient `val`: Double)
+    fun Cbc_setDblParam(@Pinned @In model: Pointer, which: Int, @In @Transient `val`: Double)
 
     /**
      * void Cbc_setParameter(Cbc_Model *model, const char *name, const char *value);
      */
-    fun Cbc_setParameter(@In model: Pointer, @In @Transient name: String, @In @Transient value: String)
+    fun Cbc_setParameter(@Pinned @In model: Pointer, @Pinned @In @Transient name: String, @Pinned @In @Transient value: String)
 
     /**
      * double Cbc_getCutoff(Cbc_Model *model);
      */
-    fun Cbc_getCutoff(@In model: Pointer): Double
+    fun Cbc_getCutoff(@Pinned @In model: Pointer): Double
 
     /**
      * void Cbc_setCutoff(Cbc_Model *model, double cutoff);
      */
-    fun Cbc_setCutoff(@In model: Pointer, cutoff: Double)
+    fun Cbc_setCutoff(@Pinned @In model: Pointer, cutoff: Double)
 
     /**
      * double Cbc_getAllowableGap(Cbc_Model *model);
      */
-    fun Cbc_getAllowableGap(@In model: Pointer): Double
+    fun Cbc_getAllowableGap(@Pinned @In model: Pointer): Double
 
     /**
      * void Cbc_setAllowableGap(Cbc_Model *model, double allowedGap);
      */
-    fun Cbc_setAllowableGap(@In model: Pointer, allowedGap: Double)
+    fun Cbc_setAllowableGap(@Pinned @In model: Pointer, allowedGap: Double)
 
     /**
      * double Cbc_getAllowableFractionGap(Cbc_Model *model);
      */
-    fun Cbc_getAllowableFractionGap(@In model: Pointer): Double
+    fun Cbc_getAllowableFractionGap(@Pinned @In model: Pointer): Double
 
     /**
      * void Cbc_setAllowableFractionGap(Cbc_Model *model, double allowedFracionGap);
      */
-    fun Cbc_setAllowableFractionGap(@In model: Pointer, allowedFracionGap: Double)
+    fun Cbc_setAllowableFractionGap(@Pinned @In model: Pointer, allowedFracionGap: Double)
 
     /**
      * double Cbc_getAllowablePercentageGap(Cbc_Model *model);
      */
-    fun Cbc_getAllowablePercentageGap(@In model: Pointer): Double
+    fun Cbc_getAllowablePercentageGap(@Pinned @In model: Pointer): Double
 
     /**
      * void Cbc_setAllowablePercentageGap(Cbc_Model *model, double allowedPercentageGap);
      */
-    fun Cbc_setAllowablePercentageGap(@In model: Pointer, allowedPercentageGap: Double)
+    fun Cbc_setAllowablePercentageGap(@Pinned @In model: Pointer, allowedPercentageGap: Double)
 
     /**
      * double Cbc_getMaximumSeconds(Cbc_Model *model);
      */
-    fun Cbc_getMaximumSeconds(@In model: Pointer): Double
+    fun Cbc_getMaximumSeconds(@Pinned @In model: Pointer): Double
 
     /**
      * void Cbc_setMaximumSeconds(Cbc_Model *model, double maxSeconds);
      */
-    fun Cbc_setMaximumSeconds(@In model: Pointer, maxSeconds: Double)
+    fun Cbc_setMaximumSeconds(@Pinned @In model: Pointer, maxSeconds: Double)
 
     /**
      * int Cbc_getMaximumNodes(Cbc_Model *model);
      */
-    fun Cbc_getMaximumNodes(@In model: Pointer): Int
+    fun Cbc_getMaximumNodes(@Pinned @In model: Pointer): Int
 
     /**
      * void Cbc_setMaximumNodes(Cbc_Model *model, int maxNodes);
      */
-    fun Cbc_setMaximumNodes(@In model: Pointer, maxNodes: Int)
+    fun Cbc_setMaximumNodes(@Pinned @In model: Pointer, maxNodes: Int)
 
     /**
      * int Cbc_getMaximumSolutions(Cbc_Model *model);
      */
-    fun Cbc_getMaximumSolutions(@In model: Pointer): Int
+    fun Cbc_getMaximumSolutions(@Pinned @In model: Pointer): Int
 
     /**
      * void Cbc_setMaximumSolutions(Cbc_Model *model, int maxSolutions);
      */
-    fun Cbc_setMaximumSolutions(@In model: Pointer, maxSolutions: Int)
+    fun Cbc_setMaximumSolutions(@Pinned @In model: Pointer, maxSolutions: Int)
 
     /**
      * int Cbc_getLogLevel(Cbc_Model *model);
      */
-    fun Cbc_getLogLevel(@In model: Pointer): Int
+    fun Cbc_getLogLevel(@Pinned @In model: Pointer): Int
 
     /**
      * void Cbc_setLogLevel(Cbc_Model *model, int logLevel);
      */
-    fun Cbc_setLogLevel(@In model: Pointer, logLevel: Int)
+    fun Cbc_setLogLevel(@Pinned @In model: Pointer, logLevel: Int)
 
     /**
      * double Cbc_getBestPossibleObjValue(Cbc_Model *model);
      */
-    fun Cbc_getBestPossibleObjValue(@In model: Pointer): Double
+    fun Cbc_getBestPossibleObjValue(@Pinned @In model: Pointer): Double
 
     /**
      * void Cbc_setMIPStart(Cbc_Model *model, int count, const char **colNames, const double
      * colValues[]);
      */
-    fun Cbc_setMIPStartI(@In model: Pointer, count: Int, @In @Transient colIdxs: IntArray, @In @Transient colValues: DoubleArray)
+    fun Cbc_setMIPStartI(@Pinned @In model: Pointer, count: Int, @Pinned @In @Transient colIdxs: IntArray, @Pinned @In @Transient colValues: DoubleArray)
 
     /**
      * void Cbc_setLPmethod(Cbc_Model *model, enum LPMethod lpm );
      */
-    fun Cbc_setLPmethod(@In model: Pointer, lpm: Int)
+    fun Cbc_setLPmethod(@Pinned @In model: Pointer, lpm: Int)
 
     /**
      * void Cbc_updateConflictGraph( Cbc_Model *model );
      */
-    fun Cbc_updateConflictGraph(@In model: Pointer)
+    fun Cbc_updateConflictGraph(@Pinned @In model: Pointer)
 
     /**
      * const void *Cbc_conflictGraph( Cbc_Model *model );
      */
-    fun Cbc_conflictGraph(@In model: Pointer): Pointer
+    fun Cbc_conflictGraph(@Pinned @In model: Pointer): Pointer
 
     /**
      * int Cbc_solve(Cbc_Model *model);
      */
-    fun Cbc_solve(@In model: Pointer): Int
+    fun Cbc_solve(@Pinned @In model: Pointer): Int
 
     /**
      * int Cbc_solveLinearProgram(Cbc_Model *model);
      */
-    fun Cbc_solveLinearProgram(@In model: Pointer): Int
+    fun Cbc_solveLinearProgram(@Pinned @In model: Pointer): Int
 
     /**
      * void Cgl_generateCuts( void *osiClpSolver, enum CutType ct, void *osiCuts, int strength );
@@ -424,32 +424,32 @@ interface CbcJnrLibrary {
     /**
      * void Cbc_strengthenPacking(Cbc_Model *model);
      */
-    fun Cbc_strengthenPacking(@In model: Pointer)
+    fun Cbc_strengthenPacking(@Pinned @In model: Pointer)
 
     /**
      * void Cbc_strengthenPackingRows(Cbc_Model *model, size_t n, const size_t rows[]);
      */
-    fun Cbc_strengthenPackingRows(@In model: Pointer, @size_t n: Long, @In @Transient @size_t rows: LongArray)
+    fun Cbc_strengthenPackingRows(@Pinned @In model: Pointer, @size_t n: Long, @Pinned @In @Transient @size_t rows: LongArray)
 
     /**
      * void *Cbc_getSolverPtr(Cbc_Model *model);
      */
-    fun Cbc_getSolverPtr(@In model: Pointer): Pointer
+    fun Cbc_getSolverPtr(@Pinned @In model: Pointer): Pointer
 
     /**
      * void *Cbc_deleteModel(Cbc_Model *model);
      */
-    fun Cbc_deleteModel(@In model: Pointer): Pointer
+    fun Cbc_deleteModel(@Pinned @In model: Pointer): Pointer
 
     /**
      * int Osi_getNumIntegers( void *osi );
      */
-    fun Osi_getNumIntegers(@In @Transient osi: Pointer): Int
+    fun Osi_getNumIntegers(@Pinned @In osi: Pointer): Int
 
     /**
      * const double *Osi_getReducedCost( void *osi );
      */
-    fun Osi_getReducedCost(@In @Transient osi: Pointer): Pointer
+    fun Osi_getReducedCost(@Pinned @In osi: Pointer): Pointer
 
     /**
      * const double *Osi_getObjCoefficients();
@@ -469,142 +469,142 @@ interface CbcJnrLibrary {
     /**
      * void Osi_deleteSolver( void *osi );
      */
-    fun Osi_deleteSolver(@In @Transient osi: Pointer)
+    fun Osi_deleteSolver(@Pinned @In osi: Pointer)
 
     /**
      * void Osi_initialSolve(void *osi);
      */
-    fun Osi_initialSolve(@In @Transient osi: Pointer)
+    fun Osi_initialSolve(@Pinned @In osi: Pointer)
 
     /**
      * void Osi_resolve(void *osi);
      */
-    fun Osi_resolve(@In @Transient osi: Pointer)
+    fun Osi_resolve(@Pinned @In osi: Pointer)
 
     /**
      * void Osi_branchAndBound(void *osi);
      */
-    fun Osi_branchAndBound(@In @Transient osi: Pointer)
+    fun Osi_branchAndBound(@Pinned @In osi: Pointer)
 
     /**
      * char Osi_isAbandoned(void *osi);
      */
-    fun Osi_isAbandoned(@In @Transient osi: Pointer): Byte
+    fun Osi_isAbandoned(@Pinned @In osi: Pointer): Byte
 
     /**
      * char Osi_isProvenOptimal(void *osi);
      */
-    fun Osi_isProvenOptimal(@In @Transient osi: Pointer): Byte
+    fun Osi_isProvenOptimal(@Pinned @In osi: Pointer): Byte
 
     /**
      * char Osi_isProvenPrimalInfeasible(void *osi);
      */
-    fun Osi_isProvenPrimalInfeasible(@In @Transient osi: Pointer): Byte
+    fun Osi_isProvenPrimalInfeasible(@Pinned @In osi: Pointer): Byte
 
     /**
      * char Osi_isProvenDualInfeasible(void *osi);
      */
-    fun Osi_isProvenDualInfeasible(@In @Transient osi: Pointer): Byte
+    fun Osi_isProvenDualInfeasible(@Pinned @In osi: Pointer): Byte
 
     /**
      * char Osi_isPrimalObjectiveLimitReached(void *osi);
      */
-    fun Osi_isPrimalObjectiveLimitReached(@In @Transient osi: Pointer): Byte
+    fun Osi_isPrimalObjectiveLimitReached(@Pinned @In osi: Pointer): Byte
 
     /**
      * char Osi_isDualObjectiveLimitReached(void *osi);
      */
-    fun Osi_isDualObjectiveLimitReached(@In @Transient osi: Pointer): Byte
+    fun Osi_isDualObjectiveLimitReached(@Pinned @In osi: Pointer): Byte
 
     /**
      * char Osi_isIterationLimitReached(void *osi);
      */
-    fun Osi_isIterationLimitReached(@In @Transient osi: Pointer): Byte
+    fun Osi_isIterationLimitReached(@Pinned @In osi: Pointer): Byte
 
     /**
      * double Osi_getObjValue( void *osi );
      */
-    fun Osi_getObjValue(@In @Transient osi: Pointer): Double
+    fun Osi_getObjValue(@Pinned @In osi: Pointer): Double
 
     /**
      * void Osi_setColUpper (void *osi, int elementIndex, double ub);
      */
-    fun Osi_setColUpper(@In @Transient osi: Pointer, elementIndex: Int, ub: Double)
+    fun Osi_setColUpper(@Pinned @In osi: Pointer, elementIndex: Int, ub: Double)
 
     /**
      * void Osi_setColLower(void *osi, int elementIndex, double lb);
      */
-    fun Osi_setColLower(@In @Transient osi: Pointer, elementIndex: Int, lb: Double)
+    fun Osi_setColLower(@Pinned @In osi: Pointer, elementIndex: Int, lb: Double)
 
     /**
      * int Osi_getNumCols( void *osi );
      */
-    fun Osi_getNumCols(@In @Transient osi: Pointer): Int
+    fun Osi_getNumCols(@Pinned @In osi: Pointer): Int
 
     /**
      * void Osi_getColName( void *osi, int i, char *name, int maxLen );
      */
-    fun Osi_getColName(@In @Transient osi: Pointer, i: Int, name: String, maxLen: Int)
+    fun Osi_getColName(@Pinned @In osi: Pointer, i: Int, @Pinned name: String, maxLen: Int)
 
     /**
      * const double *Osi_getColLower( void *osi );
      */
-    fun Osi_getColLower(@In @Transient osi: Pointer): Pointer
+    fun Osi_getColLower(@Pinned @In osi: Pointer): Pointer
 
     /**
      * const double *Osi_getColUpper( void *osi );
      */
-    fun Osi_getColUpper(@In @Transient osi: Pointer): Pointer
+    fun Osi_getColUpper(@Pinned @In osi: Pointer): Pointer
 
     /**
      * int Osi_isInteger( void *osi, int col );
      */
-    fun Osi_isInteger(@In @Transient osi: Pointer, col: Int): Int
+    fun Osi_isInteger(@Pinned @In osi: Pointer, col: Int): Int
 
     /**
      * int Osi_getNumRows( void *osi );
      */
-    fun Osi_getNumRows(@In @Transient osi: Pointer): Int
+    fun Osi_getNumRows(@Pinned @In osi: Pointer): Int
 
     /**
      * int Osi_getRowNz(void *osi, int row);
      */
-    fun Osi_getRowNz(@In @Transient osi: Pointer, row: Int): Int
+    fun Osi_getRowNz(@Pinned @In osi: Pointer, row: Int): Int
 
     /**
      * const int *Osi_getRowIndices(void *osi, int row);
      */
-    fun Osi_getRowIndices(@In @Transient osi: Pointer, row: Int): Pointer
+    fun Osi_getRowIndices(@Pinned @In osi: Pointer, row: Int): Pointer
 
     /**
      * const double *Osi_getRowCoeffs(void *osi, int row);
      */
-    fun Osi_getRowCoeffs(@In @Transient osi: Pointer, row: Int): Pointer
+    fun Osi_getRowCoeffs(@Pinned @In osi: Pointer, row: Int): Pointer
 
     /**
      * double Osi_getRowRHS(void *osi, int row);
      */
-    fun Osi_getRowRHS(@In @Transient osi: Pointer, row: Int): Double
+    fun Osi_getRowRHS(@Pinned @In osi: Pointer, row: Int): Double
 
     /**
      * char Osi_getRowSense(void *osi, int row);
      */
-    fun Osi_getRowSense(@In @Transient osi: Pointer, row: Int): Byte
+    fun Osi_getRowSense(@Pinned @In osi: Pointer, row: Int): Byte
 
     /**
      * void Osi_setObjCoef(void *osi, int index, double obj);
      */
-    fun Osi_setObjCoef(@In @Transient osi: Pointer, index: Int, obj: Double)
+    fun Osi_setObjCoef(@Pinned @In osi: Pointer, index: Int, obj: Double)
 
     /**
      * void Osi_setObjSense(void *osi, double sense);
      */
-    fun Osi_setObjSense(@In @Transient osi: Pointer, sense: Double)
+    fun Osi_setObjSense(@Pinned @In osi: Pointer, sense: Double)
 
     /**
      * const double *Osi_getColSolution(void *osi);
      */
-    fun Osi_getColSolution(@In @Transient osi: Pointer): Pointer
+    fun Osi_getColSolution(@Pinned @In osi: Pointer): Pointer
 
     /**
      * void *OsiCuts_new();
@@ -615,13 +615,13 @@ interface CbcJnrLibrary {
      * void OsiCuts_addRowCut( void *osiCuts, int nz, const int *idx, const double *coef, char
      * sense, double rhs );
      */
-    fun OsiCuts_addRowCut(@In @Transient osiCuts: Pointer, nz: Int, @In @Transient idx: IntArray, @In @Transient coef: DoubleArray, sense: Byte, rhs: Double)
+    fun OsiCuts_addRowCut(@In @Transient osiCuts: Pointer, nz: Int, @Pinned @In @Transient idx: IntArray, @Pinned @In @Transient coef: DoubleArray, sense: Byte, rhs: Double)
 
     /**
      * void OsiCuts_addGlobalRowCut( void *osiCuts, int nz, const int *idx, const double *coef,
      * char sense, double rhs );
      */
-    fun OsiCuts_addGlobalRowCut(@In @Transient osiCuts: Pointer, nz: Int, @In @Transient idx: IntArray, @In @Transient coef: DoubleArray, sense: Byte, rhs: Double)
+    fun OsiCuts_addGlobalRowCut(@In @Transient osiCuts: Pointer, nz: Int, @Pinned @In @Transient idx: IntArray, @Pinned @In @Transient coef: DoubleArray, sense: Byte, rhs: Double)
 
     /**
      * int OsiCuts_sizeRowCuts( void *osiCuts );
@@ -662,68 +662,68 @@ interface CbcJnrLibrary {
      * void Osi_addCol(void *osi, const char *name, double lb, double ub, double obj, char
      * isInteger, int nz, int *rows, double *coefs);
      */
-    fun Osi_addCol(@In @Transient osi: Pointer, @In @Transient name: String, lb: Double, ub: Double, obj: Double, isInteger: Byte, nz: Int, @In @Transient rows: IntArray, @In @Transient coefs: DoubleArray)
+    fun Osi_addCol(@Pinned @In osi: Pointer, @Pinned @In @Transient name: String, lb: Double, ub: Double, obj: Double, isInteger: Byte, nz: Int, @Pinned @In @Transient rows: IntArray, @Pinned @In @Transient coefs: DoubleArray)
 
     /**
      * void Osi_addRow(void *osi, const char *name, int nz, const int *cols, const double *coefs,
      * char sense, double rhs);
      */
-    fun Osi_addRow(@In @Transient osi: Pointer, @In @Transient name: String, nz: Int, @In @Transient cols: IntArray, @In @Transient coefs: DoubleArray, sense: Byte, rhs: Double)
+    fun Osi_addRow(@Pinned @In osi: Pointer, @Pinned @In @Transient name: String, nz: Int, @Pinned @In @Transient cols: IntArray, @Pinned @In @Transient coefs: DoubleArray, sense: Byte, rhs: Double)
 
     /**
      * void Cbc_deleteRows(Cbc_Model *model, int numRows, const int rows[]);
      */
-    fun Cbc_deleteRows(@In model: Pointer, numRows: Int, @In @Transient rows: IntArray)
+    fun Cbc_deleteRows(@Pinned @In model: Pointer, numRows: Int, @Pinned @In @Transient rows: IntArray)
 
     /**
      * void Cbc_deleteRows(@In Pointer model, int numRows, const int rows[]);
      */
-    fun Cbc_deleteCols(@In model: Pointer, numCols: Int, @In @Transient cols: IntArray)
+    fun Cbc_deleteCols(@Pinned @In model: Pointer, numCols: Int, @Pinned @In @Transient cols: IntArray)
 
     /**
      * void Cbc_storeNameIndexes(Cbc_Model *model, char _store);
      */
-    fun Cbc_storeNameIndexes(@In model: Pointer, _store: Byte)
+    fun Cbc_storeNameIndexes(@Pinned @In model: Pointer, _store: Byte)
 
     /**
      * int Cbc_getColNameIndex(Cbc_Model *model, const char *name);
      */
-    fun Cbc_getColNameIndex(@In model: Pointer, @In @Transient name: String): Int
+    fun Cbc_getColNameIndex(@Pinned @In model: Pointer, @Pinned @In @Transient name: String): Int
 
     /**
      * int Cbc_getRowNameIndex(Cbc_Model *model, const char *name);
      */
-    fun Cbc_getRowNameIndex(@In model: Pointer, @In @Transient name: String): Int
+    fun Cbc_getRowNameIndex(@Pinned @In model: Pointer, @Pinned @In @Transient name: String): Int
 
     /**
      * void Cbc_problemName(Cbc_Model *model, int maxNumberCharacters, char *array);
      */
-    fun Cbc_problemName(@In model: Pointer, maxNumberCharacters: Int, array: String)
+    fun Cbc_problemName(@Pinned @In model: Pointer, maxNumberCharacters: Int, @Pinned array: String)
 
     /**
      * int Cbc_setProblemName(Cbc_Model *model, const char *array);
      */
-    fun Cbc_setProblemName(@In model: Pointer, @In @Transient array: String): Int
+    fun Cbc_setProblemName(@Pinned @In model: Pointer, @Pinned @In @Transient array: String): Int
 
     /**
      * double Cbc_getPrimalTolerance(Cbc_Model *model);
      */
-    fun Cbc_getPrimalTolerance(@In model: Pointer): Double
+    fun Cbc_getPrimalTolerance(@Pinned @In model: Pointer): Double
 
     /**
      * void Cbc_setPrimalTolerance(Cbc_Model *model, double tol);
      */
-    fun Cbc_setPrimalTolerance(@In model: Pointer, tol: Double)
+    fun Cbc_setPrimalTolerance(@Pinned @In model: Pointer, tol: Double)
 
     /**
      * double Cbc_getDualTolerance(Cbc_Model *model);
      */
-    fun Cbc_getDualTolerance(@In model: Pointer): Double
+    fun Cbc_getDualTolerance(@Pinned @In model: Pointer): Double
 
     /**
      * void Cbc_setDualTolerance(Cbc_Model *model, double tol);
      */
-    fun Cbc_setDualTolerance(@In model: Pointer, tol: Double)
+    fun Cbc_setDualTolerance(@Pinned @In model: Pointer, tol: Double)
 
     /**
      * void Cbc_addCutCallback(Cbc_Model *model, cbc_cut_callback cutcb, const char *name, void
@@ -749,37 +749,38 @@ interface CbcJnrLibrary {
     /**
      * void Cbc_clearCallBack(Cbc_Model *model);
      */
-    fun Cbc_clearCallBack(@In model: Pointer)
+    fun Cbc_clearCallBack(@Pinned @In model: Pointer)
 
     /**
      * const double *Cbc_getRowPrice(Cbc_Model *model);
      */
-    fun Cbc_getRowPrice(@In model: Pointer): Pointer
+    fun Cbc_getRowPrice(@Pinned @In model: Pointer): Pointer
 
     /**
      * const double *Osi_getRowPrice(void *osi);
      */
-    fun Osi_getRowPrice(@In @Transient osi: Pointer): Pointer
+    fun Osi_getRowPrice(@Pinned @In osi: Pointer): Pointer
 
     /**
      * double Osi_getIntegerTolerance(void *osi);
      */
-    fun Osi_getIntegerTolerance(@In @Transient osi: Pointer): Double
+    fun Osi_getIntegerTolerance(@Pinned @In osi: Pointer): Double
 
     /**
      * void Osi_checkCGraph( void *osi );
      */
-    fun Osi_checkCGraph(@In @Transient osi: Pointer)
+    fun Osi_checkCGraph(@Pinned @In osi: Pointer)
 
     /**
      * const void * Osi_CGraph( void *osi );
      */
-    fun Osi_CGraph(@In @Transient osi: Pointer): Pointer
+    fun Osi_CGraph(@Pinned @In osi: Pointer): Pointer
 
     /**
      * size_t CG_nodes( void *cgraph );
      */
-    @size_t fun CG_nodes(cgraph: Pointer): Long
+    @size_t
+    fun CG_nodes(cgraph: Pointer): Long
 
     /**
      * char CG_conflicting( void *cgraph, int n1, int n2 );
@@ -794,7 +795,7 @@ interface CbcJnrLibrary {
     /**
      * CGNeighbors CG_conflictingNodes(Cbc_Model *model, void *cgraph, size_t node);
      */
-    fun CG_conflictingNodes(@In model: Pointer, @In @Transient cgraph: Pointer, @size_t node: Long): CGNeighbors
+    fun CG_conflictingNodes(@Pinned @In model: Pointer, @In @Transient cgraph: Pointer, @size_t node: Long): CGNeighbors
 
 
     /**
@@ -812,7 +813,7 @@ interface CbcJnrLibrary {
      */
     interface Cbc_ProgressCallback {
         @Delegate
-        fun progressCallback(model: Pointer, phase: Int, step: Int, phaseName: String, seconds: Double, lb: Double, ub: Double, nint: Int, vecint: Pointer, cbData: Pointer)
+        fun progressCallback(model: Pointer, phase: Int, step: Int, @Pinned phaseName: String, seconds: Double, lb: Double, ub: Double, nint: Int, vecint: Pointer, cbData: Pointer)
     }
 
     /**
@@ -890,17 +891,17 @@ interface CbcJnrLibrary {
          * };
          * #define N_DBL_PARAMS 10
          */
-        val DBL_PARAM_PRIMAL_TOL = 0
-        val DBL_PARAM_DUAL_TOL = 1
-        val DBL_PARAM_ZERO_TOL = 2
-        val DBL_PARAM_INT_TOL = 3
-        val DBL_PARAM_PRESOLVE_TOL = 4
-        val DBL_PARAM_TIME_LIMIT = 5
-        val DBL_PARAM_PSI = 6
-        val DBL_PARAM_CUTOFF = 7
-        val DBL_PARAM_ALLOWABLE_GAP = 8
-        val DBL_PARAM_GAP_RATIO = 9
-        val N_DBL_PARAMS = 10
+        const val DBL_PARAM_PRIMAL_TOL = 0
+        const val DBL_PARAM_DUAL_TOL = 1
+        const val DBL_PARAM_ZERO_TOL = 2
+        const val DBL_PARAM_INT_TOL = 3
+        const val DBL_PARAM_PRESOLVE_TOL = 4
+        const val DBL_PARAM_TIME_LIMIT = 5
+        const val DBL_PARAM_PSI = 6
+        const val DBL_PARAM_CUTOFF = 7
+        const val DBL_PARAM_ALLOWABLE_GAP = 8
+        const val DBL_PARAM_GAP_RATIO = 9
+        const val N_DBL_PARAMS = 10
 
         /*
          * ! Integer parameters
@@ -925,24 +926,24 @@ interface CbcJnrLibrary {
          * };
          * #define N_INT_PARAMS 17
          */
-        val INT_PARAM_PERT_VALUE = 0
-        val INT_PARAM_IDIOT = 1
-        val INT_PARAM_STRONG_BRANCHING = 2
-        val INT_PARAM_CUT_DEPTH = 3
-        val INT_PARAM_MAX_NODES = 4
-        val INT_PARAM_NUMBER_BEFORE = 5
-        val INT_PARAM_FPUMP_ITS = 6
-        val INT_PARAM_MAX_SOLS = 7
-        val INT_PARAM_CUT_PASS_IN_TREE = 8
-        val INT_PARAM_THREADS = 9
-        val INT_PARAM_CUT_PASS = 10
-        val INT_PARAM_LOG_LEVEL = 11
-        val INT_PARAM_MAX_SAVED_SOLS = 12
-        val INT_PARAM_MULTIPLE_ROOTS = 13
-        val INT_PARAM_ROUND_INT_VARS = 14
-        val INT_PARAM_RANDOM_SEED = 15
-        val INT_PARAM_ELAPSED_TIME = 16
-        val N_INT_PARAMS = 17
+        const val INT_PARAM_PERT_VALUE = 0
+        const val INT_PARAM_IDIOT = 1
+        const val INT_PARAM_STRONG_BRANCHING = 2
+        const val INT_PARAM_CUT_DEPTH = 3
+        const val INT_PARAM_MAX_NODES = 4
+        const val INT_PARAM_NUMBER_BEFORE = 5
+        const val INT_PARAM_FPUMP_ITS = 6
+        const val INT_PARAM_MAX_SOLS = 7
+        const val INT_PARAM_CUT_PASS_IN_TREE = 8
+        const val INT_PARAM_THREADS = 9
+        const val INT_PARAM_CUT_PASS = 10
+        const val INT_PARAM_LOG_LEVEL = 11
+        const val INT_PARAM_MAX_SAVED_SOLS = 12
+        const val INT_PARAM_MULTIPLE_ROOTS = 13
+        const val INT_PARAM_ROUND_INT_VARS = 14
+        const val INT_PARAM_RANDOM_SEED = 15
+        const val INT_PARAM_ELAPSED_TIME = 16
+        const val N_INT_PARAMS = 17
 
         /*
          * enum LPMethod {
@@ -952,10 +953,10 @@ interface CbcJnrLibrary {
          *     LPM_Barrier = 3   ! The barrier algorithm.
          * };
          */
-        val LPM_Auto = 0
-        val LPM_Dual = 1
-        val LPM_Primal = 2
-        val LPM_Barrier = 3
+        const val LPM_Auto = 0
+        const val LPM_Dual = 1
+        const val LPM_Primal = 2
+        const val LPM_Barrier = 3
 
         /*
          * enum CutType {
@@ -967,11 +968,17 @@ interface CbcJnrLibrary {
          *     CT_LiftAndProject = 5   ! Lift and project cuts
          * };
          */
-        val CT_Gomory = 0
-        val CT_MIR = 1
-        val CT_ZeroHalf = 2
-        val CT_Clique = 3
-        val CT_KnapsackCover = 4
-        val CT_LiftAndProject = 5
+        const val CT_Gomory = 0
+        const val CT_MIR = 1
+        const val CT_ZeroHalf = 2
+        const val CT_Clique = 3
+        const val CT_KnapsackCover = 4
+        const val CT_LiftAndProject = 5
+
+        /*
+         * Additional constants
+         */
+        const val CHAR_ONE = 1.toByte()
+        const val CHAR_ZERO = 0.toByte()
     }
 }
