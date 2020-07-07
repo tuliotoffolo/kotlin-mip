@@ -729,22 +729,22 @@ interface CbcJnrLibrary {
      * void Cbc_addCutCallback(Cbc_Model *model, cbc_cut_callback cutcb, const char *name, void
      * *appData, int howOften, char atSolution );
      */
-    // TODO public void Cbc_addCutCallback(@In Pointer model, cbc_cut_callback cutcb, @In String name, Pointer appData, int howOften, char atSolution);
+    fun Cbc_addCutCallback(@Pinned @In model: Pointer, cutcb: Cbc_CutCallback, @Pinned @In name: String, @Pinned @In appData: Pointer, howOften: Int, atSolution: Byte)
 
     /**
      * void Cbc_addIncCallback(void *model, cbc_incumbent_callback inccb, void *appData );
      */
-    // TODO public void Cbc_addIncCallback(@In Pointer model, cbc_incumbent_callback inccb, Pointer appData);
+    fun Cbc_addIncCallback(@Pinned @In model: Pointer, inccb: Cbc_IncumbentCallback, @Pinned @In appData: Pointer)
 
     /**
      * void Cbc_registerCallBack(Cbc_Model *model, cbc_callback userCallBack);
      */
-    // TODO public void Cbc_registerCallBack(@In Pointer model, cbc_callback userCallBack);
+    fun Cbc_registerCallBack(@Pinned @In model: Pointer, userCallBack: Cbc_Callback)
 
     /**
      * void Cbc_addProgrCallback(void *model, cbc_progress_callback prgcbc, void *appData);
      */
-    // TODO public void Cbc_addProgrCallback(@In Pointer model, cbc_progress_callback prgcbc, Pointer appData);
+    fun Cbc_addProgrCallback(@Pinned @In model: Pointer, prgcbc: Cbc_ProgressCallback, @Pinned @In appData: Pointer)
 
     /**
      * void Cbc_clearCallBack(Cbc_Model *model);
@@ -856,7 +856,7 @@ interface CbcJnrLibrary {
                     libLocation += "libraries"
                 }
                 Platform.OS.LINUX -> {
-                    library = "cbc-c-darwin-x86-64.dylib"
+                    library = "cbc-c-linux-x86-64.so"
                     libLocation += "libraries"
                 }
                 Platform.OS.WINDOWS -> {
