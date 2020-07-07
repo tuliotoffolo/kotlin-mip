@@ -1,6 +1,7 @@
 package mip.solvers
 
 import jnr.ffi.*
+import jnr.ffi.annotations.*
 import mip.*
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
@@ -63,11 +64,6 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     // region buffers
 
-    // private var bufferLength = 1024
-    // private var dblBuffer = Memory.allocateDirect(runtime, bufferLength * 8)
-    // private var intBuffer = Memory.allocateDirect(runtime, bufferLength * 4)
-    // private var strBuffer = Memory.allocateDirect(runtime, bufferLength * 1)
-
     private var pi: Pointer? = null
         get() {
             if (field == null && hasSolution)
@@ -105,8 +101,8 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         // lib.fflush(null)
     }
 
-    fun finalize() {
-        // lib.Cbc_deleteModel(cbc)
+    protected fun finalize() {
+        cbc = lib.Cbc_deleteModel(cbc)
     }
 
     override fun addConstr(linExpr: LinExpr, name: String) {

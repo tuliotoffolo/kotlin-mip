@@ -60,7 +60,7 @@ fun main() {
 
     println("Third constraint set created in ${runtime(checkpoint)} seconds!")
 
-    queens.write("queens.lp")
+    // queens.write("queens.lp")
     // queens.optimize()
 
     // for (i in ns) {
