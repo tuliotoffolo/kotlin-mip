@@ -7,9 +7,9 @@ import jnr.ffi.types.*;
 
 import java.io.*;
 
-public interface CbcJnr {
+public interface CbcJnrJava {
 
-    public static CbcJnr loadLibrary() {
+    public static CbcJnrJava loadLibrary() {
         String library;
         String libLocation = System.getProperty("user.dir") + File.separatorChar;
 
@@ -32,7 +32,7 @@ public interface CbcJnr {
         }
 
         return LibraryLoader
-          .create(CbcJnr.class)
+          .create(CbcJnrJava.class)
           .failImmediately()
           .load(libLocation + File.separatorChar + library);
     }
@@ -146,12 +146,12 @@ public interface CbcJnr {
     /**
      * void Cbc_readLp(Cbc_Model *model, const char *file);
      */
-    public void Cbc_readLp(@In Pointer model, @In String file);
+    public void Cbc_readLp(@In @Transient Pointer model, @In @Transient String file);
 
     /**
      * void Cbc_readMps(Cbc_Model *model, const char *file);
      */
-    public void Cbc_readMps(@In Pointer model, @In String file);
+    public void Cbc_readMps(@In @Transient Pointer model, @In @Transient String file);
 
     /**
      * char Cbc_supportsGzip();
@@ -166,417 +166,417 @@ public interface CbcJnr {
     /**
      * void Cbc_writeLp(Cbc_Model *model, const char *file);
      */
-    public void Cbc_writeLp(@In Pointer model, @In String file);
+    public void Cbc_writeLp(@In @Transient Pointer model, @In @Transient String file);
 
     /**
      * void Cbc_writeMps(Cbc_Model *model, const char *file);
      */
-    public void Cbc_writeMps(@In Pointer model, @In String file);
+    public void Cbc_writeMps(@In @Transient Pointer model, @In @Transient String file);
 
     /**
      * int Cbc_getNumCols(Cbc_Model *model);
      */
-    public int Cbc_getNumCols(@In Pointer model);
+    public int Cbc_getNumCols(@In @Transient Pointer model);
 
     /**
      * int Cbc_getNumRows(Cbc_Model *model);
      */
-    public int Cbc_getNumRows(@In Pointer model);
+    public int Cbc_getNumRows(@In @Transient Pointer model);
 
     /**
      * int Cbc_getNumIntegers(Cbc_Model *model);
      */
-    public int Cbc_getNumIntegers(@In Pointer model);
+    public int Cbc_getNumIntegers(@In @Transient Pointer model);
 
     /**
      * int Cbc_getNumElements(Cbc_Model *model);
      */
-    public int Cbc_getNumElements(@In Pointer model);
+    public int Cbc_getNumElements(@In @Transient Pointer model);
 
     /**
      * int Cbc_getRowNz(Cbc_Model *model, int row);
      */
-    public int Cbc_getRowNz(@In Pointer model, int row);
+    public int Cbc_getRowNz(@In @Transient Pointer model, int row);
 
     /**
      * int *Cbc_getRowIndices(Cbc_Model *model, int row);
      */
-    public Pointer Cbc_getRowIndices(@In Pointer model, int row);
+    public Pointer Cbc_getRowIndices(@In @Transient Pointer model, int row);
 
     /**
      * double *Cbc_getRowCoeffs(Cbc_Model *model, int row);
      */
-    public Pointer Cbc_getRowCoeffs(@In Pointer model, int row);
+    public Pointer Cbc_getRowCoeffs(@In @Transient Pointer model, int row);
 
     /**
      * double Cbc_getRowRHS(Cbc_Model *model, int row);
      */
-    public double Cbc_getRowRHS(@In Pointer model, int row);
+    public double Cbc_getRowRHS(@In @Transient Pointer model, int row);
 
     /**
      * void Cbc_setRowRHS(Cbc_Model *model, int row, double rhs);
      */
-    public void Cbc_setRowRHS(@In Pointer model, int row, double rhs);
+    public void Cbc_setRowRHS(@In @Transient Pointer model, int row, double rhs);
 
     /**
      * char Cbc_getRowSense(Cbc_Model *model, int row);
      */
-    public byte Cbc_getRowSense(@In Pointer model, int row);
+    public byte Cbc_getRowSense(@In @Transient Pointer model, int row);
 
     /**
      * const double *Cbc_getRowActivity(Cbc_Model *model);
      */
-    public Pointer Cbc_getRowActivity(@In Pointer model);
+    public Pointer Cbc_getRowActivity(@In @Transient Pointer model);
 
     /**
      * const double *Cbc_getRowSlack(Cbc_Model *model);
      */
-    public Pointer Cbc_getRowSlack(@In Pointer model);
+    public Pointer Cbc_getRowSlack(@In @Transient Pointer model);
 
     /**
      * int Cbc_getColNz(Cbc_Model *model, int col);
      */
-    public int Cbc_getColNz(@In Pointer model, int col);
+    public int Cbc_getColNz(@In @Transient Pointer model, int col);
 
     /**
      * int *Cbc_getColIndices(Cbc_Model *model, int col);
      */
-    public Pointer Cbc_getColIndices(@In Pointer model, int col);
+    public Pointer Cbc_getColIndices(@In @Transient Pointer model, int col);
 
     /**
      * double *Cbc_getColCoeffs(Cbc_Model *model, int col);
      */
-    public Pointer Cbc_getColCoeffs(@In Pointer model, int col);
+    public Pointer Cbc_getColCoeffs(@In @Transient Pointer model, int col);
 
     /**
      * void Cbc_addCol(Cbc_Model *model, const char *name, double lb, double ub, double obj, char
      * isInteger, int nz, int *rows, double *coefs);
      */
-    public void Cbc_addCol(@In Pointer model, @In String name, double lb, double ub, double obj, byte isInteger, int nz, @In int[] rows, @In double[] coefs);
+    public void Cbc_addCol(@In @Transient Pointer model, @In @Transient String name, double lb, double ub, double obj, byte isInteger, int nz, @In @Transient int[] rows, @In @Transient double[] coefs);
 
     /**
      * void Cbc_addRow(Cbc_Model *model, const char *name, int nz, const int *cols, const double
      * *coefs, char sense, double rhs);
      */
-    public void Cbc_addRow(@In Pointer model, @In String name, int nz, @In int[] cols, @In double[] coefs, byte sense, double rhs);
+    public void Cbc_addRow(@In @Transient Pointer model, @In @Transient String name, int nz, @In @Transient int[] cols, @In @Transient double[] coefs, byte sense, double rhs);
 
     /**
      * void Cbc_addLazyConstraint(Cbc_Model *model, int nz, int *cols, double *coefs, char sense,
      * double rhs);
      */
-    public void Cbc_addLazyConstraint(@In Pointer model, int nz, @In int[] cols, @In double[] coefs, byte sense, double rhs);
+    public void Cbc_addLazyConstraint(@In @Transient Pointer model, int nz, @In @Transient int[] cols, @In @Transient double[] coefs, byte sense, double rhs);
 
     /**
      * void Cbc_addSOS(Cbc_Model *model, int numRows, const int *rowStarts, const int *colIndices,
      * const double *weights, const int type);
      */
-    public void Cbc_addSOS(@In Pointer model, int numRows, @In int[] rowStarts, @In int[] colIndices,@In  double[] weights, @In int type);
+    public void Cbc_addSOS(@In @Transient Pointer model, int numRows, @In @Transient int[] rowStarts, @In @Transient int[] colIndices,@In @Transient  double[] weights, @In @Transient int type);
 
     /**
      * int Cbc_numberSOS(Cbc_Model *model);
      */
-    public int Cbc_numberSOS(@In Pointer model);
+    public int Cbc_numberSOS(@In @Transient Pointer model);
 
     /**
      * void Cbc_setObjCoeff(Cbc_Model *model, int index, double value);
      */
-    public void Cbc_setObjCoeff(@In Pointer model, int index, double value);
+    public void Cbc_setObjCoeff(@In @Transient Pointer model, int index, double value);
 
     /**
      * double Cbc_getObjSense(Cbc_Model *model);
      */
-    public double Cbc_getObjSense(@In Pointer model);
+    public double Cbc_getObjSense(@In @Transient Pointer model);
 
     /**
      * const double *Cbc_getObjCoefficients(Cbc_Model *model);
      */
-    public Pointer Cbc_getObjCoefficients(@In Pointer model);
+    public Pointer Cbc_getObjCoefficients(@In @Transient Pointer model);
 
     /**
      * const double *Cbc_getColSolution(Cbc_Model *model);
      */
-    public Pointer Cbc_getColSolution(@In Pointer model);
+    public Pointer Cbc_getColSolution(@In @Transient Pointer model);
 
     /**
      * const double *Cbc_getReducedCost(Cbc_Model *model);
      */
-    public Pointer Cbc_getReducedCost(@In Pointer model);
+    public Pointer Cbc_getReducedCost(@In @Transient Pointer model);
 
     /**
      * double *Cbc_bestSolution(Cbc_Model *model);
      */
-    public Pointer Cbc_bestSolution(@In Pointer model);
+    public Pointer Cbc_bestSolution(@In @Transient Pointer model);
 
     /**
      * int Cbc_numberSavedSolutions(Cbc_Model *model);
      */
-    public int Cbc_numberSavedSolutions(@In Pointer model);
+    public int Cbc_numberSavedSolutions(@In @Transient Pointer model);
 
     /**
      * const double *Cbc_savedSolution(Cbc_Model *model, int whichSol);
      */
-    public Pointer Cbc_savedSolution(@In Pointer model, int whichSol);
+    public Pointer Cbc_savedSolution(@In @Transient Pointer model, int whichSol);
 
     /**
      * double Cbc_savedSolutionObj(Cbc_Model *model, int whichSol);
      */
-    public double Cbc_savedSolutionObj(@In Pointer model, int whichSol);
+    public double Cbc_savedSolutionObj(@In @Transient Pointer model, int whichSol);
 
     /**
      * double Cbc_getObjValue(Cbc_Model *model);
      */
-    public double Cbc_getObjValue(@In Pointer model);
+    public double Cbc_getObjValue(@In @Transient Pointer model);
 
     /**
      * void Cbc_setObjSense(Cbc_Model *model, double sense);
      */
-    public void Cbc_setObjSense(@In Pointer model, double sense);
+    public void Cbc_setObjSense(@In @Transient Pointer model, double sense);
 
     /**
      * int Cbc_isProvenOptimal(Cbc_Model *model);
      */
-    public int Cbc_isProvenOptimal(@In Pointer model);
+    public int Cbc_isProvenOptimal(@In @Transient Pointer model);
 
     /**
      * int Cbc_isProvenInfeasible(Cbc_Model *model);
      */
-    public int Cbc_isProvenInfeasible(@In Pointer model);
+    public int Cbc_isProvenInfeasible(@In @Transient Pointer model);
 
     /**
      * int Cbc_isContinuousUnbounded(Cbc_Model *model);
      */
-    public int Cbc_isContinuousUnbounded(@In Pointer model);
+    public int Cbc_isContinuousUnbounded(@In @Transient Pointer model);
 
     /**
      * int Cbc_isAbandoned(Cbc_Model *model);
      */
-    public int Cbc_isAbandoned(@In Pointer model);
+    public int Cbc_isAbandoned(@In @Transient Pointer model);
 
     /**
      * const double *Cbc_getColLower(Cbc_Model *model);
      */
-    public Pointer Cbc_getColLower(@In Pointer model);
+    public Pointer Cbc_getColLower(@In @Transient Pointer model);
 
     /**
      * const double *Cbc_getColUpper(Cbc_Model *model);
      */
-    public Pointer Cbc_getColUpper(@In Pointer model);
+    public Pointer Cbc_getColUpper(@In @Transient Pointer model);
 
     /**
      * double Cbc_getColObj(Cbc_Model *model, int colIdx);
      */
-    public double Cbc_getColObj(@In Pointer model, int colIdx);
+    public double Cbc_getColObj(@In @Transient Pointer model, int colIdx);
 
     /**
      * double Cbc_getColLB(Cbc_Model *model, int colIdx);
      */
-    public double Cbc_getColLB(@In Pointer model, int colIdx);
+    public double Cbc_getColLB(@In @Transient Pointer model, int colIdx);
 
     /**
      * double Cbc_getColUB(Cbc_Model *model, int colIdx);
      */
-    public double Cbc_getColUB(@In Pointer model, int colIdx);
+    public double Cbc_getColUB(@In @Transient Pointer model, int colIdx);
 
     /**
      * void Cbc_setColLower(Cbc_Model *model, int index, double value);
      */
-    public void Cbc_setColLower(@In Pointer model, int index, double value);
+    public void Cbc_setColLower(@In @Transient Pointer model, int index, double value);
 
     /**
      * void Cbc_setColUpper(Cbc_Model *model, int index, double value);
      */
-    public void Cbc_setColUpper(@In Pointer model, int index, double value);
+    public void Cbc_setColUpper(@In @Transient Pointer model, int index, double value);
 
     /**
      * int Cbc_isInteger(Cbc_Model *model, int i);
      */
-    public int Cbc_isInteger(@In Pointer model, int i);
+    public int Cbc_isInteger(@In @Transient Pointer model, int i);
 
     /**
      * void Cbc_getColName(Cbc_Model *model, int iColumn, char *name, size_t maxLength);
      */
-    public void Cbc_getColName(@In Pointer model, int iColumn, String name, @size_t long maxLength);
+    public void Cbc_getColName(@In @Transient Pointer model, int iColumn, String name, @size_t long maxLength);
 
     /**
      * void Cbc_getRowName(Cbc_Model *model, int iRow, char *name, size_t maxLength);
      */
-    public void Cbc_getRowName(@In Pointer model, int iRow, @Out String name, @size_t long maxLength);
+    public void Cbc_getRowName(@In @Transient Pointer model, int iRow, @Out String name, @size_t long maxLength);
 
     /**
      * void Cbc_setContinuous(Cbc_Model *model, int iColumn);
      */
-    public void Cbc_setContinuous(@In Pointer model, int iColumn);
+    public void Cbc_setContinuous(@In @Transient Pointer model, int iColumn);
 
     /**
      * void Cbc_setInteger(Cbc_Model *model, int iColumn);
      */
-    public void Cbc_setInteger(@In Pointer model, int iColumn);
+    public void Cbc_setInteger(@In @Transient Pointer model, int iColumn);
 
     /**
      * void Cbc_setIntParam(Cbc_Model *model, enum IntParam which, const int val);
      */
-    public void Cbc_setIntParam(Pointer model, int which, @In int val);
+    public void Cbc_setIntParam(Pointer model, int which, @In @Transient int val);
 
     /**
      * void Cbc_setDblParam(Cbc_Model *model, enum DblParam which, const double val);
      */
-    public void Cbc_setDblParam(@In Pointer model, int which, @In double val);
+    public void Cbc_setDblParam(@In @Transient Pointer model, int which, @In @Transient double val);
 
     /**
      * void Cbc_setParameter(Cbc_Model *model, const char *name, const char *value);
      */
-    public void Cbc_setParameter(@In Pointer model, @In String name, @In String value);
+    public void Cbc_setParameter(@In @Transient Pointer model, @In @Transient String name, @In @Transient String value);
 
     /**
      * double Cbc_getCutoff(Cbc_Model *model);
      */
-    public double Cbc_getCutoff(@In Pointer model);
+    public double Cbc_getCutoff(@In @Transient Pointer model);
 
     /**
      * void Cbc_setCutoff(Cbc_Model *model, double cutoff);
      */
-    public void Cbc_setCutoff(@In Pointer model, double cutoff);
+    public void Cbc_setCutoff(@In @Transient Pointer model, double cutoff);
 
     /**
      * double Cbc_getAllowableGap(Cbc_Model *model);
      */
-    public double Cbc_getAllowableGap(@In Pointer model);
+    public double Cbc_getAllowableGap(@In @Transient Pointer model);
 
     /**
      * void Cbc_setAllowableGap(Cbc_Model *model, double allowedGap);
      */
-    public void Cbc_setAllowableGap(@In Pointer model, double allowedGap);
+    public void Cbc_setAllowableGap(@In @Transient Pointer model, double allowedGap);
 
     /**
      * double Cbc_getAllowableFractionGap(Cbc_Model *model);
      */
-    public double Cbc_getAllowableFractionGap(@In Pointer model);
+    public double Cbc_getAllowableFractionGap(@In @Transient Pointer model);
 
     /**
      * void Cbc_setAllowableFractionGap(Cbc_Model *model, double allowedFracionGap);
      */
-    public void Cbc_setAllowableFractionGap(@In Pointer model, double allowedFracionGap);
+    public void Cbc_setAllowableFractionGap(@In @Transient Pointer model, double allowedFracionGap);
 
     /**
      * double Cbc_getAllowablePercentageGap(Cbc_Model *model);
      */
-    public double Cbc_getAllowablePercentageGap(@In Pointer model);
+    public double Cbc_getAllowablePercentageGap(@In @Transient Pointer model);
 
     /**
      * void Cbc_setAllowablePercentageGap(Cbc_Model *model, double allowedPercentageGap);
      */
-    public void Cbc_setAllowablePercentageGap(@In Pointer model, double allowedPercentageGap);
+    public void Cbc_setAllowablePercentageGap(@In @Transient Pointer model, double allowedPercentageGap);
 
     /**
      * double Cbc_getMaximumSeconds(Cbc_Model *model);
      */
-    public double Cbc_getMaximumSeconds(@In Pointer model);
+    public double Cbc_getMaximumSeconds(@In @Transient Pointer model);
 
     /**
      * void Cbc_setMaximumSeconds(Cbc_Model *model, double maxSeconds);
      */
-    public void Cbc_setMaximumSeconds(@In Pointer model, double maxSeconds);
+    public void Cbc_setMaximumSeconds(@In @Transient Pointer model, double maxSeconds);
 
     /**
      * int Cbc_getMaximumNodes(Cbc_Model *model);
      */
-    public int Cbc_getMaximumNodes(@In Pointer model);
+    public int Cbc_getMaximumNodes(@In @Transient Pointer model);
 
     /**
      * void Cbc_setMaximumNodes(Cbc_Model *model, int maxNodes);
      */
-    public void Cbc_setMaximumNodes(@In Pointer model, int maxNodes);
+    public void Cbc_setMaximumNodes(@In @Transient Pointer model, int maxNodes);
 
     /**
      * int Cbc_getMaximumSolutions(Cbc_Model *model);
      */
-    public int Cbc_getMaximumSolutions(@In Pointer model);
+    public int Cbc_getMaximumSolutions(@In @Transient Pointer model);
 
     /**
      * void Cbc_setMaximumSolutions(Cbc_Model *model, int maxSolutions);
      */
-    public void Cbc_setMaximumSolutions(@In Pointer model, int maxSolutions);
+    public void Cbc_setMaximumSolutions(@In @Transient Pointer model, int maxSolutions);
 
     /**
      * int Cbc_getLogLevel(Cbc_Model *model);
      */
-    public int Cbc_getLogLevel(@In Pointer model);
+    public int Cbc_getLogLevel(@In @Transient Pointer model);
 
     /**
      * void Cbc_setLogLevel(Cbc_Model *model, int logLevel);
      */
-    public void Cbc_setLogLevel(@In Pointer model, int logLevel);
+    public void Cbc_setLogLevel(@In @Transient Pointer model, int logLevel);
 
     /**
      * double Cbc_getBestPossibleObjValue(Cbc_Model *model);
      */
-    public double Cbc_getBestPossibleObjValue(@In Pointer model);
+    public double Cbc_getBestPossibleObjValue(@In @Transient Pointer model);
 
     /**
      * void Cbc_setMIPStart(Cbc_Model *model, int count, const char **colNames, const double
      * colValues[]);
      */
-    public void Cbc_setMIPStartI(@In Pointer model, int count, @In int colIdxs[], @In double colValues[]);
+    public void Cbc_setMIPStartI(@In @Transient Pointer model, int count, @In @Transient int colIdxs[], @In @Transient double colValues[]);
 
     /**
      * void Cbc_setLPmethod(Cbc_Model *model, enum LPMethod lpm );
      */
-    public void Cbc_setLPmethod(@In Pointer model, int lpm);
+    public void Cbc_setLPmethod(@In @Transient Pointer model, int lpm);
 
     /**
      * void Cbc_updateConflictGraph( Cbc_Model *model );
      */
-    public void Cbc_updateConflictGraph(@In Pointer model);
+    public void Cbc_updateConflictGraph(@In @Transient Pointer model);
 
     /**
      * const void *Cbc_conflictGraph( Cbc_Model *model );
      */
-    public Pointer Cbc_conflictGraph(@In Pointer model);
+    public Pointer Cbc_conflictGraph(@In @Transient Pointer model);
 
     /**
      * int Cbc_solve(Cbc_Model *model);
      */
-    public int Cbc_solve(@In Pointer model);
+    public int Cbc_solve(@In @Transient Pointer model);
 
     /**
      * int Cbc_solveLinearProgram(Cbc_Model *model);
      */
-    public int Cbc_solveLinearProgram(@In Pointer model);
+    public int Cbc_solveLinearProgram(@In @Transient Pointer model);
 
     /**
      * void Cgl_generateCuts( void *osiClpSolver, enum CutType ct, void *osiCuts, int strength );
      */
-    public void Cgl_generateCuts(@In Pointer osiClpSolver, int ct, @In Pointer osiCuts, int strength);
+    public void Cgl_generateCuts(@In @Transient Pointer osiClpSolver, int ct, @In @Transient Pointer osiCuts, int strength);
 
     /**
      * void Cbc_strengthenPacking(Cbc_Model *model);
      */
-    public void Cbc_strengthenPacking(@In Pointer model);
+    public void Cbc_strengthenPacking(@In @Transient Pointer model);
 
     /**
      * void Cbc_strengthenPackingRows(Cbc_Model *model, size_t n, const size_t rows[]);
      */
-    public void Cbc_strengthenPackingRows(@In Pointer model, @size_t long n, @In @size_t long rows[]);
+    public void Cbc_strengthenPackingRows(@In @Transient Pointer model, @size_t long n, @In @Transient @size_t long rows[]);
 
     /**
      * void *Cbc_getSolverPtr(Cbc_Model *model);
      */
-    public Pointer Cbc_getSolverPtr(@In Pointer model);
+    public Pointer Cbc_getSolverPtr(@In @Transient Pointer model);
 
     /**
      * void *Cbc_deleteModel(Cbc_Model *model);
      */
-    public Pointer Cbc_deleteModel(@In Pointer model);
+    public Pointer Cbc_deleteModel(@In @Transient Pointer model);
 
     /**
      * int Osi_getNumIntegers( void *osi );
      */
-    public int Osi_getNumIntegers(@In Pointer osi);
+    public int Osi_getNumIntegers(@In @Transient Pointer osi);
 
     /**
      * const double *Osi_getReducedCost( void *osi );
      */
-    public Pointer Osi_getReducedCost(@In Pointer osi);
+    public Pointer Osi_getReducedCost(@In @Transient Pointer osi);
 
     /**
      * const double *Osi_getObjCoefficients();
@@ -596,142 +596,142 @@ public interface CbcJnr {
     /**
      * void Osi_deleteSolver( void *osi );
      */
-    public void Osi_deleteSolver(@In Pointer osi);
+    public void Osi_deleteSolver(@In @Transient Pointer osi);
 
     /**
      * void Osi_initialSolve(void *osi);
      */
-    public void Osi_initialSolve(@In Pointer osi);
+    public void Osi_initialSolve(@In @Transient Pointer osi);
 
     /**
      * void Osi_resolve(void *osi);
      */
-    public void Osi_resolve(@In Pointer osi);
+    public void Osi_resolve(@In @Transient Pointer osi);
 
     /**
      * void Osi_branchAndBound(void *osi);
      */
-    public void Osi_branchAndBound(@In Pointer osi);
+    public void Osi_branchAndBound(@In @Transient Pointer osi);
 
     /**
      * char Osi_isAbandoned(void *osi);
      */
-    public byte Osi_isAbandoned(@In Pointer osi);
+    public byte Osi_isAbandoned(@In @Transient Pointer osi);
 
     /**
      * char Osi_isProvenOptimal(void *osi);
      */
-    public byte Osi_isProvenOptimal(@In Pointer osi);
+    public byte Osi_isProvenOptimal(@In @Transient Pointer osi);
 
     /**
      * char Osi_isProvenPrimalInfeasible(void *osi);
      */
-    public byte Osi_isProvenPrimalInfeasible(@In Pointer osi);
+    public byte Osi_isProvenPrimalInfeasible(@In @Transient Pointer osi);
 
     /**
      * char Osi_isProvenDualInfeasible(void *osi);
      */
-    public byte Osi_isProvenDualInfeasible(@In Pointer osi);
+    public byte Osi_isProvenDualInfeasible(@In @Transient Pointer osi);
 
     /**
      * char Osi_isPrimalObjectiveLimitReached(void *osi);
      */
-    public byte Osi_isPrimalObjectiveLimitReached(@In Pointer osi);
+    public byte Osi_isPrimalObjectiveLimitReached(@In @Transient Pointer osi);
 
     /**
      * char Osi_isDualObjectiveLimitReached(void *osi);
      */
-    public byte Osi_isDualObjectiveLimitReached(@In Pointer osi);
+    public byte Osi_isDualObjectiveLimitReached(@In @Transient Pointer osi);
 
     /**
      * char Osi_isIterationLimitReached(void *osi);
      */
-    public byte Osi_isIterationLimitReached(@In Pointer osi);
+    public byte Osi_isIterationLimitReached(@In @Transient Pointer osi);
 
     /**
      * double Osi_getObjValue( void *osi );
      */
-    public double Osi_getObjValue(@In Pointer osi);
+    public double Osi_getObjValue(@In @Transient Pointer osi);
 
     /**
      * void Osi_setColUpper (void *osi, int elementIndex, double ub);
      */
-    public void Osi_setColUpper(@In Pointer osi, int elementIndex, double ub);
+    public void Osi_setColUpper(@In @Transient Pointer osi, int elementIndex, double ub);
 
     /**
      * void Osi_setColLower(void *osi, int elementIndex, double lb);
      */
-    public void Osi_setColLower(@In Pointer osi, int elementIndex, double lb);
+    public void Osi_setColLower(@In @Transient Pointer osi, int elementIndex, double lb);
 
     /**
      * int Osi_getNumCols( void *osi );
      */
-    public int Osi_getNumCols(@In Pointer osi);
+    public int Osi_getNumCols(@In @Transient Pointer osi);
 
     /**
      * void Osi_getColName( void *osi, int i, char *name, int maxLen );
      */
-    public void Osi_getColName(@In Pointer osi, int i, String name, int maxLen);
+    public void Osi_getColName(@In @Transient Pointer osi, int i, String name, int maxLen);
 
     /**
      * const double *Osi_getColLower( void *osi );
      */
-    public Pointer Osi_getColLower(@In Pointer osi);
+    public Pointer Osi_getColLower(@In @Transient Pointer osi);
 
     /**
      * const double *Osi_getColUpper( void *osi );
      */
-    public Pointer Osi_getColUpper(@In Pointer osi);
+    public Pointer Osi_getColUpper(@In @Transient Pointer osi);
 
     /**
      * int Osi_isInteger( void *osi, int col );
      */
-    public int Osi_isInteger(@In Pointer osi, int col);
+    public int Osi_isInteger(@In @Transient Pointer osi, int col);
 
     /**
      * int Osi_getNumRows( void *osi );
      */
-    public int Osi_getNumRows(@In Pointer osi);
+    public int Osi_getNumRows(@In @Transient Pointer osi);
 
     /**
      * int Osi_getRowNz(void *osi, int row);
      */
-    public int Osi_getRowNz(@In Pointer osi, int row);
+    public int Osi_getRowNz(@In @Transient Pointer osi, int row);
 
     /**
      * const int *Osi_getRowIndices(void *osi, int row);
      */
-    public Pointer Osi_getRowIndices(@In Pointer osi, int row);
+    public Pointer Osi_getRowIndices(@In @Transient Pointer osi, int row);
 
     /**
      * const double *Osi_getRowCoeffs(void *osi, int row);
      */
-    public Pointer Osi_getRowCoeffs(@In Pointer osi, int row);
+    public Pointer Osi_getRowCoeffs(@In @Transient Pointer osi, int row);
 
     /**
      * double Osi_getRowRHS(void *osi, int row);
      */
-    public double Osi_getRowRHS(@In Pointer osi, int row);
+    public double Osi_getRowRHS(@In @Transient Pointer osi, int row);
 
     /**
      * char Osi_getRowSense(void *osi, int row);
      */
-    public byte Osi_getRowSense(@In Pointer osi, int row);
+    public byte Osi_getRowSense(@In @Transient Pointer osi, int row);
 
     /**
      * void Osi_setObjCoef(void *osi, int index, double obj);
      */
-    public void Osi_setObjCoef(@In Pointer osi, int index, double obj);
+    public void Osi_setObjCoef(@In @Transient Pointer osi, int index, double obj);
 
     /**
      * void Osi_setObjSense(void *osi, double sense);
      */
-    public void Osi_setObjSense(@In Pointer osi, double sense);
+    public void Osi_setObjSense(@In @Transient Pointer osi, double sense);
 
     /**
      * const double *Osi_getColSolution(void *osi);
      */
-    public Pointer Osi_getColSolution(@In Pointer osi);
+    public Pointer Osi_getColSolution(@In @Transient Pointer osi);
 
     /**
      * void *OsiCuts_new();
@@ -742,115 +742,115 @@ public interface CbcJnr {
      * void OsiCuts_addRowCut( void *osiCuts, int nz, const int *idx, const double *coef, char
      * sense, double rhs );
      */
-    public void OsiCuts_addRowCut(@In Pointer osiCuts, int nz, @In int[] idx, @In double[] coef, byte sense, double rhs);
+    public void OsiCuts_addRowCut(@In @Transient Pointer osiCuts, int nz, @In @Transient int[] idx, @In @Transient double[] coef, byte sense, double rhs);
 
     /**
      * void OsiCuts_addGlobalRowCut( void *osiCuts, int nz, const int *idx, const double *coef,
      * char sense, double rhs );
      */
-    public void OsiCuts_addGlobalRowCut(@In Pointer osiCuts, int nz, @In int[] idx, @In double[] coef, byte sense, double rhs);
+    public void OsiCuts_addGlobalRowCut(@In @Transient Pointer osiCuts, int nz, @In @Transient int[] idx, @In @Transient double[] coef, byte sense, double rhs);
 
     /**
      * int OsiCuts_sizeRowCuts( void *osiCuts );
      */
-    public int OsiCuts_sizeRowCuts(@In Pointer osiCuts);
+    public int OsiCuts_sizeRowCuts(@In @Transient Pointer osiCuts);
 
     /**
      * int OsiCuts_nzRowCut( void *osiCuts, int iRowCut );
      */
-    public int OsiCuts_nzRowCut(@In Pointer osiCuts, int iRowCut);
+    public int OsiCuts_nzRowCut(@In @Transient Pointer osiCuts, int iRowCut);
 
     /**
      * const int * OsiCuts_idxRowCut( void *osiCuts, int iRowCut );
      */
-    public Pointer OsiCuts_idxRowCut(@In Pointer osiCuts, int iRowCut);
+    public Pointer OsiCuts_idxRowCut(@In @Transient Pointer osiCuts, int iRowCut);
 
     /**
      * const double *OsiCuts_coefRowCut( void *osiCuts, int iRowCut );
      */
-    public Pointer OsiCuts_coefRowCut(@In Pointer osiCuts, int iRowCut);
+    public Pointer OsiCuts_coefRowCut(@In @Transient Pointer osiCuts, int iRowCut);
 
     /**
      * double OsiCuts_rhsRowCut( void *osiCuts, int iRowCut );
      */
-    public double OsiCuts_rhsRowCut(@In Pointer osiCuts, int iRowCut);
+    public double OsiCuts_rhsRowCut(@In @Transient Pointer osiCuts, int iRowCut);
 
     /**
      * char OsiCuts_senseRowCut( void *osiCuts, int iRowCut );
      */
-    public byte OsiCuts_senseRowCut(@In Pointer osiCuts, int iRowCut);
+    public byte OsiCuts_senseRowCut(@In @Transient Pointer osiCuts, int iRowCut);
 
     /**
      * void OsiCuts_delete( void *osiCuts );
      */
-    public void OsiCuts_delete(@In Pointer osiCuts);
+    public void OsiCuts_delete(@In @Transient Pointer osiCuts);
 
     /**
      * void Osi_addCol(void *osi, const char *name, double lb, double ub, double obj, char
      * isInteger, int nz, int *rows, double *coefs);
      */
-    public void Osi_addCol(@In Pointer osi, @In String name, double lb, double ub, double obj, byte isInteger, int nz, @In int[] rows, @In double[] coefs);
+    public void Osi_addCol(@In @Transient Pointer osi, @In @Transient String name, double lb, double ub, double obj, byte isInteger, int nz, @In @Transient int[] rows, @In @Transient double[] coefs);
 
     /**
      * void Osi_addRow(void *osi, const char *name, int nz, const int *cols, const double *coefs,
      * char sense, double rhs);
      */
-    public void Osi_addRow(@In Pointer osi, @In String name, int nz, @In int[] cols, @In double[] coefs, byte sense, double rhs);
+    public void Osi_addRow(@In @Transient Pointer osi, @In @Transient String name, int nz, @In @Transient int[] cols, @In @Transient double[] coefs, byte sense, double rhs);
 
     /**
      * void Cbc_deleteRows(Cbc_Model *model, int numRows, const int rows[]);
      */
-    public void Cbc_deleteRows(@In Pointer model, int numRows, @In int rows[]);
+    public void Cbc_deleteRows(@In @Transient Pointer model, int numRows, @In @Transient int rows[]);
 
     /**
      * void Cbc_deleteRows(@In Pointer model, int numRows, const int rows[]);
      */
-    public void Cbc_deleteCols(@In Pointer model, int numCols, @In int cols[]);
+    public void Cbc_deleteCols(@In @Transient Pointer model, int numCols, @In @Transient int cols[]);
 
     /**
      * void Cbc_storeNameIndexes(Cbc_Model *model, char _store);
      */
-    public void Cbc_storeNameIndexes(@In Pointer model, byte _store);
+    public void Cbc_storeNameIndexes(@In @Transient Pointer model, byte _store);
 
     /**
      * int Cbc_getColNameIndex(Cbc_Model *model, const char *name);
      */
-    public int Cbc_getColNameIndex(@In Pointer model, @In String name);
+    public int Cbc_getColNameIndex(@In @Transient Pointer model, @In @Transient String name);
 
     /**
      * int Cbc_getRowNameIndex(Cbc_Model *model, const char *name);
      */
-    public int Cbc_getRowNameIndex(@In Pointer model, @In String name);
+    public int Cbc_getRowNameIndex(@In @Transient Pointer model, @In @Transient String name);
 
     /**
      * void Cbc_problemName(Cbc_Model *model, int maxNumberCharacters, char *array);
      */
-    public void Cbc_problemName(@In Pointer model, int maxNumberCharacters, String array);
+    public void Cbc_problemName(@In @Transient Pointer model, int maxNumberCharacters, String array);
 
     /**
      * int Cbc_setProblemName(Cbc_Model *model, const char *array);
      */
-    public int Cbc_setProblemName(@In Pointer model, @In String array);
+    public int Cbc_setProblemName(@In @Transient Pointer model, @In @Transient String array);
 
     /**
      * double Cbc_getPrimalTolerance(Cbc_Model *model);
      */
-    public double Cbc_getPrimalTolerance(@In Pointer model);
+    public double Cbc_getPrimalTolerance(@In @Transient Pointer model);
 
     /**
      * void Cbc_setPrimalTolerance(Cbc_Model *model, double tol);
      */
-    public void Cbc_setPrimalTolerance(@In Pointer model, double tol);
+    public void Cbc_setPrimalTolerance(@In @Transient Pointer model, double tol);
 
     /**
      * double Cbc_getDualTolerance(Cbc_Model *model);
      */
-    public double Cbc_getDualTolerance(@In Pointer model);
+    public double Cbc_getDualTolerance(@In @Transient Pointer model);
 
     /**
      * void Cbc_setDualTolerance(Cbc_Model *model, double tol);
      */
-    public void Cbc_setDualTolerance(@In Pointer model, double tol);
+    public void Cbc_setDualTolerance(@In @Transient Pointer model, double tol);
 
     /**
      * void Cbc_addCutCallback(Cbc_Model *model, cbc_cut_callback cutcb, const char *name, void
@@ -876,32 +876,32 @@ public interface CbcJnr {
     /**
      * void Cbc_clearCallBack(Cbc_Model *model);
      */
-    public void Cbc_clearCallBack(@In Pointer model);
+    public void Cbc_clearCallBack(@In @Transient Pointer model);
 
     /**
      * const double *Cbc_getRowPrice(Cbc_Model *model);
      */
-    public Pointer Cbc_getRowPrice(@In Pointer model);
+    public Pointer Cbc_getRowPrice(@In @Transient Pointer model);
 
     /**
      * const double *Osi_getRowPrice(void *osi);
      */
-    public Pointer Osi_getRowPrice(@In Pointer osi);
+    public Pointer Osi_getRowPrice(@In @Transient Pointer osi);
 
     /**
      * double Osi_getIntegerTolerance(void *osi);
      */
-    public double Osi_getIntegerTolerance(@In Pointer osi);
+    public double Osi_getIntegerTolerance(@In @Transient Pointer osi);
 
     /**
      * void Osi_checkCGraph( void *osi );
      */
-    public void Osi_checkCGraph(@In Pointer osi);
+    public void Osi_checkCGraph(@In @Transient Pointer osi);
 
     /**
      * const void * Osi_CGraph( void *osi );
      */
-    public Pointer Osi_CGraph(@In Pointer osi);
+    public Pointer Osi_CGraph(@In @Transient Pointer osi);
 
     /**
      * size_t CG_nodes( void *cgraph );
@@ -921,7 +921,7 @@ public interface CbcJnr {
     /**
      * CGNeighbors CG_conflictingNodes(Cbc_Model *model, void *cgraph, size_t node);
      */
-    public CGNeighbors CG_conflictingNodes(@In Pointer model, @In Pointer cgraph, @size_t long node);
+    public CGNeighbors CG_conflictingNodes(@In @Transient Pointer model, @In @Transient Pointer cgraph, @size_t long node);
 
 
     /**

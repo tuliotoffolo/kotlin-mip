@@ -10,7 +10,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     override val solverName = "CBC"
 
     private var cbc: Pointer
-    private val lib = CbcJnr.loadLibrary()
+    private val lib = CbcJnrLibrary.loadLibrary()
     private val runtime: Runtime = Runtime.getRuntime(lib)
     private var nSolutions = 0
 
