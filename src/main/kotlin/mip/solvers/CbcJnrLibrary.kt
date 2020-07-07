@@ -9,6 +9,8 @@ import java.io.*
 
 interface CbcJnrLibrary {
 
+    fun fflush(stream: Pointer?) = CLibrary.lib.fflush(stream)
+
     /**
      * void *Cbc_newModel();
      */
@@ -841,9 +843,8 @@ interface CbcJnrLibrary {
 
 
     companion object {
-
         @JvmStatic
-        fun loadLibrary(): CbcJnrJava {
+        fun loadLibrary(): CbcJnrJavaLibrary {
             val library: String?
             var libLocation: String? = System.getProperty("user.dir") + File.separatorChar
 
@@ -868,7 +869,7 @@ interface CbcJnrLibrary {
             }
 
             return LibraryLoader
-                .create(CbcJnrJava::class.java)
+                .create(CbcJnrJavaLibrary::class.java)
                 .failImmediately()
                 .load(libLocation + File.separatorChar + library)
         }
