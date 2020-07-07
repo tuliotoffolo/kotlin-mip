@@ -13,7 +13,7 @@ class LinExpr {
 
     var const = 0.0
     var sense = ""
-    val terms = HashMap<Var, Double>()
+    val terms = LinkedHashMap<Var, Double>()
 
     /**
      * Returns if this linear expression is affine, i.e. if it has no sense.
