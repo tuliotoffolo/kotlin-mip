@@ -4,14 +4,14 @@ import mip.*
 
 private
 fun main() {
-    val temp = readLine()
+    // val temp = readLine()
 
     val start = System.currentTimeMillis()
     var checkpoint = System.currentTimeMillis()
     val runtime: (Long) -> Double = { (System.currentTimeMillis() - it) / 1000.0 }
 
     // number of queens
-    val n = 250
+    val n = 1000
     val ns = 0 until n
 
     val queens = Model("NQueens", MINIMIZE)
