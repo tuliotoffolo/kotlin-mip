@@ -62,7 +62,7 @@ fun main() {
 
     // queens.write("queens.lp")
     // queens.optimize()
-    //
+
     // for (i in ns) {
     //     for (j in ns)
     //         print(if (x[i][j].x >= EPS) "O " else ". ")
@@ -71,3 +71,5 @@ fun main() {
     println()
     println("Total runtime: ${runtime(start)} seconds!")
 }
+
+fun QueensRuntime() = main()

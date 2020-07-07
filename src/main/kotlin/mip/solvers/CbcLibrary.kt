@@ -3,7 +3,7 @@ package mip.solvers
 import jnr.ffi.*
 import jnr.ffi.Platform.OS
 import jnr.ffi.types.*
-import jnr.ffi.annotations.Delegate
+import jnr.ffi.annotations.*
 import java.io.File
 
 internal interface CbcLibrary {
@@ -12,10 +12,7 @@ internal interface CbcLibrary {
 
     companion object {
 
-        @JvmStatic
-        val lib: CbcLibrary
-
-        init {
+        fun loadLibrary(): CbcLibrary {
             var library: String?
             var libLocation: String? = System.getProperty("user.dir") + File.separatorChar
 
@@ -39,7 +36,7 @@ internal interface CbcLibrary {
                 }
             }
 
-            this.lib = LibraryLoader
+            return LibraryLoader
                 .create(CbcLibrary::class.java)
                 .failImmediately()
                 .load(libLocation + File.separatorChar + library)
@@ -279,16 +276,16 @@ internal interface CbcLibrary {
     // void Cbc_addCol(Cbc_Model *model, const char *name, double lb, double ub, double obj,
     //                 char isInteger, int nz, int *rows, double *coeffs);
     fun Cbc_addCol(model: Pointer, name: String, lb: Double, ub: Double, obj: Double,
-                   isInteger: Byte, nz: Int, rows: Pointer?, coeffs: Pointer?)
+                   isInteger: Byte, nz: Int, @In rows: IntArray?, @In coeffs: DoubleArray?)
 
     // void Cbc_addRow(Cbc_Model *model, const char *name, int nz, const int *cols,
     //                 const double *coefs, char sense, double rhs);
-    fun Cbc_addRow(model: Pointer, name: String, nz: Int, cols: Pointer, coeffs: Pointer,
+    fun Cbc_addRow(model: Pointer, name: String, nz: Int, @In cols: IntArray?, @In coeffs: DoubleArray?,
                    sense: Byte, rhs: Double)
 
     // void Cbc_addLazyConstraint(Cbc_Model *model, int nz, int *cols, double *coefs, char sense,
     //                            double rhs);
-    fun Cbc_addLazyConstraint(model: Pointer, nz: Int, cols: IntArray?, coefs: DoubleArray?,
+    fun Cbc_addLazyConstraint(model: Pointer, nz: Int, @In cols: IntArray?, @In coefs: DoubleArray?,
                               sense: Byte, rhs: Double)
 
     // void Cbc_addSOS(Cbc_Model *model, int numRows, const int *rowStarts, const int *colIndices,
@@ -366,10 +363,10 @@ internal interface CbcLibrary {
     fun Cbc_isInteger(model: Pointer, i: Int): Int
 
     // void Cbc_getColName(Cbc_Model *model, int iColumn, char *name, size_t maxLength);
-    fun Cbc_getColName(model: Pointer, iColumn: Int, name: Pointer, @size_t maxLength: Int)
+    fun Cbc_getColName(model: Pointer, iColumn: Int, @Out name: String, @size_t maxLength: Int)
 
     // void Cbc_getRowName(Cbc_Model *model, int iRow, char *name, size_t maxLength);
-    fun Cbc_getRowName(model: Pointer, iRow: Int, name: Pointer, @size_t maxLength: Int)
+    fun Cbc_getRowName(model: Pointer, iRow: Int, @Out name: String, @size_t maxLength: Int)
 
     // void Cbc_setContinuous(Cbc_Model *model, int iColumn);
     fun Cbc_setContinuous(model: Pointer, iColumn: Int)
@@ -611,10 +608,10 @@ internal interface CbcLibrary {
     //                sense: Byte, rhs: Double)
 
     // void Cbc_deleteRows(Cbc_Model *model, int numRows, const int rows[]);
-    fun Cbc_deleteRows(model: Pointer, numRows: Int, rows: Pointer)
+    fun Cbc_deleteRows(model: Pointer, numRows: Int, @In rows: IntArray?)
 
     // void Cbc_deleteCols(Cbc_Model *model, int numCols, const int cols[]);
-    fun Cbc_deleteCols(model: Pointer, numCols: Int, cols: Pointer)
+    fun Cbc_deleteCols(model: Pointer, numCols: Int, @In cols: IntArray?)
 
     // void Cbc_storeNameIndexes(Cbc_Model *model, char _store);
     fun Cbc_storeNameIndexes(model: Pointer, _store: Byte);
