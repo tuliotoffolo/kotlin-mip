@@ -41,6 +41,7 @@ class Model : ModelParameters {
         solver = when (solverName.toUpperCase()) {
             CBC -> mip.solvers.Cbc(this, name, sense)
             CPLEX -> mip.solvers.Cplex(this, name, sense)
+            EMPTY_SOLVER -> mip.solvers.EmptySolver(this, name, sense)
             GUROBI -> mip.solvers.Gurobi(this, name, sense)
             else -> findSolver(sense)
         }

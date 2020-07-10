@@ -24,17 +24,17 @@ fun main() {
     // diagonal \
     for (k in 2 - n until n - 1) {
         val lhs = LinExpr()
-        for (i in ns) for (j in ns) if (i - j == k)
-            lhs += x[i][j]
-        queens += lhs leq 1
+        for (i in ns) if (i - k in ns)
+            lhs += x[i][i - k]
+        queens += lhs leq 1 named "diag1_${k.toString().replace("-", "m")}"
     }
 
     // diagonal \
     for (k in 3 until n + n) {
         val lhs = LinExpr()
-        for (i in ns) for (j in ns) if (i + j == k)
-            lhs += x[i][j]
-        queens += lhs leq 1
+        for (i in ns) if (k - i in ns)
+            lhs += x[i][k - i]
+        queens += lhs leq 1 named "diag2_$k"
     }
 
     queens.optimize()

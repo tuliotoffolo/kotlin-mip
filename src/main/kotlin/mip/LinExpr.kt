@@ -114,11 +114,20 @@ class LinExpr {
 
     }
 
-    @JvmOverloads
-    fun add(variable: Var?, coeff: Number? = 1.0) {
+    fun add(variable: Var?, coeff: Number?) {
         if (variable == null || coeff == null || coeff == 0.0) return
 
         val res = coeff.toDouble() + (terms[variable] ?: 0.0)
+        if (res != 0.0)
+            terms[variable] = res
+        else
+            terms.remove(variable)
+    }
+
+    fun add(variable: Var?) {
+        if (variable == null) return
+
+        val res = (terms[variable] ?: 0.0) + 1.0
         if (res != 0.0)
             terms[variable] = res
         else
@@ -209,33 +218,33 @@ class LinExpr {
 
     // region kotlin operators
 
-    operator fun plusAssign(iterable: Iterable<Any?>?) = add(iterable)
-    operator fun plusAssign(linExpr: LinExpr?) = add(linExpr)
-    operator fun plusAssign(variable: Var?) = add(variable)
-    operator fun plusAssign(const: Number?) = add(const)
+    inline operator fun plusAssign(iterable: Iterable<Any?>?) = add(iterable)
+    inline operator fun plusAssign(linExpr: LinExpr?) = add(linExpr)
+    inline operator fun plusAssign(variable: Var?) = add(variable)
+    inline operator fun plusAssign(const: Number?) = add(const)
 
-    operator fun minusAssign(iterable: Iterable<Any?>?) = sub(iterable)
-    operator fun minusAssign(linExpr: LinExpr?) = sub(linExpr)
-    operator fun minusAssign(variable: Var?) = sub(variable)
-    operator fun minusAssign(const: Number?) = sub(const)
+    inline operator fun minusAssign(iterable: Iterable<Any?>?) = sub(iterable)
+    inline operator fun minusAssign(linExpr: LinExpr?) = sub(linExpr)
+    inline operator fun minusAssign(variable: Var?) = sub(variable)
+    inline operator fun minusAssign(const: Number?) = sub(const)
 
-    operator fun timesAssign(const: Number?) = multiply(const)
-    operator fun divAssign(const: Number?) = divide(const)
+    inline operator fun timesAssign(const: Number?) = multiply(const)
+    inline operator fun divAssign(const: Number?) = divide(const)
 
-    operator fun plus(iterable: Iterable<Any?>?) = copy().apply { add(iterable) }
-    operator fun plus(linExpr: LinExpr?) = copy().apply { add(linExpr) }
-    operator fun plus(variable: Var?) = copy().apply { add(variable) }
-    operator fun plus(const: Number?) = copy().apply { add(const) }
-    operator fun unaryPlus() = this
+    inline operator fun plus(iterable: Iterable<Any?>?) = copy().apply { add(iterable) }
+    inline operator fun plus(linExpr: LinExpr?) = copy().apply { add(linExpr) }
+    inline operator fun plus(variable: Var?) = copy().apply { add(variable) }
+    inline operator fun plus(const: Number?) = copy().apply { add(const) }
+    inline operator fun unaryPlus() = this
 
-    operator fun minus(iterable: Iterable<Any?>?) = copy().apply { sub(iterable) }
-    operator fun minus(linExpr: LinExpr?) = copy().apply { sub(linExpr) }
-    operator fun minus(variable: Var?) = copy().apply { sub(variable) }
-    operator fun minus(const: Number?) = copy().apply { sub(const) }
-    operator fun unaryMinus() = copy().apply { multiply(-1) }
+    inline operator fun minus(iterable: Iterable<Any?>?) = copy().apply { sub(iterable) }
+    inline operator fun minus(linExpr: LinExpr?) = copy().apply { sub(linExpr) }
+    inline operator fun minus(variable: Var?) = copy().apply { sub(variable) }
+    inline operator fun minus(const: Number?) = copy().apply { sub(const) }
+    inline operator fun unaryMinus() = copy().apply { multiply(-1) }
 
-    operator fun times(const: Number?) = copy().apply { multiply(const) }
-    operator fun div(const: Number?) = copy().apply { divide(const) }
+    inline operator fun times(const: Number?) = copy().apply { multiply(const) }
+    inline operator fun div(const: Number?) = copy().apply { divide(const) }
 
     // endregion kotlin operators
 }

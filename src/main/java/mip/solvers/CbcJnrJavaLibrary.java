@@ -53,17 +53,17 @@ public interface CbcJnrJavaLibrary {
      * };
      * #define N_DBL_PARAMS 10
      */
-    public final int DBL_PARAM_PRIMAL_TOL = 0;
-    public final int DBL_PARAM_DUAL_TOL = 1;
-    public final int DBL_PARAM_ZERO_TOL = 2;
-    public final int DBL_PARAM_INT_TOL = 3;
-    public final int DBL_PARAM_PRESOLVE_TOL = 4;
-    public final int DBL_PARAM_TIME_LIMIT = 5;
-    public final int DBL_PARAM_PSI = 6;
-    public final int DBL_PARAM_CUTOFF = 7;
-    public final int DBL_PARAM_ALLOWABLE_GAP = 8;
-    public final int DBL_PARAM_GAP_RATIO = 9;
-    public final int N_DBL_PARAMS = 10;
+    public static final int DBL_PARAM_PRIMAL_TOL = 0;
+    public static final int DBL_PARAM_DUAL_TOL = 1;
+    public static final int DBL_PARAM_ZERO_TOL = 2;
+    public static final int DBL_PARAM_INT_TOL = 3;
+    public static final int DBL_PARAM_PRESOLVE_TOL = 4;
+    public static final int DBL_PARAM_TIME_LIMIT = 5;
+    public static final int DBL_PARAM_PSI = 6;
+    public static final int DBL_PARAM_CUTOFF = 7;
+    public static final int DBL_PARAM_ALLOWABLE_GAP = 8;
+    public static final int DBL_PARAM_GAP_RATIO = 9;
+    public static final int N_DBL_PARAMS = 10;
 
     /*
      * ! Integer parameters
@@ -88,24 +88,24 @@ public interface CbcJnrJavaLibrary {
      * };
      * #define N_INT_PARAMS 17
      */
-    public final int INT_PARAM_PERT_VALUE = 0;
-    public final int INT_PARAM_IDIOT = 1;
-    public final int INT_PARAM_STRONG_BRANCHING = 2;
-    public final int INT_PARAM_CUT_DEPTH = 3;
-    public final int INT_PARAM_MAX_NODES = 4;
-    public final int INT_PARAM_NUMBER_BEFORE = 5;
-    public final int INT_PARAM_FPUMP_ITS = 6;
-    public final int INT_PARAM_MAX_SOLS = 7;
-    public final int INT_PARAM_CUT_PASS_IN_TREE = 8;
-    public final int INT_PARAM_THREADS = 9;
-    public final int INT_PARAM_CUT_PASS = 10;
-    public final int INT_PARAM_LOG_LEVEL = 11;
-    public final int INT_PARAM_MAX_SAVED_SOLS = 12;
-    public final int INT_PARAM_MULTIPLE_ROOTS = 13;
-    public final int INT_PARAM_ROUND_INT_VARS = 14;
-    public final int INT_PARAM_RANDOM_SEED = 15;
-    public final int INT_PARAM_ELAPSED_TIME = 16;
-    public final int N_INT_PARAMS = 17;
+    public static final int INT_PARAM_PERT_VALUE = 0;
+    public static final int INT_PARAM_IDIOT = 1;
+    public static final int INT_PARAM_STRONG_BRANCHING = 2;
+    public static final int INT_PARAM_CUT_DEPTH = 3;
+    public static final int INT_PARAM_MAX_NODES = 4;
+    public static final int INT_PARAM_NUMBER_BEFORE = 5;
+    public static final int INT_PARAM_FPUMP_ITS = 6;
+    public static final int INT_PARAM_MAX_SOLS = 7;
+    public static final int INT_PARAM_CUT_PASS_IN_TREE = 8;
+    public static final int INT_PARAM_THREADS = 9;
+    public static final int INT_PARAM_CUT_PASS = 10;
+    public static final int INT_PARAM_LOG_LEVEL = 11;
+    public static final int INT_PARAM_MAX_SAVED_SOLS = 12;
+    public static final int INT_PARAM_MULTIPLE_ROOTS = 13;
+    public static final int INT_PARAM_ROUND_INT_VARS = 14;
+    public static final int INT_PARAM_RANDOM_SEED = 15;
+    public static final int INT_PARAM_ELAPSED_TIME = 16;
+    public static final int N_INT_PARAMS = 17;
 
     /*
      * enum LPMethod {
@@ -115,10 +115,10 @@ public interface CbcJnrJavaLibrary {
      *     LPM_Barrier = 3   ! The barrier algorithm.
      * };
      */
-    public final int LPM_Auto = 0;
-    public final int LPM_Dual = 1;
-    public final int LPM_Primal = 2;
-    public final int LPM_Barrier = 3;
+    public static final int LPM_Auto = 0;
+    public static final int LPM_Dual = 1;
+    public static final int LPM_Primal = 2;
+    public static final int LPM_Barrier = 3;
 
     /*
      * enum CutType {
@@ -130,12 +130,12 @@ public interface CbcJnrJavaLibrary {
      *     CT_LiftAndProject = 5   ! Lift and project cuts
      * };
      */
-    public final int CT_Gomory = 0;
-    public final int CT_MIR = 1;
-    public final int CT_ZeroHalf = 2;
-    public final int CT_Clique = 3;
-    public final int CT_KnapsackCover = 4;
-    public final int CT_LiftAndProject = 5;
+    public static final int CT_Gomory = 0;
+    public static final int CT_MIR = 1;
+    public static final int CT_ZeroHalf = 2;
+    public static final int CT_Clique = 3;
+    public static final int CT_KnapsackCover = 4;
+    public static final int CT_LiftAndProject = 5;
 
 
     /**
@@ -856,22 +856,22 @@ public interface CbcJnrJavaLibrary {
      * void Cbc_addCutCallback(Cbc_Model *model, cbc_cut_callback cutcb, const char *name, void
      * *appData, int howOften, char atSolution );
      */
-    // TODO public void Cbc_addCutCallback(@In Pointer model, cbc_cut_callback cutcb, @In String name, Pointer appData, int howOften, char atSolution);
+    public void Cbc_addCutCallback(@In Pointer model, Cbc_CutCallback cutcb, @In String name, Pointer appData, int howOften, char atSolution);
 
     /**
      * void Cbc_addIncCallback(void *model, cbc_incumbent_callback inccb, void *appData );
      */
-    // TODO public void Cbc_addIncCallback(@In Pointer model, cbc_incumbent_callback inccb, Pointer appData);
+    public void Cbc_addIncCallback(@In Pointer model, Cbc_IncumbentCallback inccb, Pointer appData);
 
     /**
      * void Cbc_registerCallBack(Cbc_Model *model, cbc_callback userCallBack);
      */
-    // TODO public void Cbc_registerCallBack(@In Pointer model, cbc_callback userCallBack);
+    public void Cbc_registerCallBack(@In Pointer model, Cbc_Callback userCallBack);
 
     /**
      * void Cbc_addProgrCallback(void *model, cbc_progress_callback prgcbc, void *appData);
      */
-    // TODO public void Cbc_addProgrCallback(@In Pointer model, cbc_progress_callback prgcbc, Pointer appData);
+    public void Cbc_addProgrCallback(@In Pointer model, Cbc_ProgressCallback prgcbc, Pointer appData);
 
     /**
      * void Cbc_clearCallBack(Cbc_Model *model);
@@ -937,33 +937,45 @@ public interface CbcJnrJavaLibrary {
         }
     }
 
-    /*
-     * TODO: implement callbacks
-     *
-     * typedef int(*cbc_progress_callback)(void *model,
-     *                                     int phase,
-     *                                     int step,
-     *                                     const char *phaseName,
-     *                                     double seconds,
-     *                                     double lb,
-     *                                     double ub,
-     *                                     int nint,
-     *                                     int *vecint,
-     *                                     void *cbData
-     *                                     );
-     *
-     *
-     *     typedef void(*cbc_callback)(void *model, int msgno, int ndouble,
-     *         const double *dvec, int nint, const int *ivec,
-     *         int nchar, char **cvec);
-     *
-     *     typedef void(*cbc_cut_callback)(void *osiSolver,
-     *         void *osiCuts, void *appdata);
-     *
-     *     typedef int (*cbc_incumbent_callback)(void *cbcModel,
-     *         double obj, int nz,
-     *         char **vnames, double *x, void *appData);
+
+    /**
+     * typedef int(*cbc_progress_callback)(void *model, int phase, int step, const char *phaseName,
+     * double seconds, double lb, double ub, int nint, int *vecint, void *cbData);
      */
+    public interface Cbc_ProgressCallback {
+
+        @Delegate
+        public void progressCallback(Pointer model, int phase, int step, @Pinned String phaseName, double seconds, double lb, double ub, int nint, Pointer vecint, Pointer cbData);
+    }
+
+    /**
+     * typedef void(*cbc_callback)(void *model, int msgno, int ndouble, const double *dvec, int
+     * nint, const int *ivec, int nchar, char **cvec);
+     */
+    public interface Cbc_Callback {
+
+        @Delegate
+        public void callback(Pointer model, int msgno, int nDouble, Pointer dvec, int nint, Pointer ivec, int nchar, Pointer cvec);
+    }
+
+    /**
+     * typedef void(*cbc_cut_callback)(void *osiSolver, void *osiCuts, void *appdata);
+     */
+    public interface Cbc_CutCallback {
+
+        @Delegate
+        public void cutCallback(Pointer osiSolver, Pointer osiCuts, Pointer appData);
+    }
+
+    /**
+     * typedef int (*cbc_incumbent_callback)(void *cbcModel, double obj, int nz, char **vnames,
+     * double *x, void *appData);
+     */
+    public interface Cbc_IncumbentCallback {
+
+        @Delegate
+        public int incumbentCallback(Pointer cbcModel, double obj, int nz, Pointer vnames, Pointer x, Pointer appData);
+    }
 }
 
 

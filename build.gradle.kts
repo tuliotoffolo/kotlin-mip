@@ -24,6 +24,8 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     implementation("com.github.jnr:jnr-ffi:2.1.14")
+
+    implementation("org.bytedeco:javacpp:1.5.3")
     // implementation("com.github.jnr:jnr-posix:3.0.54")
     // implementation("com.github.jnr:jnr-constants:0.9.15")
 
@@ -82,6 +84,7 @@ tasks {
     }
 
     test {
+        exclude("**/*")
         ignoreFailures = true
         jvmArgs = listOf("-Xss4m")
     }
@@ -97,6 +100,6 @@ tasks.register<Jar>("queens") {
     )
     from(sourceSets.main.get().output)
     manifest {
-        attributes["Main-Class"] = "mip.examples.QueensRuntimeKt"
+        attributes["Main-Class"] = "mip.examples.QueensKt"
     }
 }
