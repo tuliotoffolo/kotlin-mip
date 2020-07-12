@@ -1,13 +1,11 @@
 package mip
 
-import kotlin.reflect.KProperty
-
 /**
  * Abstract class used to represent a MIP solver, which should only be instantiated by a [Model].
  *
  * @author Túlio Toffolo
  */
-abstract class Solver(val model: Model, var name: String, sense: String = MINIMIZE) : Parameters() {
+abstract class Solver(val model: Model, var name: String, sense: String = MINIMIZE) : Properties() {
 
     abstract fun addConstr(linExpr: LinExpr, name: String): Unit
 

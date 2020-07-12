@@ -980,5 +980,53 @@ interface CbcJnrLibrary {
          */
         const val CHAR_ONE = 1.toByte()
         const val CHAR_ZERO = 0.toByte()
+
+        /**
+         * Map of constants' strings
+         */
+        val constantsMap = mapOf(
+            "DBL_PARAM_PRIMAL_TOL" to DBL_PARAM_PRIMAL_TOL,
+            "DBL_PARAM_DUAL_TOL" to DBL_PARAM_DUAL_TOL,
+            "DBL_PARAM_ZERO_TOL" to DBL_PARAM_ZERO_TOL,
+            "DBL_PARAM_INT_TOL" to DBL_PARAM_INT_TOL,
+            "DBL_PARAM_PRESOLVE_TOL" to DBL_PARAM_PRESOLVE_TOL,
+            "DBL_PARAM_TIME_LIMIT" to DBL_PARAM_TIME_LIMIT,
+            "DBL_PARAM_PSI" to DBL_PARAM_PSI,
+            "DBL_PARAM_CUTOFF" to DBL_PARAM_CUTOFF,
+            "DBL_PARAM_ALLOWABLE_GAP" to DBL_PARAM_ALLOWABLE_GAP,
+            "DBL_PARAM_GAP_RATIO" to DBL_PARAM_GAP_RATIO,
+            "N_DBL_PARAMS" to N_DBL_PARAMS,
+
+            "INT_PARAM_PERT_VALUE" to INT_PARAM_PERT_VALUE,
+            "INT_PARAM_IDIOT" to INT_PARAM_IDIOT,
+            "INT_PARAM_STRONG_BRANCHING" to INT_PARAM_STRONG_BRANCHING,
+            "INT_PARAM_CUT_DEPTH" to INT_PARAM_CUT_DEPTH,
+            "INT_PARAM_MAX_NODES" to INT_PARAM_MAX_NODES,
+            "INT_PARAM_NUMBER_BEFORE" to INT_PARAM_NUMBER_BEFORE,
+            "INT_PARAM_FPUMP_ITS" to INT_PARAM_FPUMP_ITS,
+            "INT_PARAM_MAX_SOLS" to INT_PARAM_MAX_SOLS,
+            "INT_PARAM_CUT_PASS_IN_TREE" to INT_PARAM_CUT_PASS_IN_TREE,
+            "INT_PARAM_THREADS" to INT_PARAM_THREADS,
+            "INT_PARAM_CUT_PASS" to INT_PARAM_CUT_PASS,
+            "INT_PARAM_LOG_LEVEL" to INT_PARAM_LOG_LEVEL,
+            "INT_PARAM_MAX_SAVED_SOLS" to INT_PARAM_MAX_SAVED_SOLS,
+            "INT_PARAM_MULTIPLE_ROOTS" to INT_PARAM_MULTIPLE_ROOTS,
+            "INT_PARAM_ROUND_INT_VARS" to INT_PARAM_ROUND_INT_VARS,
+            "INT_PARAM_RANDOM_SEED" to INT_PARAM_RANDOM_SEED,
+            "INT_PARAM_ELAPSED_TIME" to INT_PARAM_ELAPSED_TIME,
+            "N_INT_PARAMS" to N_INT_PARAMS,
+
+            "LPM_Auto" to LPM_Auto,
+            "LPM_Dual" to LPM_Dual,
+            "LPM_Primal" to LPM_Primal,
+            "LPM_Barrier" to LPM_Barrier,
+
+            "CT_Gomory" to CT_Gomory,
+            "CT_MIR" to CT_MIR,
+            "CT_ZeroHalf" to CT_ZeroHalf,
+            "CT_Clique" to CT_Clique,
+            "CT_KnapsackCover" to CT_KnapsackCover,
+            "CT_LiftAndProject" to CT_LiftAndProject,
+        )
     }
 }

@@ -1,10 +1,7 @@
 package mip.solvers
 
 import jnr.ffi.*
-import jnr.ffi.annotations.*
 import mip.*
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KProperty
 
 class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense) {
 
@@ -148,19 +145,6 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         }
     }
 
-    override fun get(property: KProperty<*>): Any = when (property.name) {
-        "cutoff" -> lib.Cbc_getCutoff(cbc)
-        "maxMipGap" -> lib.Cbc_getAllowableFractionGap(cbc)
-        "maxMipGapAbs" -> lib.Cbc_getAllowableGap(cbc)
-        "maxNodes" -> lib.Cbc_getMaximumNodes(cbc)
-        "maxSeconds" -> lib.Cbc_getMaximumSeconds(cbc)
-        "numSolutions" -> lib.Cbc_numberSavedSolutions(cbc)
-        "objectiveBound" -> lib.Cbc_getBestPossibleObjValue(cbc)
-        "objectiveValue" -> lib.Cbc_getObjValue(cbc)
-        "sense" -> if (lib.Cbc_getObjSense(cbc) > 0) MINIMIZE else MAXIMIZE
-
-        else -> throw NotImplementedError("Parameter currently unavailable in CBC interface")
-    }
 
     override fun optimize(): OptimizationStatus {
         // resetting buffers
@@ -176,6 +160,34 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         // lib.fflush(null)
 
         return OptimizationStatus.Other
+    }
+
+    override fun propertyGet(property: String): Any = when (property) {
+        "cutoff" -> lib.Cbc_getCutoff(cbc)
+        "maxMipGap" -> lib.Cbc_getAllowableFractionGap(cbc)
+        "maxMipGapAbs" -> lib.Cbc_getAllowableGap(cbc)
+        "maxNodes" -> lib.Cbc_getMaximumNodes(cbc)
+        "maxSeconds" -> lib.Cbc_getMaximumSeconds(cbc)
+        "numSolutions" -> lib.Cbc_numberSavedSolutions(cbc)
+        "objectiveBound" -> lib.Cbc_getBestPossibleObjValue(cbc)
+        "objectiveValue" -> lib.Cbc_getObjValue(cbc)
+        "sense" -> if (lib.Cbc_getObjSense(cbc) > 0) MINIMIZE else MAXIMIZE
+
+        else -> throw NotImplementedError("Parameter currently unavailable in CBC interface")
+    }
+
+    override fun <T> propertySet(property: String, value: T) = when (property) {
+        "cutoff" -> lib.Cbc_setCutoff(cbc, value as Double)
+        "maxMipGap" -> lib.Cbc_setAllowableFractionGap(cbc, value as Double)
+        "maxMipGapAbs" -> lib.Cbc_setAllowableGap(cbc, value as Double)
+        "maxNodes" -> lib.Cbc_setMaximumNodes(cbc, value as Int)
+        "maxSeconds" -> lib.Cbc_setMaximumSeconds(cbc, value as Double)
+        "seed" -> lib.Cbc_setIntParam(cbc, CbcJnrLibrary.INT_PARAM_RANDOM_SEED, value as Int)
+        "sense" -> lib.Cbc_setObjSense(cbc, if (value == MAXIMIZE) -1.0 else 1.0)
+        "threads" -> lib.Cbc_setIntParam(cbc, CbcJnrLibrary.INT_PARAM_THREADS, value as Int)
+        "timeLimit" -> lib.Cbc_setMaximumSeconds(cbc, value as Double)
+
+        else -> throw NotImplementedError("Parameter $property is currently unavailable in CBC interface")
     }
 
     override fun removeConstrs(constrs: Iterable<Constr>) {
@@ -198,19 +210,13 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         }
     }
 
-    override fun <T> set(property: KMutableProperty<*>, value: T) {
-        when (property.name) {
-            "cutoff" -> lib.Cbc_setCutoff(cbc, value as Double)
-            "maxMipGap" -> lib.Cbc_setAllowableFractionGap(cbc, value as Double)
-            "maxMipGapAbs" -> lib.Cbc_setAllowableGap(cbc, value as Double)
-            "maxNodes" -> lib.Cbc_setMaximumNodes(cbc, value as Int)
-            "maxSeconds" -> lib.Cbc_setMaximumSeconds(cbc, value as Double)
-            "seed" -> lib.Cbc_setIntParam(cbc, CbcJnrLibrary.INT_PARAM_RANDOM_SEED, value as Int)
-            "sense" -> lib.Cbc_setObjSense(cbc, if (value == MAXIMIZE) -1.0 else 1.0)
-            "threads" -> lib.Cbc_setParameter(cbc, "threads", value.toString())
-            "timeLimit" -> lib.Cbc_setMaximumSeconds(cbc, value as Double)
+    override fun <T> set(property: String, value: T) {
+        when (value) {
+            is Int -> lib.Cbc_setIntParam(cbc, convertParam(property), value)
+            is Double -> lib.Cbc_setDblParam(cbc, convertParam(property), value)
+            is String -> lib.Cbc_setParameter(cbc, property, value)
 
-            else -> throw NotImplementedError("Parameter ${property.name} is currently unavailable in CBC interface")
+            else -> lib.Cbc_setParameter(cbc, property, value.toString())
         }
     }
 
@@ -325,6 +331,8 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         //     intBuffer = Memory.allocateDirect(runtime, bufferLength * 4)
         // }
     }
+
+    private fun convertParam(property: String) = CbcJnrLibrary.constantsMap[property] ?: -1
 
     private fun getSolutionIdx(idx: Int): Pointer {
         if (idx in solutions) return solutions[idx]!!

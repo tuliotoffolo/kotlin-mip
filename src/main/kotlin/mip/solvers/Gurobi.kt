@@ -3,8 +3,6 @@ package mip.solvers
 import jnr.ffi.*
 import jnr.ffi.byref.PointerByReference
 import mip.*
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KProperty
 
 class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, sense) {
 
@@ -233,23 +231,6 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         }
     }
 
-    override fun get(property: KProperty<*>): Any = when (property.name) {
-        "cutoff" -> getDblParam("Cutoff")
-        "maxMipGap" -> getDblParam("MIPGap")
-        "maxMipGapAbs" -> getDblParam("MIPGapAbs")
-        // "numSolutions" -> lib.Cbc_numberSavedSolutions(gurobi)
-        "nodeLimit" -> getDblParam("NodeLimit")
-        "objective" -> objective
-        "objectiveBound" -> getDblAttr("ObjBound")
-        "objectiveValue" -> getDblAttr("ObjVal")
-        "sense" -> if (getIntAttr("ModelSense") >= 0) MINIMIZE else MAXIMIZE
-        "status" -> status
-        "threads" -> getIntParam("Threads")
-        "timeLimit" -> getDblParam("TimeLimit")
-
-        else -> throw NotImplementedError("Parameter '${property.name}' currently unavailable in Gurobi interface")
-    }
-
     override fun optimize(): OptimizationStatus {
         // resetting buffers
         removeSolution()
@@ -278,22 +259,6 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
             for ((i, variable) in vars.withIndex())
                 intBuffer.putInt(4 * i.toLong(), variable.idx)
             lib.GRBdelvars(gurobi, size, intBuffer)
-        }
-    }
-
-    override fun <T> set(property: KMutableProperty<*>, value: T) {
-        when (property.name) {
-            "cutoff" -> lib.GRBsetdblparam(gurobi, "Cutoff", value as Double)
-            "iterationLimit" -> lib.GRBsetdblparam(gurobi, "IterationLimit", value as Double)
-            "maxMipGap" -> lib.GRBsetdblparam(gurobi, "MIPGap", value as Double)
-            "maxMipGapAbs" -> lib.GRBsetdblparam(gurobi, "MIPGapAbs", value as Double)
-            "seed" -> lib.GRBsetintparam(gurobi, "Seed", value as Int)
-            "sense" -> lib.GRBsetintparam(gurobi, "ModelSense", if (sense == MIN) 1 else -1)
-            "threads" -> lib.GRBsetintparam(gurobi, "Threads", value as Int)
-            "nodeLimit" -> lib.GRBsetdblparam(gurobi, "NodeLimit", value as Double)
-            "timeLimit" -> lib.GRBsetdblparam(gurobi, "TimeLimit", value as Double)
-
-            else -> throw NotImplementedError("Parameter currently unavailable in Gurobi interface")
         }
     }
 

@@ -1,6 +1,5 @@
 package mip
 
-import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 
 /**
@@ -8,7 +7,7 @@ import kotlin.reflect.KProperty
  *
  * @author Túlio A. M. Toffolo
  */
-abstract class Parameters {
+abstract class Properties {
 
     /**
      * Name of the solver ("CBC" or "Gurobi", for example).
@@ -64,7 +63,7 @@ abstract class Parameters {
      */
     open val objectiveValue by Param<Double>()
 
-    /** 
+    /**
      * Optimization status, which can be OPTIMAL(0), ERROR(-1), INFEASIBLE(1), UNBOUNDED(2). When
      * optimizing problems with integer variables some additional cases may happen, FEASIBLE(3)
      * for the case when a feasible solution was found but optimality was not proved,
@@ -172,17 +171,16 @@ abstract class Parameters {
     /**
      * Tolerance for the quality of the optimal solution, if a solution with cost :math:`c` and a
      * lower bound :math:`l` are available and :math:`c-l<` :code:`mip_gap_abs`, the search will
-     * be concluded, see :attr:`~mip.Model.max_mip_gap` to determine a percentage value. Default
-     * value: 1e-10.
+     * be concluded, see :attr:`~mip.Model.max_mip_gap` to determine a percentage value.
      */
-    open var maxMipGap by Param<Double>(1e-10)
+    open var maxMipGap by Param<Double>()
 
     /**
      * Value indicating the tolerance for the maximum percentage deviation from the optimal
      * solution cost, if a solution with cost :math:`c` and a lower bound :math:`l` are available
-     * and :math:`(c-l)/l <` :code:`max_mip_gap` the search will be concluded. Default value: 1e-4.
+     * and :math:`(c-l)/l <` :code:`max_mip_gap` the search will be concluded.
      */
-    open var maxMipGapAbs by Param<Double>(1e-4)
+    open var maxMipGapAbs by Param<Double>()
 
     /**
      * Limit on the number of nodes explored by the search. Note that the solver will return if
@@ -296,9 +294,9 @@ abstract class Parameters {
 
     /**
      * Defines whether [searchProgressLog] will be stored or not when optimizing. Activate it if
-     * you want to analyze bound improvements over time. Default value: false.
+     * you want to analyze bound improvements over time.
      */
-    open var storeSearchProgressLog by Param<Boolean>(false)
+    open var storeSearchProgressLog by Param<Boolean>()
 
     /**
      * Number of threads to be used when solving the problem. 0 uses solver default configuration,
@@ -320,37 +318,74 @@ abstract class Parameters {
     // endregion vars
 
     /**
+     * Getter used to directly query solver parameters and/or arguments.
+     */
+    open fun get(property: String): Any {
+        throw NotImplementedError("Parameter or attribute '$property' unavailable in solver $solverName")
+    }
+
+    /**
+     * Getter used to directly query solver *Double* parameters and/or arguments.
+     */
+    open fun getDouble(property: String): Double {
+        throw NotImplementedError("Parameter or attribute '$property' unavailable in solver $solverName")
+    }
+
+    /**
+     * Getter used to directly query solver *Int* parameters and/or arguments.
+     */
+    open fun getInt(property: String): Int {
+        throw NotImplementedError("Parameter or attribute '$property' unavailable in solver $solverName")
+    }
+
+    /**
+     * Getter used to directly query solver *String* parameters and/or arguments.
+     */
+    open fun getString(property: String): String {
+        throw NotImplementedError("Parameter or attribute '$property' unavailable in solver $solverName")
+    }
+
+    /**
+     * Setter used to directly set solver parameters and/or arguments.
+     */
+    open fun <T> set(property: String, value: T) {
+        throw NotImplementedError("Parameter or attribute '$property' unavailable in solver $solverName")
+    }
+
+
+    /**
      * Getter used by delegated properties.
      */
-    open fun get(property: KProperty<*>): Any {
-        throw NotImplementedError("Parameter or attribute '${property.name}' unavailable in solver $solverName")
+    internal open fun propertyGet(property: String): Any {
+        throw NotImplementedError("Parameter or attribute '$property' unavailable in solver $solverName")
     }
 
     /**
-     * Setter used by delegated properties.
+     * Getter used by delegated properties.
      */
-    open fun <T> set(property: KMutableProperty<*>, value: T) {
-        throw NotImplementedError("Parameter or attribute '${property.name}' unavailable in solver $solverName")
+    internal open fun <T> propertySet(property: String, value: T) {
+        throw NotImplementedError("Parameter or attribute '$property' unavailable in solver $solverName")
     }
 
+
     /**
-     * Delegate class which is used as the default manager for properties of class [Parameters].
+     * Delegate class which is used as the default manager for properties of class [Properties].
      */
     @Suppress("NOTHING_TO_INLINE")
-    private class Param<T>(val default: T? = null) {
+    private class Param<T> {
 
         /**
          * Delegate getter.
          */
-        inline operator fun getValue(param: Parameters, property: KProperty<*>): T {
-            return param.get(property) as T
+        inline operator fun getValue(param: Properties, property: KProperty<*>): T {
+            return param.propertyGet(property.name) as T
         }
 
         /**
          * Delegate setter.
          */
-        inline operator fun setValue(param: Parameters, property: KProperty<*>, value: T) {
-            param.set(property as KMutableProperty<*>, value)
+        inline operator fun setValue(param: Properties, property: KProperty<*>, value: T) {
+            param.propertySet(property.name, value)
         }
     }
 }

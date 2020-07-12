@@ -3,8 +3,6 @@ package mip
 import java.lang.Double.*
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KProperty
 
 /**
  * Model class
@@ -21,7 +19,7 @@ import kotlin.reflect.KProperty
  *
  * @author Túlio Toffolo
  */
-class Model : ModelParameters {
+class Model : ModelProperties {
 
     var name: String
     override var sense: String
