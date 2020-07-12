@@ -4,7 +4,7 @@
 
 Package website: **http://j-mip.com**
 
-Kotlin-MIP is a collection of Java/Kotlin tools for the modeling and solution of Mixed-Integer Linear programs (MIPs). 
+Kotlin-MIP (also known as J-MIP) is a collection of Java/Kotlin tools for the modeling and solution of Mixed-Integer Linear programs (MIPs). 
 The entire package is inspired by [Python-MIP](https://github.com/coin-or/python-mip), which was also developed by us.
 The main goal here is to provide the tool for a higher-performance environment such as the one represented by the Java Virtual Machine -- which may be necessary to develop certain hybrid heuristics, for example.
 
