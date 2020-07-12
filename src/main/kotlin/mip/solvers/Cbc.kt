@@ -10,11 +10,10 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     private var cbc: Pointer
     private val lib = CbcJnrLibrary.loadLibrary()
     private val runtime: Runtime = Runtime.getRuntime(lib)
-    private var nSolutions = 0
 
     // region properties override
 
-    override val hasSolution get() = nSolutions > 0
+    override val hasSolution get() = numSolutions > 0
 
     override var objective: LinExpr
         get() {
@@ -86,6 +85,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     // endregion buffers
 
+
     init {
         // initializing the solver/model
         this.cbc = lib.Cbc_newModel()
@@ -101,6 +101,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     protected fun finalize() {
         lib.Cbc_deleteModel(cbc)
     }
+
 
     override fun addConstr(linExpr: LinExpr, name: String) {
         val nz = linExpr.size
@@ -145,47 +146,90 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         }
     }
 
-
     override fun optimize(): OptimizationStatus {
         // resetting buffers
         removeSolution()
 
-        // optimizing...
+        // optimizing and flushing stdout
         lib.Cbc_solve(cbc)
-        if (lib.Cbc_isProvenOptimal(cbc) != 0 || lib.Cbc_getNumIntegers(cbc) > 0) {
-            nSolutions = lib.Cbc_numberSavedSolutions(cbc)
-        }
+        lib.fflush(null)
 
-        // flushing stdout
-        // lib.fflush(null)
-
-        return OptimizationStatus.Other
+        return status
     }
 
     override fun propertyGet(property: String): Any = when (property) {
+        // vals
+        // "gap" -> ???
+        // "hasSolution" -> using property
+        // "numCols" -> ???
+        // "numInt" -> ???
+        // "numRows" -> ???
+        // "numNZ" -> ???
+        "numSolutions" -> lib.Cbc_numberSavedSolutions(cbc)
+        "objectiveBound" -> lib.Cbc_getBestPossibleObjValue(cbc)
+        "objectiveValue" -> lib.Cbc_getObjValue(cbc)
+        // "status" -> using property
+
+        // vars
+        // "clique" -> ???
         "cutoff" -> lib.Cbc_getCutoff(cbc)
+        // "cutPasses" -> ???
+        // "cuts" -> ???
+        // "cutsGenerator" -> ???
+        // "emphasis" -> ???
+        // "infeasTol" -> ???
+        // "integerTol" -> ???
+        // "lazyConstrsGenerator" -> ???
+        // "lpMethod" -> ???
         "maxMipGap" -> lib.Cbc_getAllowableFractionGap(cbc)
         "maxMipGapAbs" -> lib.Cbc_getAllowableGap(cbc)
         "maxNodes" -> lib.Cbc_getMaximumNodes(cbc)
         "maxSeconds" -> lib.Cbc_getMaximumSeconds(cbc)
-        "numSolutions" -> lib.Cbc_numberSavedSolutions(cbc)
-        "objectiveBound" -> lib.Cbc_getBestPossibleObjValue(cbc)
-        "objectiveValue" -> lib.Cbc_getObjValue(cbc)
+        // "objective" -> using property
+        // "objectiveConst" -> using property
+        // "optTol" -> ???
+        // "preprocess" -> ???
+        // "roundIntVars" -> ???
+        // "seed" -> ???
         "sense" -> if (lib.Cbc_getObjSense(cbc) > 0) MINIMIZE else MAXIMIZE
+        // "solPoolSize" -> ???
+        // "start" -> ???
+        // "searchProgressLog" -> ???
+        // "storeSearchProgressLog" -> ???
+        // "threads" -> ???
+        // "verbose" -> ???
 
-        else -> throw NotImplementedError("Parameter currently unavailable in CBC interface")
+        else -> throw NotImplementedError("Parameter $property is currently unavailable in CBC interface")
     }
 
     override fun <T> propertySet(property: String, value: T) = when (property) {
+        "clique" -> lib.Cbc_setParameter(cbc, "clique", if (value == 0) "off" else "forceon")
         "cutoff" -> lib.Cbc_setCutoff(cbc, value as Double)
+        // "cutPasses" -> ???
+        // "cuts" -> ???
+        // "cutsGenerator" -> ???
+        // "emphasis" -> ???
+        // "infeasTol" -> ???
+        // "integerTol" -> ???
+        // "lazyConstrsGenerator" -> ???
+        // "lpMethod" -> ???
         "maxMipGap" -> lib.Cbc_setAllowableFractionGap(cbc, value as Double)
         "maxMipGapAbs" -> lib.Cbc_setAllowableGap(cbc, value as Double)
         "maxNodes" -> lib.Cbc_setMaximumNodes(cbc, value as Int)
         "maxSeconds" -> lib.Cbc_setMaximumSeconds(cbc, value as Double)
+        // "objective" -> using property
+        // "objectiveConst" -> using property
+        // "optTol" -> ???
+        // "preprocess" -> ???
+        // "roundIntVars" -> ???
         "seed" -> lib.Cbc_setIntParam(cbc, CbcJnrLibrary.INT_PARAM_RANDOM_SEED, value as Int)
         "sense" -> lib.Cbc_setObjSense(cbc, if (value == MAXIMIZE) -1.0 else 1.0)
+        // "solPoolSize" -> ???
+        // "start" -> ???
+        // "searchProgressLog" -> ???
+        // "storeSearchProgressLog" -> ???
         "threads" -> lib.Cbc_setIntParam(cbc, CbcJnrLibrary.INT_PARAM_THREADS, value as Int)
-        "timeLimit" -> lib.Cbc_setMaximumSeconds(cbc, value as Double)
+        // "verbose" -> ???
 
         else -> throw NotImplementedError("Parameter $property is currently unavailable in CBC interface")
     }
@@ -231,7 +275,9 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     // region constraints getters and setters
 
     override fun getConstrExpr(idx: Int): LinExpr = throw NotImplementedError()
-    override fun setConstrExpr(idx: Int, value: LinExpr): Unit = throw NotImplementedError()
+    override fun setConstrExpr(idx: Int, value: LinExpr) {
+        throw NotImplementedError()
+    }
 
     override fun getConstrName(idx: Int): String {
         val strBuffer = String()
@@ -243,7 +289,9 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         pi?.getDouble(8 * idx.toLong()) ?: throw Error("Solution not available")
 
     override fun getConstrRHS(idx: Int): Double = throw NotImplementedError()
-    override fun setConstrRHS(idx: Int, value: Double): Unit = throw NotImplementedError()
+    override fun setConstrRHS(idx: Int, value: Double) {
+        throw NotImplementedError()
+    }
 
     override fun getConstrSlack(idx: Int): Double = throw NotImplementedError()
 
@@ -288,9 +336,11 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         rc?.getDouble(8 * idx.toLong()) ?: throw Error("Solution not available.")
 
     override fun getVarType(idx: Int): VarType {
-        if (lib.Cbc_isInteger(cbc, idx) != 0 && getVarLB(idx) == 0.0 && getVarUB(idx) == 1.0)
+        val isInt = lib.Cbc_isInteger(cbc, idx) != 0
+
+        if (isInt && getVarLB(idx) == 0.0 && getVarUB(idx) == 1.0)
             return VarType.Binary
-        else if (lib.Cbc_isInteger(cbc, idx) != 0)
+        else if (isInt)
             return VarType.Integer
         else
             return VarType.Continuous
@@ -324,15 +374,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     // region private useful functions
 
-    private fun checkBuffer(nz: Int) {
-        // if (nz > bufferLength) {
-        //     bufferLength = nz
-        //     dblBuffer = Memory.allocateDirect(runtime, bufferLength * 8)
-        //     intBuffer = Memory.allocateDirect(runtime, bufferLength * 4)
-        // }
-    }
-
-    private fun convertParam(property: String) = CbcJnrLibrary.constantsMap[property] ?: -1
+    private fun convertParam(property: String): Int = CbcJnrLibrary.constantsMap[property] ?: -1
 
     private fun getSolutionIdx(idx: Int): Pointer {
         if (idx in solutions) return solutions[idx]!!

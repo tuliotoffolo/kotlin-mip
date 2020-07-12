@@ -125,13 +125,13 @@ interface CbcJnrLibrary {
      * void Cbc_addCol(Cbc_Model *model, const char *name, double lb, double ub, double obj, char
      * isInteger, int nz, int *rows, double *coefs);
      */
-    fun Cbc_addCol(@Pinned @In model: Pointer, @Pinned @In @Transient name: String, lb: Double, ub: Double, obj: Double, isInteger: Byte, nz: Int, @Pinned @In @Transient rows: IntArray, @Pinned @In @Transient coefs: DoubleArray)
+    fun Cbc_addCol(@Pinned @In model: Pointer, @Pinned @In @Transient name: String, lb: Double, ub: Double, obj: Double, isInteger: Byte, nz: Int, @Pinned @In @Transient rows: IntArray?, @Pinned @In @Transient coefs: DoubleArray?)
 
     /**
      * void Cbc_addRow(Cbc_Model *model, const char *name, int nz, const int *cols, const double
      * *coefs, char sense, double rhs);
      */
-    fun Cbc_addRow(@Pinned @In model: Pointer, @Pinned @In @Transient name: String, nz: Int, @Pinned @In @Transient cols: IntArray, @Pinned @In @Transient coefs: DoubleArray, sense: Byte, rhs: Double)
+    fun Cbc_addRow(@Pinned @In model: Pointer, @Pinned @In @Transient name: String, nz: Int, @Pinned @In @Transient cols: IntArray?, @Pinned @In @Transient coefs: DoubleArray?, sense: Byte, rhs: Double)
 
     /**
      * void Cbc_addLazyConstraint(Cbc_Model *model, int nz, int *cols, double *coefs, char sense,
@@ -845,7 +845,7 @@ interface CbcJnrLibrary {
 
     companion object {
         @JvmStatic
-        fun loadLibrary(): CbcJnrJavaLibrary {
+        fun loadLibrary(): CbcJnrLibrary {
             val library: String?
             var libLocation: String? = System.getProperty("user.dir") + File.separatorChar
 

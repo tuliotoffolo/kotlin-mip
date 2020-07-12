@@ -14,6 +14,7 @@ abstract class Properties {
      */
     abstract val solverName: String
 
+
     // region vals
 
     /**
@@ -316,6 +317,7 @@ abstract class Properties {
     open var verbose by Param<Boolean>()
 
     // endregion vars
+
 
     /**
      * Getter used to directly query solver parameters and/or arguments.

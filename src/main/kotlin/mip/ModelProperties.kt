@@ -8,6 +8,7 @@ abstract class ModelProperties() : Properties() {
 
     internal abstract var solver: Solver
 
+
     // region vals
 
     override val gap: Double get() = solver.gap
@@ -192,6 +193,7 @@ abstract class ModelProperties() : Properties() {
 
     // endregion vars
 
+
     override fun get(property: String) = solver.get(property)
 
     override fun getDouble(property: String) = solver.getDouble(property)
@@ -201,6 +203,7 @@ abstract class ModelProperties() : Properties() {
     override fun getString(property: String) = solver.getString(property)
 
     override fun <T> set(property: String, value: T) = solver.set(property, value)
+
 
     override fun propertyGet(property: String) = solver.propertyGet(property)
 
