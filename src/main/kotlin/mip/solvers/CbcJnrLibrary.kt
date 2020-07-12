@@ -870,7 +870,7 @@ interface CbcJnrLibrary {
             }
 
             return LibraryLoader
-                .create(CbcJnrJavaLibrary::class.java)
+                .create(CbcJnrLibrary::class.java)
                 .failImmediately()
                 .load(libLocation + File.separatorChar + library)
         }
