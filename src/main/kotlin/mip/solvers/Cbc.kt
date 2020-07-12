@@ -8,7 +8,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     override val solverName = "CBC"
 
     private var cbc: Pointer
-    private val lib = CbcJnrLibrary.loadLibrary()
+    private val lib = CbcJnrLib.loadLibrary()
     private val runtime: Runtime = Runtime.getRuntime(lib)
 
     // region properties override
@@ -89,7 +89,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     init {
         // initializing the solver/model
         this.cbc = lib.Cbc_newModel()
-        lib.Cbc_storeNameIndexes(cbc, CbcJnrLibrary.CHAR_ONE)
+        lib.Cbc_storeNameIndexes(cbc, CbcJnrLib.CHAR_ONE)
 
         // setting sense (if needed)
         if (sense == MAXIMIZE)
@@ -125,9 +125,9 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         val nz = column.size
 
         val isInteger = when (varType) {
-            VarType.Binary -> CbcJnrLibrary.CHAR_ONE
-            VarType.Continuous -> CbcJnrLibrary.CHAR_ZERO
-            VarType.Integer -> CbcJnrLibrary.CHAR_ONE
+            VarType.Binary -> CbcJnrLib.CHAR_ONE
+            VarType.Continuous -> CbcJnrLib.CHAR_ZERO
+            VarType.Integer -> CbcJnrLib.CHAR_ONE
         }
 
         if (nz > 0) {
@@ -159,12 +159,12 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     override fun propertyGet(property: String): Any = when (property) {
         // vals
-        // "gap" -> ???
+        "gap" -> if (hasSolution) (objectiveValue - objectiveBound) / objectiveBound else 1.0
         // "hasSolution" -> using property
-        // "numCols" -> ???
-        // "numInt" -> ???
-        // "numRows" -> ???
-        // "numNZ" -> ???
+        "numCols" -> lib.Cbc_getNumCols(cbc)
+        "numInt" -> lib.Cbc_getNumIntegers(cbc)
+        "numRows" -> lib.Cbc_getNumRows(cbc)
+        "numNZ" -> lib.Cbc_getNumElements(cbc)
         "numSolutions" -> lib.Cbc_numberSavedSolutions(cbc)
         "objectiveBound" -> lib.Cbc_getBestPossibleObjValue(cbc)
         "objectiveValue" -> lib.Cbc_getObjValue(cbc)
@@ -178,7 +178,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         // "cutsGenerator" -> ???
         // "emphasis" -> ???
         "infeasTol" -> lib.Cbc_getPrimalTolerance(cbc)
-        // "integerTol" -> lib.Cbc_getDblParam(cbc, convertParam("DBL_PARAM_INT_TOL"))
+        // "integerTol" -> lib.Cbc_getDblParam(cbc, CbcJnrLibrary.DBL_PARAM_INT_TOL)
         // "integerTol" -> ???
         // "lazyConstrsGenerator" -> ???
         // "lpMethod" -> ???
@@ -198,7 +198,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         // "searchProgressLog" -> ???
         // "storeSearchProgressLog" -> ???
         // "threads" -> ???
-        // "verbose" -> ???
+        "verbose" -> lib.Cbc_getLogLevel(cbc) == 1
 
         else -> throw NotImplementedError("Parameter $property is currently unavailable in CBC interface")
     }
@@ -211,7 +211,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         // "cutsGenerator" -> ???
         // "emphasis" -> ???
         "infeasTol" -> lib.Cbc_setPrimalTolerance(cbc, value as Double)
-        "integerTol" -> lib.Cbc_setDblParam(cbc, convertParam("DBL_PARAM_INT_TOL"), value as Double)
+        "integerTol" -> lib.Cbc_setDblParam(cbc, CbcJnrLib.DBL_PARAM_INT_TOL, value as Double)
         // "lazyConstrsGenerator" -> ???
         // "lpMethod" -> ???
         "maxMipGap" -> lib.Cbc_setAllowableFractionGap(cbc, value as Double)
@@ -223,14 +223,14 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         // "optTol" -> ???
         // "preprocess" -> ???
         // "roundIntVars" -> ???
-        "seed" -> lib.Cbc_setIntParam(cbc, CbcJnrLibrary.INT_PARAM_RANDOM_SEED, value as Int)
+        "seed" -> lib.Cbc_setIntParam(cbc, CbcJnrLib.INT_PARAM_RANDOM_SEED, value as Int)
         "sense" -> lib.Cbc_setObjSense(cbc, if (value == MAXIMIZE) -1.0 else 1.0)
         // "solPoolSize" -> ???
         // "start" -> ???
         // "searchProgressLog" -> ???
         // "storeSearchProgressLog" -> ???
-        "threads" -> lib.Cbc_setIntParam(cbc, CbcJnrLibrary.INT_PARAM_THREADS, value as Int)
-        // "verbose" -> ???
+        "threads" -> lib.Cbc_setIntParam(cbc, CbcJnrLib.INT_PARAM_THREADS, value as Int)
+        "verbose" -> lib.Cbc_setLogLevel(cbc, if (value as Boolean) 1 else 0)
 
         else -> throw NotImplementedError("Parameter $property is currently unavailable in CBC interface")
     }
@@ -396,7 +396,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     // region private useful functions
 
-    private fun convertParam(property: String): Int = CbcJnrLibrary.constantsMap[property] ?: -1
+    private fun convertParam(property: String): Int = CbcJnrLib.constantsMap[property] ?: -1
 
     private fun getSolutionIdx(idx: Int): Pointer {
         if (idx in solutions) return solutions[idx]!!

@@ -241,8 +241,8 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
                         column: Column) {
         // val nz = column.size
         dblByRef1.putDouble(0, obj)
-        dblByRef2.putDouble(0, if (lb == -INF) -GurobiLibrary.GRB_INFINITY else lb)
-        dblByRef3.putDouble(0, if (ub == INF) GurobiLibrary.GRB_INFINITY else ub)
+        dblByRef2.putDouble(0, if (lb == -INF) -GurobiJnrLib.GRB_INFINITY else lb)
+        dblByRef3.putDouble(0, if (ub == INF) GurobiJnrLib.GRB_INFINITY else ub)
 
         val vtype = when (varType) {
             VarType.Binary -> 'B'.toByte()

@@ -7,9 +7,9 @@ import jnr.ffi.types.*;
 
 import java.io.*;
 
-public interface CbcJnrJavaLibrary {
+public interface CbcJnrJavaLib {
 
-    public static CbcJnrJavaLibrary loadLibrary() {
+    public static CbcJnrJavaLib loadLibrary() {
         String library;
         String libLocation = System.getProperty("user.dir") + File.separatorChar;
 
@@ -32,7 +32,7 @@ public interface CbcJnrJavaLibrary {
         }
 
         return LibraryLoader
-          .create(CbcJnrJavaLibrary.class)
+          .create(CbcJnrJavaLib.class)
           .failImmediately()
           .load(libLocation + File.separatorChar + library);
     }

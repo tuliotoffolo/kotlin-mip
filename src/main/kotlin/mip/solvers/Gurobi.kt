@@ -10,12 +10,14 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
 
     private var env: Pointer
     private var gurobi: Pointer
-    private val lib = GurobiLibrary.lib
+    private val lib = GurobiJnrLib.lib
     private val runtime: Runtime = Runtime.getRuntime(lib)
 
     // region properties override
 
-    // override val gap by Param<Double>()
+    override val gap
+        get() = if (hasSolution) (objectiveValue - objectiveBound) / objectiveBound else 1.0
+
     override val hasSolution get() = numSolutions > 0
     override val numCols get() = getIntAttr("NumVars")
     override val numRows get() = getIntAttr("NumRows")
@@ -58,7 +60,10 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         get() = getDblParam("FeasibilityTol")
         set(value) = setDblParam("FeasibilityTol", value)
 
-    // override var integerTol: Int
+    override var integerTol: Double
+        get() = getDblParam("IntFeasTol")
+        set(value) = setDblParam("IntFeasTol", value)
+
     // override var lazyConstrsGenerator: Int
     // override var lpMethod: LPMethod
 
@@ -169,6 +174,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
 
     // endregion buffers
 
+
     init {
         // initializing the environment
         val envRef = PointerByReference()
@@ -185,6 +191,10 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
             lib.GRBsetintattr(gurobi, "ModelSense", -1)
 
         lib.fflush(null)
+    }
+
+    protected fun finalize() {
+
     }
 
 
@@ -207,8 +217,8 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     override fun addVar(name: String, obj: Double, lb: Double, ub: Double, varType: VarType,
                         column: Column) {
         val nz = column.size
-        val lowerBound = if (lb == -INF) -GurobiLibrary.GRB_INFINITY else lb
-        val upperBound = if (ub == INF) GurobiLibrary.GRB_INFINITY else ub
+        val lowerBound = if (lb == -INF) -GurobiJnrLib.GRB_INFINITY else lb
+        val upperBound = if (ub == INF) GurobiJnrLib.GRB_INFINITY else ub
 
         val vtype = when (varType) {
             VarType.Binary -> 'B'.toByte()

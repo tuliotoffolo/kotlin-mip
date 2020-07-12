@@ -7,7 +7,7 @@ import jnr.ffi.types.*
 
 import java.io.*
 
-interface CbcJnrLibrary {
+interface CbcJnrLib {
 
     fun fflush(stream: Pointer?) = CLibrary.lib.fflush(stream)
 
@@ -844,8 +844,9 @@ interface CbcJnrLibrary {
 
 
     companion object {
+
         @JvmStatic
-        fun loadLibrary(): CbcJnrLibrary {
+        fun loadLibrary(): CbcJnrLib {
             val library: String?
             var libLocation: String? = System.getProperty("user.dir") + File.separatorChar
 
@@ -870,7 +871,7 @@ interface CbcJnrLibrary {
             }
 
             return LibraryLoader
-                .create(CbcJnrLibrary::class.java)
+                .create(CbcJnrLib::class.java)
                 .failImmediately()
                 .load(libLocation + File.separatorChar + library)
         }
