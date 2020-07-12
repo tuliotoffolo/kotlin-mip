@@ -34,14 +34,11 @@ Very soon the code of these mip.examples and additional ones (published in tutor
 
 ## Documentation
  
-The full J-MIP documentation is available at
-https://docs.j-mip.com/en/latest/
+The full J-MIP documentation will be available at https://docs.j-mip.com/en/latest/
 
-A PDF version is also available:
-https://j-mip.readthedocs.io/_/downloads/en/latest/pdf/
+A PDF version will be available at: https://j-mip.readthedocs.io/_/downloads/en/latest/pdf/
 
 ## Mailing list
 
-Questions, suggestions and development news can be posted at the [J-MIP google group](https
-://groups.google.com/forum/#!forum/jmip).
+Questions, suggestions and development news can be posted to the [J-MIP google group](https://groups.google.com/forum/#!forum/jmip).
 
