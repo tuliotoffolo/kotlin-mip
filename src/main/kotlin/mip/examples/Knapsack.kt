@@ -29,6 +29,7 @@ fun main() {
     assert(m.status == OptimizationStatus.Optimal)
     assert(m.objectiveValue.roundToInt() == 41)
     assert(m.constrs[0].slack.roundToInt() == 1)
+    assert(m.validateOptimizationResult())
 }
 
 fun Knapsack() = main()

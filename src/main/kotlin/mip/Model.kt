@@ -3,6 +3,8 @@ package mip
 import java.lang.Double.*
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.round
+import kotlin.math.roundToInt
 
 /**
  * Model class
@@ -48,10 +50,6 @@ class Model : ModelProperties {
         this.solverName = solver.solverName
     }
 
-    private fun findSolver(sense: String): Solver {
-        return mip.solvers.Cbc(this, name, sense)
-        // TODO("Find an available solver")
-    }
 
     @JvmOverloads
     fun addConstr(expr: LinExpr, name: String? = null): Constr {
@@ -221,7 +219,7 @@ class Model : ModelProperties {
         return vars.last()
     }
 
-    // region addVar aliases
+    // region aliases for addVar
 
     @JvmOverloads
     fun addBinVar(name: String? = null, obj: Number? = 0.0,
@@ -304,51 +302,48 @@ class Model : ModelProperties {
      * being integral whenever requested.
      */
     fun validateOptimizationResult(): Boolean {
-        if (status in arrayOf(OptimizationStatus.Feasible, OptimizationStatus.Optimal)) {
+        if (status in arrayOf(OptimizationStatus.Feasible, OptimizationStatus.Optimal))
             assert(numSolutions >= 1)
 
+        if (numSolutions >= 1 || status in arrayOf(OptimizationStatus.Feasible, OptimizationStatus.Optimal)) {
+
             if (sense == MINIMIZE)
-                assert(objectiveBound <= objectiveValue + EPS)
+                assert(objectiveBound <= objectiveValue + 1e-10)
             else
-                assert(objectiveBound + EPS >= objectiveValue)
+                assert(objectiveBound + 1e-10 >= objectiveValue)
 
-            // for (c in constrs) {
-            //     if (c.violation >= infeasTol * 1.1) {
-            //
-            //     }
-            // }
+            for (c in constrs) {
+                if (c.expr.violation >= infeasTol + infeasTol * 0.1) { // TODO: check this (here and in Python-MIP)
+                    throw Error("Constraint ${c.name} is violated:\n" +
+                        "    ${c.expr}\n" +
+                        "    Computed violation is ${c.expr.violation}\n" +
+                        "    Tolerance for infeasibility is $infeasTol\n" +
+                        "    Solution status is $status")
+                }
+            }
 
-            TODO("Finish this method based on Python-MIP's")
+            for (v in vars) {
+                val x = v.x
+                if (x <= v.lb - 1e-10 || x >= v.ub + 1e-10) {
+                    throw Error("Variable ${v.name}=${x} is out of its bounds.\n" +
+                        "    {$v.lb} <= ${x} <= ${v.ub}")
+                }
+
+                if (v.type == VarType.Integer || v.type == VarType.Binary) {
+                    if (round(x) - x >= integerTol + integerTol * 0.1)
+                        throw Error("Variable ${v.name}=${x} should be integral")
+                }
+            }
         }
-        return true
 
-        // for c in constrs:
-        // if c.expr.violation >= infeas_tol + infeas_tol * 0.1:
-        // raise mip.InfeasibleSolution(
-        //     "Constraint {}:\n{}\n is violated."
-        // "Computed violation is {}."
-        // "Tolerance for infeasibility is {}."
-        // "Solution status is {}.".format(
-        //     c.name,
-        //     str(c),
-        //     c.expr.violation,
-        //     infeas_tol,
-        //     status,
-        // )
-        // )
-        // for v in vars:
-        // if v.x <= v.lb - 1e-10 or v.x >= v.ub + 1e-10:
-        // raise mip.InfeasibleSolution(
-        //     "Invalid solution value for "
-        // "variable {}={} variable bounds"
-        // " are [{}, {}].".format(v.name, v.x, v.lb, v.ub)
-        // )
-        // if v.var_type in [mip.BINARY, mip.INTEGER]:
-        // if (round(v.x) - v.x) >= integer_tol + integer_tol * 0.1:
-        // raise mip.InfeasibleSolution(
-        //     "Variable {}={} should be integral.".format(v.name, v.x)
-        //     )
+        return true
     }
 
     fun write(path: String) = solver.write(path)
+
+
+    private fun findSolver(sense: String): Solver {
+        return mip.solvers.Cbc(this, name, sense)
+        // TODO("Find an available solver")
+    }
 }

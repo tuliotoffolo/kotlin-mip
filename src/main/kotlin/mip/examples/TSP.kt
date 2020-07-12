@@ -62,4 +62,6 @@ fun main() {
             }
         }
     }
+
+    assert(model.validateOptimizationResult())
 }

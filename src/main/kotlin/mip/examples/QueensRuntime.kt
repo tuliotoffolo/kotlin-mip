@@ -70,6 +70,8 @@ fun main() {
     // }
     println()
     println("Total runtime: ${runtime(start)} seconds!")
+
+    assert(queens.validateOptimizationResult())
 }
 
 fun QueensRuntime() = main()

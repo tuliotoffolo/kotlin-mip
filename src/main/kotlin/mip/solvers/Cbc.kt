@@ -367,7 +367,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     override fun getVarXi(idx: Int, i: Int): Double {
         if (idx == 0) return getVarX(idx)
 
-        return getSolutionIdx(i)?.getDouble(8 * idx.toLong())
+        return getSolutionIdx(i).getDouble(8 * idx.toLong())
     }
 
     // endregion variable getters and setters

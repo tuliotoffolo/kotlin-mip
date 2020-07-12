@@ -46,6 +46,8 @@ fun main() {
             println()
         }
     }
+
+    assert(queens.validateOptimizationResult())
 }
 
 fun Queens() = main()

@@ -13,16 +13,16 @@ class Var internal constructor(val model: Model, idx: Int) : Comparable<Var> {
     var idx: Int = idx
         internal set
 
-    var lb: Number
+    var lb: Double
         get() = model.solver.getVarLB(idx)
-        set(value) = model.solver.setVarLB(idx, value.toDouble())
+        set(value) = model.solver.setVarLB(idx, value)
 
     val name: String
         get() = model.solver.getVarName(idx)
 
-    var obj: Number
+    var obj: Double
         get() = model.solver.getVarObj(idx)
-        set(value) = model.solver.setVarObj(idx, value.toDouble())
+        set(value) = model.solver.setVarObj(idx, value)
 
     val rc get() = model.solver.getVarRC(idx)
 
@@ -30,9 +30,9 @@ class Var internal constructor(val model: Model, idx: Int) : Comparable<Var> {
         get() = model.solver.getVarType(idx)
         set(value) = model.solver.setVarType(idx, value)
 
-    var ub: Number
+    var ub: Double
         get() = model.solver.getVarUB(idx)
-        set(value) = model.solver.setVarUB(idx, value.toDouble())
+        set(value) = model.solver.setVarUB(idx, value)
 
     val x get() = model.solver.getVarX(idx)
 

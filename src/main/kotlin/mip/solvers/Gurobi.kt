@@ -91,7 +91,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
             return obj
         }
         set(linExpr: LinExpr) {
-
+            // TODO: Not implemented...
         }
 
     override var objectiveConst: Double

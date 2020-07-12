@@ -56,7 +56,7 @@ fun main() {
     // sanity tests
     assert(model.status == OptimizationStatus.Optimal)
     assert(abs(model.objectiveValue - 21) <= 1e-4)
-    // TODO model.check_optimization_results()
+    assert(model.validateOptimizationResult())
 }
 
 fun RCPSP() = main()

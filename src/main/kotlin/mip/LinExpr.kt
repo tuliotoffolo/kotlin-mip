@@ -1,6 +1,7 @@
 package mip
 
 import kotlin.math.abs
+import kotlin.math.max
 
 @Suppress("NOTHING_TO_INLINE")
 /**
@@ -24,6 +25,26 @@ class LinExpr {
      * Returns the number of variables within the linear expression.
      */
     val size get() = terms.size
+
+    /**
+     * Amount by which the current solution violates this non-affine linear expression.
+     *
+     * If a solution is available, than this property indicates how much the current solution
+     * violates this linear expression.
+     */
+    val violation: Double
+        get() {
+            if (isAffine) return 0.0
+
+            val lhs = terms.entries.sumByDouble { (variable, coeff) -> coeff * variable.x }
+            val rhs = -const
+            when (sense) {
+                EQ -> return abs(lhs - rhs)
+                LEQ -> return max(lhs - rhs, 0.0)
+                GEQ -> return max(rhs - lhs, 0.0)
+            }
+            return 0.0
+        }
 
     constructor(linExpr: LinExpr?) {
         if (linExpr == null) return;
@@ -90,13 +111,12 @@ class LinExpr {
     fun add(iterable: Iterable<Any?>?, mult: Number? = 1.0) {
         if (iterable == null || mult == null || mult == 0.0) return
 
-        val mult = mult.toDouble()
         for (term in iterable) {
             when (term) {
                 null -> continue
-                is LinExpr -> add(term, mult)
-                is Var -> add(term, mult)
-                is Number -> add(term.toDouble() * mult)
+                is LinExpr -> add(term, mult.toDouble())
+                is Var -> add(term, mult.toDouble())
+                is Number -> add(term.toDouble() * mult.toDouble())
                 else -> throw IllegalArgumentException()
             }
         }
@@ -106,10 +126,10 @@ class LinExpr {
     fun add(linExpr: LinExpr?, mult: Number? = 1.0) {
         if (linExpr == null || mult == null || mult == 0.0) return;
 
-        val mult = mult.toDouble()
-        const += linExpr.const * mult
+        val multiplier = mult.toDouble()
+        const += linExpr.const * multiplier
         for ((v, coeff) in linExpr.terms) {
-            add(v, coeff * mult)
+            add(v, coeff * multiplier)
         }
 
     }

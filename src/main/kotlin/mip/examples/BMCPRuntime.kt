@@ -75,7 +75,7 @@ fun main() {
         assert(m.objectiveValue.roundToInt() == 41)
     else if (m.status == OptimizationStatus.Feasible)
         assert(m.objectiveValue >= 41 - 1e-10)
-    // m.validateOptimizationResult() TODO("Finish validation..")
+    assert(m.validateOptimizationResult())
 
     println("Total runtime = ${(System.currentTimeMillis() - start) / 1000.0} seconds.")
 }

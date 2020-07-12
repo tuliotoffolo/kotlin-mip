@@ -74,7 +74,7 @@ fun main() {
     // sanity tests
     assert(model.status == OptimizationStatus.Optimal)
     assert(model.objectiveValue.roundToInt() == 547)
-    // TODO model.checkOptimizationStatus()
+    assert(model.validateOptimizationResult())
 }
 
 fun TSPCompact() = main()
