@@ -6,7 +6,7 @@ Package website: **http://j-mip.com**
 
 J-MIP is a collection of Java/Kotlin tools for the modeling and solution of Mixed-Integer Linear programs (MIPs). 
 The entire package is inspired by [Python-MIP](https://github.com/coin-or/python-mip), which was also developed by us.
-The main goal here is to provide the tool for a higher-performance  environment such as the one represented by the Java Virtual Machine -- which may be necessary to develop math-heuristics, for example. 
+The main goal here is to provide the tool for a higher-performance  environment such as the one represented by the Java Virtual Machine -- which may be necessary to develop certain hybrid heuristics, for example. 
 
 Just like Python-MIP, J-MIP provides access to advanced solver features such as cut generation, lazy constraints, MIPstarts and solution Pools. 
 While Python-MIP provides a very fast platform for modeling MIP problems, depending on the kind of algorithm you aim at implementing, performance-wise it may be worth porting your code to J-MIP.
