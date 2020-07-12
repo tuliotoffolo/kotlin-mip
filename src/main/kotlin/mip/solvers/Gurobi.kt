@@ -10,7 +10,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
 
     private var env: Pointer
     private var gurobi: Pointer
-    private val lib = GurobiJnrLib.lib
+    private val lib = GurobiJnrLib.loadLibrary()
     private val runtime: Runtime = Runtime.getRuntime(lib)
 
     // region properties override
@@ -194,7 +194,9 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     }
 
     protected fun finalize() {
-
+        // freeing Gurobi model and environment
+        lib.GRBfreemodel(gurobi)
+        lib.GRBfreeenv(env)
     }
 
 
@@ -280,7 +282,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     // region constraints getters and setters
 
     override fun getConstrExpr(idx: Int): LinExpr = throw NotImplementedError()
-    override fun setConstrExpr(idx: Int, value: LinExpr): Unit = throw NotImplementedError()
+    override fun setConstrExpr(idx: Int, value: LinExpr) = throw NotImplementedError()
 
     override fun getConstrName(idx: Int): String {
         val pointer = PointerByReference()
@@ -292,7 +294,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         pi?.getDouble(8 * idx.toLong()) ?: throw Error("Solution not available")
 
     override fun getConstrRHS(idx: Int): Double = throw NotImplementedError()
-    override fun setConstrRHS(idx: Int, value: Double): Unit = throw NotImplementedError()
+    override fun setConstrRHS(idx: Int, value: Double) = throw NotImplementedError()
 
     override fun getConstrSlack(idx: Int): Double = throw NotImplementedError()
 
@@ -403,7 +405,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         return dblBuffer.getDouble(0)
     }
 
-    private fun setDblAttr(attr: String, value: Double): Unit {
+    private fun setDblAttr(attr: String, value: Double) {
         lib.GRBsetdblattr(gurobi, attr, value)
     }
 
@@ -412,7 +414,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         return dblBuffer.getDouble(0)
     }
 
-    private fun setDblParam(param: String, value: Double): Unit {
+    private fun setDblParam(param: String, value: Double) {
         lib.GRBsetdblparam(gurobi, param, value)
     }
 
@@ -421,7 +423,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         return intBuffer.getInt(0)
     }
 
-    private fun setIntAttr(param: String, value: Int): Unit {
+    private fun setIntAttr(param: String, value: Int) {
         lib.GRBsetintattr(gurobi, param, value)
     }
 
@@ -430,7 +432,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         return intBuffer.getInt(0)
     }
 
-    private fun setIntParam(param: String, value: Int): Unit {
+    private fun setIntParam(param: String, value: Int) {
         lib.GRBsetintparam(gurobi, param, value)
     }
 

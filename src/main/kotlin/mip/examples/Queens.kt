@@ -8,7 +8,7 @@ fun main() {
     val n = 16
     val ns = 0 until n
 
-    val queens = Model("NQueens")
+    val queens = Model("NQueens", solverName=GRB)
 
     // creating variables
     val x = ns.map { i -> ns.map { j -> queens.addBinVar("x($i,$j)") } }

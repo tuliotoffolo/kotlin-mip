@@ -14,7 +14,7 @@ fun main() {
     val n = 1000
     val ns = 0 until n
 
-    val queens = Model("NQueens", MINIMIZE)
+    val queens = Model("NQueens", MINIMIZE, GUROBI)
 
     println("Model started in ${runtime(checkpoint)} seconds!")
     checkpoint = System.currentTimeMillis()

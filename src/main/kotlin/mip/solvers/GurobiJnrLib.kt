@@ -1,8 +1,7 @@
 package mip.solvers
 
 import jnr.ffi.*
-import jnr.ffi.annotations.Delegate
-import jnr.ffi.annotations.Out
+import jnr.ffi.annotations.*
 import jnr.ffi.byref.PointerByReference
 
 internal interface GurobiJnrLib {
@@ -10,98 +9,98 @@ internal interface GurobiJnrLib {
     fun fflush(stream: Pointer?) = CLibrary.lib.fflush(stream)
 
     /** GRBenv *GRBgetenv(GRBmodel *model); */
-    fun GRBgetenv(model: Pointer): Pointer
+    fun GRBgetenv(@Pinned @In model: Pointer): Pointer
 
     /** int GRBloadenv(GRBenv **envP, const char *logfilename); */
-    fun GRBloadenv(envP: PointerByReference, logfilename: String?): Int
+    fun GRBloadenv(@Out envP: PointerByReference, logfilename: String?): Int
 
     /**
      * int GRBnewmodel(GRBenv *env, GRBmodel **modelP, const char *Pname, int numvars, double *obj,
      *                 double *lb, double *ub, char *vtype, char **varnames);
      */
-    fun GRBnewmodel(env: Pointer, modelP: PointerByReference, Pname: String, numvars: Int,
+    fun GRBnewmodel(@Pinned @In env: Pointer, @Out modelP: PointerByReference, Pname: String, numvars: Int,
                     obj: Pointer?, lb: Pointer?, ub: Pointer?, vtype: Pointer?,
                     varnames: PointerByReference?): Int
 
     /** void GRBfreeenv(GRBenv *env); */
-    fun GRBfreeenv(env: Pointer)
+    fun GRBfreeenv(@Pinned @In env: Pointer)
 
     /** int GRBfreemodel(GRBmodel *model); */
-    fun GRBfreemodel(model: Pointer): Int
+    fun GRBfreemodel(@Pinned @In model: Pointer): Int
 
     /** int GRBgetintattr(GRBmodel *model, const char *attrname, int *valueP); */
-    fun GRBgetintattr(model: Pointer, attrname: String, valueP: Pointer?): Int
+    fun GRBgetintattr(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, @Out valueP: Pointer?): Int
 
     /** int GRBsetintattr(GRBmodel *model, const char *attrname, int newvalue); */
-    fun GRBsetintattr(model: Pointer, attrname: String, newvalue: Int): Int
+    fun GRBsetintattr(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, newvalue: Int): Int
 
     /** int GRBgetintattrelement(GRBmodel *model, const char *attrname, int element, int *valueP); */
-    fun GRBgetintattrelement(model: Pointer, attrname: String, element: Int, valueP: Pointer?): Int
+    fun GRBgetintattrelement(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, element: Int, @Out valueP: Pointer?): Int
 
     /** int GRBsetintattrelement(GRBmodel *model, const char *attrname, int element, int newvalue); */
-    fun GRBsetintattrelement(model: Pointer, attrname: String, element: Int, newvalue: Int): Int
+    fun GRBsetintattrelement(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, element: Int, newvalue: Int): Int
 
     /** int GRBgetdblattr(GRBmodel *model, const char *attrname, double *valueP); */
-    fun GRBgetdblattr(model: Pointer, attrname: String, @Out valueP: Pointer?): Int
+    fun GRBgetdblattr(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, @Out valueP: Pointer?): Int
 
     /** int GRBsetdblattr(GRBmodel *model, const char *attrname, double newvalue); */
-    fun GRBsetdblattr(model: Pointer, attrname: String, newvalue: Double): Int
+    fun GRBsetdblattr(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, newvalue: Double): Int
 
     /**
      * int GRBgetcharattrarray(GRBmodel *model, const char *attrname, int first, int len,
      *                         char *values);
      */
-    fun GRBgetdblattrarray(model: Pointer, attrname: String, first: Int, len: Int,
+    fun GRBgetdblattrarray(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, first: Int, len: Int,
                            values: Pointer?): Int
 
     /**
      * int GRBsetdblattrarray(GRBmodel *model, const char *attrname, int first, int len,
      *                        double *newvalues);
      */
-    fun GRBsetdblattrarray(model: Pointer, attrname: String, first: Int, len: Int,
+    fun GRBsetdblattrarray(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, first: Int, len: Int,
                            newvalues: Pointer?): Int
 
     /**
      * int GRBsetdblattrlist(GRBmodel *model, const char *attrname, int len, int *ind,
      *                       double *newvalues);
      */
-    fun GRBsetdblattrlist(model: Pointer, attrname: String, len: Int, ind: Pointer?,
+    fun GRBsetdblattrlist(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, len: Int, ind: Pointer?,
                           newvalues: Pointer?): Int
 
     /** int GRBgetdblattrelement(GRBmodel *model, const char *attrname, int element, double *valueP); */
-    fun GRBgetdblattrelement(model: Pointer, attrname: String, element: Int, valueP: Pointer?): Int
+    fun GRBgetdblattrelement(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, element: Int, valueP: Pointer?): Int
 
     /** int GRBsetdblattrelement(GRBmodel *model, const char *attrname, int element, double newvalue); */
-    fun GRBsetdblattrelement(model: Pointer, attrname: String, element: Int, newvalue: Double): Int
+    fun GRBsetdblattrelement(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, element: Int, newvalue: Double): Int
 
     /**
      * int GRBgetcharattrarray(GRBmodel *model, const char *attrname, int first, int len,
      *                         char *values);
      */
-    fun GRBgetcharattrarray(model: Pointer, attrname: String, first: Int, len: Int,
+    fun GRBgetcharattrarray(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, first: Int, len: Int,
                             values: String): Int
 
     /**
      * int GRBsetcharattrarray(GRBmodel *model, const char *attrname, int first, int len,
      *                         char *newvalues);
      */
-    fun GRBsetcharattrarray(model: Pointer, attrname: String, first: Int, len: Int,
+    fun GRBsetcharattrarray(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, first: Int, len: Int,
                             newvalues: String): Int
 
     /** int GRBgetcharattrelement(GRBmodel *model, const char *attrname, int element, char *valueP); */
-    fun GRBgetcharattrelement(model: Pointer, attrname: String, element: Int, valueP: Pointer): Int
+    fun GRBgetcharattrelement(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, element: Int, valueP: Pointer): Int
 
     /** int GRBsetcharattrelement(GRBmodel *model, const char *attrname, int element, char newvalue); */
-    fun GRBsetcharattrelement(model: Pointer, attrname: String, element: Int, newvalue: Byte): Int
+    fun GRBsetcharattrelement(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, element: Int, newvalue: Byte): Int
 
     /** int GRBgetstrattrelement(GRBmodel *model, const char *attrname, int element, char **valueP); */
-    fun GRBgetstrattrelement(model: Pointer, attrname: String, element: Int, valueP: PointerByReference): Int
+    fun GRBgetstrattrelement(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, element: Int, @Out valueP: PointerByReference): Int
 
     /** int GRBgetstrattr (GRBmodel *model, const char *attrname, char **valueP); */
-    fun GRBgetstrattr(model: Pointer, attrname: String, valueP: PointerByReference): Int
+    fun GRBgetstrattr(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, @Out valueP: PointerByReference): Int
 
     /** int GRBsetstrattr (GRBmodel *model, const char *attrname, const char *newvalue); */
-    fun GRBsetstrattr(model: Pointer, attrname: String, newvalue: String): Int
+    fun GRBsetstrattr(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, newvalue: String): Int
 
     /** int GRBgetintparam(GRBenv *env, const char *paramname, int *valueP); */
     fun GRBgetintparam(env: Pointer, paramname: String, valueP: Pointer?): Int
@@ -120,7 +119,7 @@ internal interface GurobiJnrLib {
      *                      double reltol, const char *name, double constant, int lnz, int *lind,
      *                      double *lval);
      */
-    fun GRBsetobjectiven(model: Pointer, index: Int, priority: Int, weight: Double, abstol: Double,
+    fun GRBsetobjectiven(@Pinned @In model: Pointer, index: Int, priority: Int, weight: Double, abstol: Double,
                          reltol: Double, name: String, constant: Double, lnz: Int, lind: Pointer?,
                          lval: Pointer?): Int
 
@@ -128,67 +127,67 @@ internal interface GurobiJnrLib {
      * int GRBaddvar(GRBmodel *model, int numnz, int *vind, double *vval, double obj, double lb,
      *               double ub, char vtype, const char *varname);
      */
-    fun GRBaddvar(model: Pointer, numnz: Int, vind: Pointer?, vval: Pointer?, obj: Double,
+    fun GRBaddvar(@Pinned @In model: Pointer, numnz: Int, vind: Pointer?, vval: Pointer?, obj: Double,
                   lb: Double, ub: Double, vtype: Byte, varname: String): Int
 
     /**
      * int GRBaddconstr(GRBmodel *model, int numnz, int *cind, double *cval, char sense, double rhs,
      *                  const char *constrname);
      */
-    fun GRBaddconstr(model: Pointer, numnz: Int, cind: Pointer?, cval: Pointer?, sense: Byte,
+    fun GRBaddconstr(@Pinned @In model: Pointer, numnz: Int, cind: Pointer?, cval: Pointer?, sense: Byte,
                      rhs: Double, constrname: String): Int
 
     /**
      * int GRBaddsos(GRBmodel *model, int numsos, int nummembers, int *types, int *beg, int *ind,
      *               double *weight);
      */
-    fun GRBaddsos(model: Pointer, numsos: Int, nummembers: Int, types: Pointer?, beg: Pointer?,
+    fun GRBaddsos(@Pinned @In model: Pointer, numsos: Int, nummembers: Int, types: Pointer?, beg: Pointer?,
                   ind: Pointer?, weight: Pointer?): Int
 
     /**
      * int GRBgetconstrs(GRBmodel *model, int *numnzP, int *cbeg, int *cind, double *cval,
      *                   int start, int len);
      */
-    fun GRBgetconstrs(model: Pointer, numnzP: Pointer?, cbeg: Pointer?, cind: Pointer?,
+    fun GRBgetconstrs(@Pinned @In model: Pointer, numnzP: Pointer?, cbeg: Pointer?, cind: Pointer?,
                       cval: Pointer?, start: Int, len: Int): Int
 
     /**
      * int GRBgetvars(GRBmodel *model, int *numnzP, int *vbeg, int *vind, double *vval, int start,
      *                int len);
      */
-    fun GRBgetvars(model: Pointer, numnzP: Pointer?, vbeg: Pointer?, vind: Pointer?,
+    fun GRBgetvars(@Pinned @In model: Pointer, numnzP: Pointer?, vbeg: Pointer?, vind: Pointer?,
                    vval: Pointer?, start: Int, len: Int): Int
 
     /** int GRBgetvarbyname(GRBmodel *model, const char *name, int *indexP); */
-    fun GRBgetvarbyname(model: Pointer, name: String, indexP: Pointer?): Int
+    fun GRBgetvarbyname(@Pinned @In model: Pointer, name: String, indexP: Pointer?): Int
 
     /** int GRBgetconstrbyname(GRBmodel *model, const char *name, int *indexP); */
-    fun GRBgetconstrbyname(model: Pointer, name: String, indexP: Pointer?): Int
+    fun GRBgetconstrbyname(@Pinned @In model: Pointer, name: String, indexP: Pointer?): Int
 
     /** int GRBoptimize(GRBmodel *model); */
-    fun GRBoptimize(model: Pointer): Int
+    fun GRBoptimize(@Pinned @In model: Pointer): Int
 
     /** int GRBupdatemodel(GRBmodel *model); */
-    fun GRBupdatemodel(model: Pointer): Int
+    fun GRBupdatemodel(@Pinned @In model: Pointer): Int
 
     /** int GRBwrite(GRBmodel *model, const char *filename); */
-    fun GRBwrite(model: Pointer, filename: String): Int
+    fun GRBwrite(@Pinned @In model: Pointer, filename: String): Int
 
     /** int GRBreadmodel(GRBenv *env, const char *filename, GRBmodel **modelP); */
     fun GRBreadmodel(env: Pointer, filename: String, modelP: PointerByReference): Int
 
     /** int GRBdelvars(GRBmodel *model, int numdel, int *ind ); */
-    fun GRBdelvars(model: Pointer, numdel: Int, ind: Pointer?): Int
+    fun GRBdelvars(@Pinned @In model: Pointer, numdel: Int, ind: Pointer?): Int
 
     /**
      * int GRBsetcharattrlist(GRBmodel *model, const char *attrname, int len, int *ind,
      *                        char *newvalues);
      */
-    fun GRBsetcharattrlist(model: Pointer, attrname: String, len: Int, ind: Pointer?,
+    fun GRBsetcharattrlist(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, len: Int, ind: Pointer?,
                            newvalues: String): Int
 
     /** int GRBsetcallbackfunc(GRBmodel *model, gurobi_callback grbcb, void *usrdata); */
-    fun GRBsetcallbackfunc(model: Pointer, grbcb: GRBcallback, usrdata: Pointer): Int
+    fun GRBsetcallbackfunc(@Pinned @In model: Pointer, grbcb: GRBcallback, usrdata: Pointer): Int
 
     /** int GRBcbget(void *cbdata, int where, int what, void *resultP); */
     fun GRBcbget(cbdata: Pointer, where: Int, what: Int, resultP: Pointer): Int
@@ -214,7 +213,7 @@ internal interface GurobiJnrLib {
                   lazysense: Byte, lazyrhs: Double): Int
 
     /** int GRBdelconstrs (GRBmodel *model, int numdel, int *ind); */
-    fun GRBdelconstrs(model: Pointer, numdel: Int, ind: Pointer?): Int
+    fun GRBdelconstrs(@Pinned @In model: Pointer, numdel: Int, ind: Pointer?): Int
 
 
     /**
@@ -222,7 +221,7 @@ internal interface GurobiJnrLib {
      */
     interface GRBcallback {
         @Delegate
-        fun gurobiCallback(model: Pointer, cbdata: Pointer, where: Int, usrdata: Pointer)
+        fun gurobiCallback(@Pinned @In model: Pointer, cbdata: Pointer, where: Int, usrdata: Pointer)
     }
 
 
