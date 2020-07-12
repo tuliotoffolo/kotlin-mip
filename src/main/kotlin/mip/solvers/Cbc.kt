@@ -177,7 +177,8 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         // "cuts" -> ???
         // "cutsGenerator" -> ???
         // "emphasis" -> ???
-        // "infeasTol" -> ???
+        "infeasTol" -> lib.Cbc_getPrimalTolerance(cbc)
+        // "integerTol" -> lib.Cbc_getDblParam(cbc, convertParam("DBL_PARAM_INT_TOL"))
         // "integerTol" -> ???
         // "lazyConstrsGenerator" -> ???
         // "lpMethod" -> ???
@@ -209,8 +210,8 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         // "cuts" -> ???
         // "cutsGenerator" -> ???
         // "emphasis" -> ???
-        // "infeasTol" -> ???
-        // "integerTol" -> ???
+        "infeasTol" -> lib.Cbc_setPrimalTolerance(cbc, value as Double)
+        "integerTol" -> lib.Cbc_setDblParam(cbc, convertParam("DBL_PARAM_INT_TOL"), value as Double)
         // "lazyConstrsGenerator" -> ???
         // "lpMethod" -> ???
         "maxMipGap" -> lib.Cbc_setAllowableFractionGap(cbc, value as Double)
@@ -274,7 +275,28 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     // region constraints getters and setters
 
-    override fun getConstrExpr(idx: Int): LinExpr = throw NotImplementedError()
+    override fun getConstrExpr(idx: Int): LinExpr {
+        val nz = lib.Cbc_getRowNz(cbc, idx)
+        val vars = lib.Cbc_getRowIndices(cbc, idx)
+        val coeffs = lib.Cbc_getRowCoeffs(cbc, idx)
+        val rhs = lib.Cbc_getRowRHS(cbc, idx)
+
+        val sense = when (lib.Cbc_getRowSense(cbc, idx).toChar().toUpperCase()) {
+            'E' -> EQ
+            'L' -> LEQ
+            'G' -> GEQ
+            else -> ""
+        }
+
+        val expr = LinExpr(-rhs)
+        expr.sense = sense
+        for (i in 0 until nz) {
+            val v = vars.getInt(i.toLong() * 4)
+            val coeff = coeffs.getDouble(i.toLong() * 4)
+            expr.add(model.vars[v], coeff)
+        }
+        return expr
+    }
     override fun setConstrExpr(idx: Int, value: LinExpr) {
         throw NotImplementedError()
     }
