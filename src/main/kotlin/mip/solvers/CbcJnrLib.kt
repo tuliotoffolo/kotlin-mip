@@ -168,12 +168,12 @@ interface CbcJnrLib {
     /**
      * const double *Cbc_getColSolution(Cbc_Model *model);
      */
-    fun Cbc_getColSolution(@Pinned @In model: Pointer): Pointer
+    @Out fun Cbc_getColSolution(@Pinned @In model: Pointer): Pointer
 
     /**
      * const double *Cbc_getReducedCost(Cbc_Model *model);
      */
-    fun Cbc_getReducedCost(@Pinned @In model: Pointer): Pointer
+    @Out fun Cbc_getReducedCost(@Pinned @In model: Pointer): Pointer
 
     /**
      * double *Cbc_bestSolution(Cbc_Model *model);

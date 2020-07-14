@@ -4,6 +4,7 @@ import mip.*
 
 class EmptySolver(model: Model, name: String, sense: String) : Solver(model, name, sense) {
 
+    override val hasSolution: Boolean = false
     override val solverName: String = "EMPTY-SOLVER"
 
     override fun addConstr(linExpr: LinExpr, name: String) {}

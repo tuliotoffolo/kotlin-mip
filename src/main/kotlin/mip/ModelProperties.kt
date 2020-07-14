@@ -12,7 +12,6 @@ abstract class ModelProperties() : Properties() {
     // region vals
 
     override val gap: Double get() = solver.gap
-    override val hasSolution: Boolean get() = solver.hasSolution
     override val numCols: Int get() = solver.numCols
     override val numInt: Int get() = solver.numInt
     override val numRows: Int get() = solver.numRows

@@ -4,6 +4,7 @@ import mip.*
 import kotlin.math.*
 
 private
+
 fun main() {
     // resource capacities (c), processing times (p), and resource consumptions (u)
     val c = arrayOf(6, 8)
@@ -27,12 +28,12 @@ fun main() {
 
     val model = Model("RCPSP")
 
-    val x = J.map { j -> T.map { t -> model.addBinVar("x($j, $t") } }
+    val x = J.list { j -> T.list { t -> model.addBinVar("x($j,$t)") } }
 
-    model.objective = minimize(T.map { t -> t * x[J.last][t] })
+    model.objective = minimize(T.sum { t -> t * x[J.last][t] })
 
     for (j in J)
-        model += T.map { t -> x[j][t] } eq 1
+        model += T.sum { t -> x[j][t] } eq 1
 
     for (r in R) for (t in T) {
         val lhs = LinExpr()
@@ -42,7 +43,7 @@ fun main() {
     }
 
     for ((j, s) in S)
-        model += T.map { t -> t * x[s][t] - t * x[j][t] } geq p[j]
+        model += T.sum { t -> t * x[s][t] - t * x[j][t] } geq p[j]
 
     model.optimize()
 
@@ -59,4 +60,4 @@ fun main() {
     assert(model.validateOptimizationResult())
 }
 
-fun RCPSP() = main()
+fun runRCPSP() = main()

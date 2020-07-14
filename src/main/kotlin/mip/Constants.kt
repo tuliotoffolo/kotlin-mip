@@ -1,4 +1,5 @@
 @file:JvmName("MIP")
+@file:JvmMultifileClass
 
 /**
  * Constants used by the package.
@@ -7,6 +8,8 @@
  */
 
 package mip
+
+// region constants
 
 /** Epsilon number (practical zero) */
 const val EPS = 10e-64
@@ -38,6 +41,10 @@ const val SCIP = "SCIP"  // we plan to support SCIP in the future
 const val BINARY = 'B'
 const val CONTINUOUS = 'C'
 const val INTEGER = 'I'
+
+// endregion constants
+
+// region enums
 
 
 /**
@@ -210,3 +217,5 @@ enum class LongParam {
 enum class StringParam {
     LogFile
 }
+
+// endregion enums

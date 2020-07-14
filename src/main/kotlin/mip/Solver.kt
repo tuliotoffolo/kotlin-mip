@@ -7,65 +7,67 @@ package mip
  */
 abstract class Solver(val model: Model, var name: String, sense: String = MINIMIZE) : Properties() {
 
-    abstract fun addConstr(linExpr: LinExpr, name: String): Unit
+    internal abstract val hasSolution: Boolean
 
-    abstract fun addVar(name: String, obj: Double, lb: Double, ub: Double, varType: VarType,
-                        column: Column): Unit
+    internal abstract fun addConstr(linExpr: LinExpr, name: String): Unit
 
-    abstract fun optimize(): OptimizationStatus
+    internal abstract fun addVar(name: String, obj: Double, lb: Double, ub: Double, varType: VarType,
+                                 column: Column): Unit
 
-    open fun relax(): Unit = throw NotImplementedError()
+    internal abstract fun optimize(): OptimizationStatus
 
-    open fun read(path: String): Unit = throw NotImplementedError()
+    internal open fun relax(): Unit = throw NotImplementedError()
 
-    abstract fun removeConstrs(constrs: Iterable<Constr>)
+    internal open fun read(path: String): Unit = throw NotImplementedError()
 
-    abstract fun removeVars(vars: Iterable<Var>)
+    internal abstract fun removeConstrs(constrs: Iterable<Constr>)
 
-    open fun write(path: String): Unit = throw NotImplementedError()
+    internal abstract fun removeVars(vars: Iterable<Var>)
+
+    internal open fun write(path: String): Unit = throw NotImplementedError()
 
     // region constraints getters and setters
 
-    open fun getConstrExpr(idx: Int): LinExpr = throw NotImplementedError()
-    open fun setConstrExpr(idx: Int, value: LinExpr): Unit = throw NotImplementedError()
+    internal open fun getConstrExpr(idx: Int): LinExpr = throw NotImplementedError()
+    internal open fun setConstrExpr(idx: Int, value: LinExpr): Unit = throw NotImplementedError()
 
-    open fun getConstrName(idx: Int): String = throw NotImplementedError()
-    open fun setConstrName(idx: Int, value: String): Unit = throw NotImplementedError()
+    internal open fun getConstrName(idx: Int): String = throw NotImplementedError()
+    internal open fun setConstrName(idx: Int, value: String): Unit = throw NotImplementedError()
 
-    open fun getConstrPi(idx: Int): Double = throw NotImplementedError()
+    internal open fun getConstrPi(idx: Int): Double = throw NotImplementedError()
 
-    open fun getConstrRHS(idx: Int): Double = throw NotImplementedError()
-    open fun setConstrRHS(idx: Int, value: Double): Unit = throw NotImplementedError()
+    internal open fun getConstrRHS(idx: Int): Double = throw NotImplementedError()
+    internal open fun setConstrRHS(idx: Int, value: Double): Unit = throw NotImplementedError()
 
-    open fun getConstrSlack(idx: Int): Double = throw NotImplementedError()
+    internal open fun getConstrSlack(idx: Int): Double = throw NotImplementedError()
 
     // endregion constraints getters and setters
 
     // region variable getters and setters
 
-    open fun getVarColumn(idx: Int): Column = throw NotImplementedError()
-    open fun setVarColumn(idx: Int, value: Column): Unit = throw NotImplementedError()
+    internal open fun getVarColumn(idx: Int): Column = throw NotImplementedError()
+    internal open fun setVarColumn(idx: Int, value: Column): Unit = throw NotImplementedError()
 
-    open fun getVarLB(idx: Int): Double = throw NotImplementedError()
-    open fun setVarLB(idx: Int, value: Double): Unit = throw NotImplementedError()
+    internal open fun getVarLB(idx: Int): Double = throw NotImplementedError()
+    internal open fun setVarLB(idx: Int, value: Double): Unit = throw NotImplementedError()
 
-    open fun getVarName(idx: Int): String = throw NotImplementedError()
-    open fun setVarName(idx: Int, value: String): Unit = throw NotImplementedError()
+    internal open fun getVarName(idx: Int): String = throw NotImplementedError()
+    internal open fun setVarName(idx: Int, value: String): Unit = throw NotImplementedError()
 
-    open fun getVarObj(idx: Int): Double = throw NotImplementedError()
-    open fun setVarObj(idx: Int, value: Double): Unit = throw NotImplementedError()
+    internal open fun getVarObj(idx: Int): Double = throw NotImplementedError()
+    internal open fun setVarObj(idx: Int, value: Double): Unit = throw NotImplementedError()
 
-    open fun getVarRC(idx: Int): Double = throw NotImplementedError()
+    internal open fun getVarRC(idx: Int): Double = throw NotImplementedError()
 
-    open fun getVarType(idx: Int): VarType = throw NotImplementedError()
-    open fun setVarType(idx: Int, value: VarType): Unit = throw NotImplementedError()
+    internal open fun getVarType(idx: Int): VarType = throw NotImplementedError()
+    internal open fun setVarType(idx: Int, value: VarType): Unit = throw NotImplementedError()
 
-    open fun getVarUB(idx: Int): Double = throw NotImplementedError()
-    open fun setVarUB(idx: Int, value: Double): Unit = throw NotImplementedError()
+    internal open fun getVarUB(idx: Int): Double = throw NotImplementedError()
+    internal open fun setVarUB(idx: Int, value: Double): Unit = throw NotImplementedError()
 
-    open fun getVarX(idx: Int): Double = throw NotImplementedError()
+    internal open fun getVarX(idx: Int): Double = throw NotImplementedError()
 
-    open fun getVarXi(idx: Int, i: Int): Double = throw NotImplementedError()
+    internal open fun getVarXi(idx: Int, i: Int): Double = throw NotImplementedError()
 
     // endregion variable getters and setters
 }

@@ -35,19 +35,19 @@ fun main() {
     val n = places.size
     val V = 0 until n
 
-    val model = Model("TSPCompact", solverName = CBC)
+    val model = Model("TSPCompact")
 
     // binary variables indicating if arc (i,j) is used or not
-    val x = V.map { i -> V.map { j -> model.addBinVar("x($i,$j)", dists[i][j]) } }
+    val x = V.list { i -> V.list { j -> model.addBinVar("x($i,$j)", dists[i][j]) } }
 
     // continuous variable to prevent subtours: each city will have a different
     // sequential id in the planned route (except the first one)
-    val y = V.map { model.addNumVar("y($it)") }
+    val y = V.list { model.addNumVar("y($it)") }
 
     // Constraints 1 and 2: leave and enter each city exactly only once
     for (i in V) {
-        model += V.filter { it != i }.map { x[i][it] } eq 1
-        model += V.filter { it != i }.map { x[it][i] } eq 1
+        model += V.filter { it != i }.sum { x[i][it] } eq 1 named "out_$i"
+        model += V.filter { it != i }.sum { x[it][i] } eq 1 named "in_$i"
     }
 
     // Constraints 3: subtour elimination
@@ -55,6 +55,7 @@ fun main() {
         for (j in 1 until n) if (i != j)
             model += y[i] - n * x[i][j] geq y[j] - (n - 1)
 
+    model.maxSeconds = 30.0
     model.optimize()
 
     // checking if a solution was found and printing it
@@ -77,4 +78,4 @@ fun main() {
     assert(model.validateOptimizationResult())
 }
 
-fun TSPCompact() = main()
+fun runTSPCompact() = main()

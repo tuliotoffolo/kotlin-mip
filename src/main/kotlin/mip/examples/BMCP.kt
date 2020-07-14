@@ -9,6 +9,7 @@ import mip.*
 import kotlin.math.roundToInt
 
 private
+
 fun main() {
     // number of channels per node (r) and range of channels (N)
     val r = intArrayOf(3, 5, 8, 3, 6, 5, 7, 3)
@@ -30,14 +31,14 @@ fun main() {
     // produced with some heuristic
     val U = 0 until N.sumBy { i -> N.sumBy { j -> d[i][j] } } + r.sum()
 
-    // creating model and variables
     val m = Model("BMCP")
     val x = N.map { i -> U.map { c -> m.addBinVar("x($i,$c)") } }
-    val z = m.addVar("z", obj = 1.0)
+    val z = m.addVar("z")
 
-    // creating constraints
+    m.objective = minimize(z)
+
     for (i in N)
-        m += U.map { c -> x[i][c] } eq r[i]
+        m += U.sum { c -> x[i][c] } eq r[i]
 
     for (i in N) for (j in N) if (i != j)
         for (c1 in U) for (c2 in U) if (c1 <= c2 && c2 < c1 + d[i][j])
@@ -67,7 +68,7 @@ fun main() {
     assert(m.validateOptimizationResult())
 }
 
-fun BMCP() = main()
+fun runBMCP() = main()
 
 /*
 

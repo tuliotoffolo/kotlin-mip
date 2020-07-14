@@ -11,8 +11,8 @@ class ExamplesTest {
     fun `Solving n-Queens`() = Queens()
 
     @Test
-    fun `Solving RCPSP`() = RCPSP()
+    fun `Solving RCPSP`() = runRCPSP()
 
     @Test
-    fun `Solving TSP-Compact`() = TSPCompact()
+    fun `Solving TSP-Compact`() = runTSPCompact()
 }

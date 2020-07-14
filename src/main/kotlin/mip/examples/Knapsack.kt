@@ -4,26 +4,28 @@ import mip.*
 import kotlin.math.roundToInt
 
 private
+
 fun main() {
     // problem's input data
     val p = arrayOf(10, 13, 18, 31, 7, 15)
     val w = arrayOf(11, 15, 20, 35, 10, 33)
     val c = 47
-    val I = 0 until w.size - 1
+    val I = 0 until w.size
 
     // creating model
-    val m = Model("Knapsack", sense = MAXIMIZE)
+    val m = Model("Knapsack")
 
-    // creating vars
-    val x = I.map { m.addBinVar("item_$it", obj = p[it]) }
+    // creating vars and setting objective function
+    val x = I.list { i -> m.addBinVar("item_$i") }
+    m.objective = maximize(I.sum { i -> p[i] * x[i] })
 
     // adding constraint and solving model
-    m += I.map { w[it] * x[it] } leq c
+    m += I.sum { i -> w[i] * x[i] } leq c
     m.optimize()
 
     // printing result
     val selected = x.filter { it.x >= 0.99 }
-    print("Selected items: ${selected}")
+    print("Selected items: $selected")
 
     // sanity tests
     assert(m.status == OptimizationStatus.Optimal)
@@ -32,4 +34,4 @@ fun main() {
     assert(m.validateOptimizationResult())
 }
 
-fun Knapsack() = main()
+fun runKnapsack() = main()
