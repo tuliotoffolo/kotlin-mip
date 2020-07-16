@@ -120,6 +120,9 @@ class Constr internal constructor(val model: Model, var idx: Int) : Comparable<C
         @JvmStatic
         fun leq(lhs: Number?, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = "<=" }
 
+        @JvmStatic
+        fun leq(lhs: Number?, rhs: Number?) = LinExpr(lhs).apply { sub(rhs); sense = "<=" }
+
         // endregion leq
 
         // region geq
@@ -169,6 +172,9 @@ class Constr internal constructor(val model: Model, var idx: Int) : Comparable<C
         @JvmStatic
         fun geq(lhs: Number?, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = ">=" }
 
+        @JvmStatic
+        fun geq(lhs: Number?, rhs: Number?) = LinExpr(lhs).apply { sub(rhs); sense = ">=" }
+
         // endregion geq
 
         // region eq
@@ -217,6 +223,9 @@ class Constr internal constructor(val model: Model, var idx: Int) : Comparable<C
 
         @JvmStatic
         fun eq(lhs: Number?, rhs: Var?) = LinExpr(lhs).apply { sub(rhs); sense = "==" }
+
+        @JvmStatic
+        fun eq(lhs: Number?, rhs: Number?) = LinExpr(lhs).apply { sub(rhs); sense = "==" }
 
         // endregion eq
     }

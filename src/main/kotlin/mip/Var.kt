@@ -59,20 +59,6 @@ class Var internal constructor(val model: Model, idx: Int) : Comparable<Var> {
 
     override fun toString() = name
 
-    // region comparators
-
-    inline infix fun le(other: LinExpr?) = Constr.leq(this, other)
-    inline infix fun le(other: Var?) = Constr.leq(this, other)
-    inline infix fun le(other: Number) = Constr.leq(this, other)
-    inline infix fun ge(other: LinExpr?) = Constr.geq(this, other)
-    inline infix fun ge(other: Var?) = Constr.geq(this, other)
-    inline infix fun ge(other: Number) = Constr.geq(this, other)
-    inline infix fun eq(other: LinExpr?) = Constr.eq(this, other)
-    inline infix fun eq(other: Var?) = Constr.eq(this, other)
-    inline infix fun eq(other: Number) = Constr.eq(this, other)
-
-    // endregion comparators
-
     // region kotlin operators
 
     operator fun plus(iterable: Iterable<Any>) = toLinExpr().apply { add(iterable) }

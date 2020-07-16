@@ -30,7 +30,8 @@ class Model : ModelProperties {
     val vars = ArrayList<Var>()
 
     @get:JvmName("hasSolution")
-    val hasSolution get() = solver.hasSolution
+    val hasSolution
+        get() = solver.hasSolution
 
     override var solver: Solver
 
@@ -346,7 +347,26 @@ class Model : ModelProperties {
 
 
     private fun findSolver(sense: String): Solver {
+        val solverName = System.getProperty("SOLVER_NAME") ?: System.getenv("SOLVER_NAME")
+        if (solverName != null) {
+            when (System.getProperty("SOLVER_NAME")) {
+                CBC -> return mip.solvers.Cbc(this, name, sense)
+                CPLEX -> return mip.solvers.Cplex(this, name, sense)
+                EMPTY_SOLVER -> return mip.solvers.EmptySolver(this, name, sense)
+                GUROBI -> return mip.solvers.Gurobi(this, name, sense)
+            }
+        }
+
+        // trying Gurobi
+        val gurobiHome = System.getProperty("GUROBI_HOME") ?: System.getenv("GUROBI_HOME")
+        if (gurobiHome != null)
+            return mip.solvers.Gurobi(this, name, sense)
+
+        // trying Cplex
+        val cplexHome = System.getProperty("CPLEX_HOME") ?: System.getenv("CPLEX_HOME")
+        if (cplexHome != null)
+            return mip.solvers.Cplex(this, name, sense)
+
         return mip.solvers.Cbc(this, name, sense)
-        // TODO("Find an available solver")
     }
 }

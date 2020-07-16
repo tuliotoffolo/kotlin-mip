@@ -22,7 +22,6 @@ configurations {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-
     implementation("com.github.jnr:jnr-ffi:2.1.15")
 
     // implementation("org.bytedeco:javacpp:1.5.3")
@@ -46,8 +45,11 @@ java {
 
 tasks {
     compileKotlin {
-        kotlinOptions.includeRuntime = true
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions {
+            includeRuntime = true
+            jvmTarget = "1.8"
+            suppressWarnings = false
+        }
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
@@ -86,7 +88,7 @@ tasks {
     test {
         // exclude("**/*")
         ignoreFailures = true
-        jvmArgs = listOf("-Xss4m")
+        jvmArgs = listOf("-ea", "-Xss8m")
     }
 }
 

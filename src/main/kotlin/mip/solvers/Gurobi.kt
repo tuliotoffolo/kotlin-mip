@@ -1,8 +1,9 @@
 package mip.solvers
 
 import jnr.ffi.*
-import jnr.ffi.byref.PointerByReference
+import jnr.ffi.byref.*
 import mip.*
+import kotlin.math.roundToInt
 
 class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, sense) {
 
@@ -76,8 +77,8 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         set(value) = setDblParam("MIPGapAbs", value)
 
     override var maxNodes: Int
-        get() = getIntParam("NodeLimit")
-        set(value) = setIntParam("NodeLimit", value)
+        get() = getDblParam("NodeLimit").roundToInt()
+        set(value) = setDblParam("NodeLimit", value.toDouble())
 
     override var maxSeconds: Double
         get() = getDblParam("TimeLimit")
@@ -95,13 +96,27 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
                 obj += v.obj * v
             return obj
         }
-        set(linExpr: LinExpr) {
-            // TODO: Not implemented...
+        set(expr: LinExpr) {
+            assert(expr.isAffine)
+
+            val nz = model.vars.size
+            val vars = IntArray(nz) { it }
+            val objs = DoubleArray(nz) { 0.0 }
+            for ((v, coeff) in expr.terms)
+                objs[v.idx] = coeff
+
+            // setting constant and objective sense
+            objectiveConst = expr.const
+            if (sense == MINIMIZE || sense == MAXIMIZE) sense = expr.sense
+
+            // setting variable coefficients
+            lib.GRBsetdblattrlist(gurobi, "Obj", nz, vars, objs)
+            // error = GRBsetdblattrlist(self._model, attr, nz, cind, cval)
         }
 
     override var objectiveConst: Double
-        get() = getDblParam("ObjCon")
-        set(value) = setDblParam("ObjCon", value)
+        get() = getDblAttr("ObjCon")
+        set(value) = setDblAttr("ObjCon", value)
 
     override var optTol: Double
         get() = getDblParam("OptimalityTol")
@@ -134,11 +149,6 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     // endregion properties override
 
     // region buffers
-
-    private var bufferLength = 8192
-    private var dblBuffer = Memory.allocateDirect(runtime, bufferLength * 8)
-    private var intBuffer = Memory.allocateDirect(runtime, bufferLength * 4)
-    private var strBuffer = Memory.allocateDirect(runtime, bufferLength * 1)
 
     private var pi: Pointer? = null
         get() {
@@ -205,11 +215,12 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         val rhs = -linExpr.const
         val sense = linExpr.sense[0].toByte()
 
-        checkBuffer(nz)
-        var i = 0L
+        val intBuffer = IntArray(nz) { 0 }
+        val dblBuffer = DoubleArray(nz) { 0.0 }
+        var i = 0
         for ((v, coeff) in linExpr.terms) {
-            intBuffer.putInt(4L * i, v.idx)
-            dblBuffer.putDouble(8L * i, coeff)
+            intBuffer[i] = v.idx
+            dblBuffer[i] = coeff
             i++
         }
 
@@ -229,11 +240,12 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         }
 
         if (nz > 0) {
-            checkBuffer(nz)
-            var i = 0L
+            val intBuffer = IntArray(nz)
+            val dblBuffer = DoubleArray(nz)
+            var i = 0
             for ((constr, coeff) in column.terms) {
-                intBuffer.putInt(4 * i, constr.idx)
-                dblBuffer.putDouble(8 * i, coeff)
+                intBuffer[i] = constr.idx
+                dblBuffer[i] = coeff
                 i++
             }
             lib.GRBaddvar(gurobi, nz, intBuffer, dblBuffer, obj, lowerBound, upperBound, vtype, name)
@@ -257,9 +269,9 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     override fun removeConstrs(constrs: Iterable<Constr>) {
         val size = if (constrs is Collection<*>) constrs.size else constrs.count()
         if (size > 0) {
-            checkBuffer(size)
+            val intBuffer = IntArray(size)
             for ((i, constr) in constrs.withIndex())
-                intBuffer.putInt(4 * i.toLong(), constr.idx)
+                intBuffer[i] = constr.idx
             lib.GRBdelconstrs(gurobi, size, intBuffer)
         }
     }
@@ -267,9 +279,9 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     override fun removeVars(vars: Iterable<Var>) {
         val size = if (vars is Collection<*>) vars.size else vars.count()
         if (size > 0) {
-            checkBuffer(size)
+            val intBuffer = IntArray(size)
             for ((i, variable) in vars.withIndex())
-                intBuffer.putInt(4 * i.toLong(), variable.idx)
+                intBuffer[i] = variable.idx
             lib.GRBdelvars(gurobi, size, intBuffer)
         }
     }
@@ -323,8 +335,9 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         throw UnsupportedOperationException("Gurobi interface does not permit setting column")
 
     override fun getVarLB(idx: Int): Double {
-        lib.GRBgetdblattrelement(gurobi, "LB", idx, dblBuffer)
-        return dblBuffer.getDouble(0)
+        val dblRef = DoubleByReference()
+        lib.GRBgetdblattrelement(gurobi, "LB", idx, dblRef)
+        return dblRef.value
     }
 
     override fun setVarLB(idx: Int, value: Double) {
@@ -338,8 +351,9 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     }
 
     override fun getVarObj(idx: Int): Double {
-        lib.GRBgetdblattrelement(gurobi, "Obj", idx, dblBuffer)
-        return dblBuffer.getDouble(0)
+        val dblRef = DoubleByReference()
+        lib.GRBgetdblattrelement(gurobi, "Obj", idx, dblRef)
+        return dblRef.value
     }
 
     override fun setVarObj(idx: Int, value: Double) {
@@ -350,6 +364,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         rc?.getDouble(8 * idx.toLong()) ?: throw Error("Solution not available.")
 
     override fun getVarType(idx: Int): VarType {
+        val strBuffer = Memory.allocateDirect(runtime, 256)
         lib.GRBgetcharattrelement(gurobi, "VType", idx, strBuffer)
         val vtype = strBuffer.getByte(0).toChar()
 
@@ -370,8 +385,9 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     }
 
     override fun getVarUB(idx: Int): Double {
-        lib.GRBgetdblattrelement(gurobi, "UB", idx, dblBuffer)
-        return dblBuffer.getDouble(0)
+        val dblRef = DoubleByReference()
+        lib.GRBgetdblattrelement(gurobi, "UB", idx, dblRef)
+        return dblRef.value
     }
 
     override fun setVarUB(idx: Int, value: Double) {
@@ -392,17 +408,10 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
 
     // region private useful functions
 
-    private fun checkBuffer(nz: Int) {
-        if (nz > bufferLength) {
-            bufferLength = nz
-            dblBuffer = Memory.allocateDirect(runtime, bufferLength * 8)
-            intBuffer = Memory.allocateDirect(runtime, bufferLength * 4)
-        }
-    }
-
     private fun getDblAttr(attr: String): Double {
-        lib.GRBgetdblattr(gurobi, attr, dblBuffer)
-        return dblBuffer.getDouble(0)
+        val dblRef = DoubleByReference()
+        lib.GRBgetdblattr(gurobi, attr, dblRef)
+        return dblRef.value
     }
 
     private fun setDblAttr(attr: String, value: Double) {
@@ -410,17 +419,19 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     }
 
     private fun getDblParam(param: String): Double {
-        lib.GRBgetdblparam(gurobi, param, dblBuffer)
-        return dblBuffer.getDouble(0)
+        val dblRef = DoubleByReference()
+        lib.GRBgetdblparam(env, param, dblRef)
+        return dblRef.value
     }
 
     private fun setDblParam(param: String, value: Double) {
-        lib.GRBsetdblparam(gurobi, param, value)
+        lib.GRBsetdblparam(env, param, value)
     }
 
     private fun getIntAttr(attr: String): Int {
-        lib.GRBgetintattr(gurobi, attr, intBuffer)
-        return intBuffer.getInt(0)
+        val intRef = IntByReference()
+        lib.GRBgetintattr(gurobi, attr, intRef)
+        return intRef.value
     }
 
     private fun setIntAttr(param: String, value: Int) {
@@ -428,12 +439,13 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     }
 
     private fun getIntParam(param: String): Int {
-        lib.GRBgetintparam(gurobi, param, intBuffer)
-        return intBuffer.getInt(0)
+        val intRef = IntByReference()
+        lib.GRBgetintparam(env, param, intRef)
+        return intRef.value
     }
 
     private fun setIntParam(param: String, value: Int) {
-        lib.GRBsetintparam(gurobi, param, value)
+        lib.GRBsetintparam(env, param, value)
     }
 
     private fun removeSolution() {

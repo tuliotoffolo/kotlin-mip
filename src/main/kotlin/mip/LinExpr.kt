@@ -1,5 +1,8 @@
 package mip
 
+import java.util.*
+import java.util.function.Consumer
+import kotlin.collections.LinkedHashMap
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -237,6 +240,8 @@ class LinExpr {
     // endregion addLHS and addRHS aliases
 
     // region kotlin operators
+
+    inline operator fun get(v: Var): Double = terms.getOrDefault(v, 0.0)
 
     inline operator fun plusAssign(iterable: Iterable<Any?>?) = add(iterable)
     inline operator fun plusAssign(linExpr: LinExpr?) = add(linExpr)

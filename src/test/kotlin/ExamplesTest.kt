@@ -1,18 +1,59 @@
-import org.junit.Test
-
+import mip.*
 import mip.examples.*
+import org.junit.Test
 
 class ExamplesTest {
 
-    @Test
-    fun `Solving BMCP`() = BMCP()
+    var solvers = mutableListOf(GUROBI)//, CPLEX, CBC)
+
+    init {
+        for (solver in solvers) {
+            try {
+                Model(solverName = solver)
+            }
+            catch (e: Exception) {
+                solvers.remove(solver)
+            }
+        }
+    }
 
     @Test
-    fun `Solving n-Queens`() = Queens()
+    fun `Solve BMCP Example`() {
+        for (solver in solvers) {
+            System.setProperty("SOLVER_NAME", solver)
+            runBMCP()
+        }
+    }
 
     @Test
-    fun `Solving RCPSP`() = runRCPSP()
+    fun `Solve Queens Example`() {
+        for (solver in solvers) {
+            System.setProperty("SOLVER_NAME", solver)
+            runQueens()
+        }
+    }
 
     @Test
-    fun `Solving TSP-Compact`() = runTSPCompact()
+    fun `Solve RCPSP Example`() {
+        for (solver in solvers) {
+            System.setProperty("SOLVER_NAME", solver)
+            runRCPSP()
+        }
+    }
+
+    @Test
+    fun `Solve TSPCompact Example`() {
+        for (solver in solvers) {
+            System.setProperty("SOLVER_NAME", solver)
+            runTSPCompact()
+        }
+    }
+
+    @Test
+    fun `Solve TSPLarge Example`() {
+        for (solver in solvers) {
+            System.setProperty("SOLVER_NAME", solver)
+            runTSPLarge()
+        }
+    }
 }

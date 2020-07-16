@@ -2,7 +2,7 @@ package mip.solvers
 
 import jnr.ffi.*
 import jnr.ffi.annotations.*
-import jnr.ffi.byref.PointerByReference
+import jnr.ffi.byref.*
 
 internal interface GurobiJnrLib {
 
@@ -29,7 +29,7 @@ internal interface GurobiJnrLib {
     fun GRBfreemodel(@Pinned @In model: Pointer): Int
 
     /** int GRBgetintattr(GRBmodel *model, const char *attrname, int *valueP); */
-    fun GRBgetintattr(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, @Out valueP: Pointer?): Int
+    fun GRBgetintattr(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, @Out valueP: IntByReference): Int
 
     /** int GRBsetintattr(GRBmodel *model, const char *attrname, int newvalue); */
     fun GRBsetintattr(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, newvalue: Int): Int
@@ -41,7 +41,7 @@ internal interface GurobiJnrLib {
     fun GRBsetintattrelement(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, element: Int, newvalue: Int): Int
 
     /** int GRBgetdblattr(GRBmodel *model, const char *attrname, double *valueP); */
-    fun GRBgetdblattr(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, @Out valueP: Pointer?): Int
+    fun GRBgetdblattr(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, @Out valueP: DoubleByReference): Int
 
     /** int GRBsetdblattr(GRBmodel *model, const char *attrname, double newvalue); */
     fun GRBsetdblattr(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, newvalue: Double): Int
@@ -64,11 +64,10 @@ internal interface GurobiJnrLib {
      * int GRBsetdblattrlist(GRBmodel *model, const char *attrname, int len, int *ind,
      *                       double *newvalues);
      */
-    fun GRBsetdblattrlist(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, len: Int, ind: Pointer?,
-                          newvalues: Pointer?): Int
+    fun GRBsetdblattrlist(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, len: Int, @Pinned @In ind: IntArray, @Pinned @In newvalues: DoubleArray): Int
 
     /** int GRBgetdblattrelement(GRBmodel *model, const char *attrname, int element, double *valueP); */
-    fun GRBgetdblattrelement(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, element: Int, valueP: Pointer?): Int
+    fun GRBgetdblattrelement(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, element: Int, valueP: DoubleByReference?): Int
 
     /** int GRBsetdblattrelement(GRBmodel *model, const char *attrname, int element, double newvalue); */
     fun GRBsetdblattrelement(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, element: Int, newvalue: Double): Int
@@ -88,7 +87,7 @@ internal interface GurobiJnrLib {
                             newvalues: String): Int
 
     /** int GRBgetcharattrelement(GRBmodel *model, const char *attrname, int element, char *valueP); */
-    fun GRBgetcharattrelement(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, element: Int, valueP: Pointer): Int
+    fun GRBgetcharattrelement(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, element: Int, @Out valueP: Pointer): Int
 
     /** int GRBsetcharattrelement(GRBmodel *model, const char *attrname, int element, char newvalue); */
     fun GRBsetcharattrelement(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, element: Int, newvalue: Byte): Int
@@ -100,19 +99,19 @@ internal interface GurobiJnrLib {
     fun GRBgetstrattr(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, @Out valueP: PointerByReference): Int
 
     /** int GRBsetstrattr (GRBmodel *model, const char *attrname, const char *newvalue); */
-    fun GRBsetstrattr(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, newvalue: String): Int
+    fun GRBsetstrattr(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, @Pinned @In @Transient newvalue: String): Int
 
     /** int GRBgetintparam(GRBenv *env, const char *paramname, int *valueP); */
-    fun GRBgetintparam(env: Pointer, paramname: String, valueP: Pointer?): Int
+    fun GRBgetintparam(@Pinned @In env: Pointer, @Pinned @In @Transient paramname: String, @Out valueP: IntByReference): Int
 
     /** int GRBsetintparam(GRBenv *env, const char *paramname, int value); */
-    fun GRBsetintparam(env: Pointer, paramname: String, value: Int): Int
+    fun GRBsetintparam(@Pinned @In env: Pointer, @Pinned @In @Transient paramname: String, value: Int): Int
 
     /** int GRBgetdblparam(GRBenv *env, const char *paramname, double *valueP); */
-    fun GRBgetdblparam(env: Pointer, paramname: String, valueP: Pointer?): Int
+    fun GRBgetdblparam(@Pinned @In env: Pointer, @Pinned @In @Transient paramname: String, @Out valueP: DoubleByReference): Int
 
     /** int GRBsetdblparam(GRBenv *env, const char *paramname, double value); */
-    fun GRBsetdblparam(env: Pointer, paramname: String, value: Double): Int
+    fun GRBsetdblparam(@Pinned @In env: Pointer, @Pinned @In @Transient attrname: String, newvalue: Double): Int
 
     /**
      * int GRBsetobjectiven(GRBmodel *model, int index, int priority, double weight, double abstol,
@@ -127,14 +126,14 @@ internal interface GurobiJnrLib {
      * int GRBaddvar(GRBmodel *model, int numnz, int *vind, double *vval, double obj, double lb,
      *               double ub, char vtype, const char *varname);
      */
-    fun GRBaddvar(@Pinned @In model: Pointer, numnz: Int, vind: Pointer?, vval: Pointer?, obj: Double,
+    fun GRBaddvar(@Pinned @In model: Pointer, numnz: Int, @Pinned @In vind: IntArray?, @Pinned @In vval: DoubleArray?, obj: Double,
                   lb: Double, ub: Double, vtype: Byte, varname: String): Int
 
     /**
      * int GRBaddconstr(GRBmodel *model, int numnz, int *cind, double *cval, char sense, double rhs,
      *                  const char *constrname);
      */
-    fun GRBaddconstr(@Pinned @In model: Pointer, numnz: Int, cind: Pointer?, cval: Pointer?, sense: Byte,
+    fun GRBaddconstr(@Pinned @In model: Pointer, numnz: Int, @Pinned @In cind: IntArray?, @Pinned @In cval: DoubleArray?, sense: Byte,
                      rhs: Double, constrname: String): Int
 
     /**
@@ -177,7 +176,7 @@ internal interface GurobiJnrLib {
     fun GRBreadmodel(env: Pointer, filename: String, modelP: PointerByReference): Int
 
     /** int GRBdelvars(GRBmodel *model, int numdel, int *ind ); */
-    fun GRBdelvars(@Pinned @In model: Pointer, numdel: Int, ind: Pointer?): Int
+    fun GRBdelvars(@Pinned @In model: Pointer, numdel: Int, @Pinned @In ind: IntArray?): Int
 
     /**
      * int GRBsetcharattrlist(GRBmodel *model, const char *attrname, int len, int *ind,
@@ -213,7 +212,7 @@ internal interface GurobiJnrLib {
                   lazysense: Byte, lazyrhs: Double): Int
 
     /** int GRBdelconstrs (GRBmodel *model, int numdel, int *ind); */
-    fun GRBdelconstrs(@Pinned @In model: Pointer, numdel: Int, ind: Pointer?): Int
+    fun GRBdelconstrs(@Pinned @In model: Pointer, numdel: Int, @Pinned @In ind: IntArray?): Int
 
 
     /**
@@ -228,7 +227,12 @@ internal interface GurobiJnrLib {
     companion object {
 
         @JvmStatic
+        var library: GurobiJnrLib? = null
+
+        @JvmStatic
         fun loadLibrary(): GurobiJnrLib {
+            if (library != null) return library!!
+
             val platform = Platform.getNativePlatform();
 
             val versions = (10 downTo 6).flatMap { i -> (11 downTo 0).map { j -> "$i$j" } }
@@ -252,7 +256,8 @@ internal interface GurobiJnrLib {
                 if (lib != null) break
             }
 
-            return lib!!
+            library = lib
+            return library!!
         }
 
         const val CHAR_ONE: Byte = 1.toByte()

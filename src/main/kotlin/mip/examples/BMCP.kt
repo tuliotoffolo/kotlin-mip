@@ -50,14 +50,16 @@ fun main() {
 
     for (i in N)
         for (c in U)
-            m += z ge (c + 1) * x[i][c]
+            m += z geq (c + 1) * x[i][c]
 
     m.maxNodes = 30
     m.optimize()
 
-    if (m.hasSolution)
+    if (m.hasSolution) {
+        println("Solution cost = ${m.objectiveValue}")
         for (i in N)
-            println("Channels of node $i: ${U.filter { c -> x[i][c].x >= 0.99 }}")
+            println("  - Channels of node $i: ${U.filter { c -> x[i][c].x >= 0.99 }}")
+    }
 
     // sanity tests
     assert(m.objectiveBound <= 41 + 1e-10)

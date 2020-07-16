@@ -12,10 +12,10 @@ package mip
 // region constants
 
 /** Epsilon number (practical zero) */
-const val EPS = 10e-64
+const val EPS = 10e-10
 
 /** Infinity representation */
-const val INF = 1.0 / 0.0
+val INF = Double.MAX_VALUE
 
 // constraint senses
 const val EQ = "=="

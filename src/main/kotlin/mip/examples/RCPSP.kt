@@ -52,7 +52,7 @@ fun main() {
     println("Schedule:")
     for (j in J)
         for (t in T) if (x[j][t].x >= 0.99)
-            println("($j, $t)")
+            println("  ($j, $t)")
 
     // sanity tests
     assert(model.status == OptimizationStatus.Optimal)

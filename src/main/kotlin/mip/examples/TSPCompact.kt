@@ -14,7 +14,7 @@ fun main() {
     )
 
     // distance matrix
-    val dists = arrayOf(
+    val c = arrayOf(
         arrayOf(0, 83, 81, 113, 52, 42, 73, 44, 23, 91, 105, 90, 124, 57),
         arrayOf(83, 0, 161, 160, 39, 89, 151, 110, 90, 99, 177, 143, 193, 100),
         arrayOf(81, 161, 0, 90, 125, 82, 13, 57, 71, 123, 38, 72, 59, 82),
@@ -38,7 +38,7 @@ fun main() {
     val model = Model("TSPCompact")
 
     // binary variables indicating if arc (i,j) is used or not
-    val x = V.list { i -> V.list { j -> model.addBinVar("x($i,$j)", dists[i][j]) } }
+    val x = V.list { i -> V.list { j -> model.addBinVar("x($i,$j)", obj = c[i][j]) } }
 
     // continuous variable to prevent subtours: each city will have a different
     // sequential id in the planned route (except the first one)
@@ -60,10 +60,10 @@ fun main() {
 
     // checking if a solution was found and printing it
     if (model.hasSolution) {
-        println("\nRoute with total distance ${model.objectiveValue} found:")
+        println("Route with total distance ${model.objectiveValue} found:")
         var i = 0
         do {
-            println("- ${places[i]}")
+            println("  - ${places[i]}")
             for (j in V) if (x[i][j].x >= 0.99) {
                 i = j
                 break
