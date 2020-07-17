@@ -26,8 +26,8 @@ fun main() {
 
     // printing result
     val selected = x.filter { it.x >= 0.99 }
-    print("Total cost: ${m.objectiveValue}")
-    print("Selected items: $selected")
+    println("Total cost: ${m.objectiveValue}")
+    println("Selected items: $selected")
 
     // sanity tests
     assert(m.status == OptimizationStatus.Optimal)
