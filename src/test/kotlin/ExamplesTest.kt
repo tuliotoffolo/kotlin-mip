@@ -25,6 +25,10 @@ object ExampleTest: Spek({
                 runBMCP()
             }
 
+            test("Solve Knapsack Example") {
+                runKnapsack()
+            }
+
             test("Solve Queens Example") {
                 runQueens()
             }
