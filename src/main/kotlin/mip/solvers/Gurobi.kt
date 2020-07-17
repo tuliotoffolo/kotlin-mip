@@ -111,7 +111,6 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
 
             // setting variable coefficients
             lib.GRBsetdblattrlist(gurobi, "Obj", nz, vars, objs)
-            // error = GRBsetdblattrlist(self._model, attr, nz, cind, cval)
         }
 
     override var objectiveConst: Double

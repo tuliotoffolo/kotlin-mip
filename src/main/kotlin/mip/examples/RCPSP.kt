@@ -55,6 +55,7 @@ fun main() {
             println("  ($j, $t)")
 
     // sanity tests
+    assert(model.hasSolution)
     assert(model.status == OptimizationStatus.Optimal)
     assert(abs(model.objectiveValue - 21) <= 1e-4)
     assert(model.validateOptimizationResult())

@@ -99,7 +99,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     }
 
     protected fun finalize() {
-        lib.Cbc_deleteModel(cbc)
+        // lib.Cbc_deleteModel(cbc)
     }
 
 

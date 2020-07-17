@@ -62,6 +62,7 @@ fun main() {
     }
 
     // sanity tests
+    assert(m.hasSolution)
     assert(m.objectiveBound <= 41 + 1e-10)
     if (m.status == OptimizationStatus.Optimal)
         assert(m.objectiveValue.roundToInt() == 41)

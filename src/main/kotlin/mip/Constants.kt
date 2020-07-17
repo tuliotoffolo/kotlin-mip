@@ -30,10 +30,10 @@ const val MAXIMIZE = MAX
 
 // solvers
 const val CBC = "CBC"
-const val CPX = "CPX"    // we plan to support CPLEX in the future
+const val CPX = "CPLEX"    // we plan to support CPLEX in the future
 const val CPLEX = CPX  // we plan to support CPLEX in the future
 const val EMPTY_SOLVER = "EMPTY_SOLVER"
-const val GRB = "GRB"
+const val GRB = "GUROBI"
 const val GUROBI = GRB
 const val SCIP = "SCIP"  // we plan to support SCIP in the future
 

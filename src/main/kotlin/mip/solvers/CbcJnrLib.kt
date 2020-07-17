@@ -846,34 +846,40 @@ interface CbcJnrLib {
     companion object {
 
         @JvmStatic
+        var library: CbcJnrLib? = null
+
+        @JvmStatic
         fun loadLibrary(): CbcJnrLib {
-            val library: String?
+            if (library != null) return library!!
+
+            val libname: String?
             var libLocation: String? = System.getProperty("user.dir") + File.separatorChar
 
             val platform = Platform.getNativePlatform()
             when (platform.os) {
                 Platform.OS.DARWIN -> {
-                    library = "cbc-c-darwin-x86-64.dylib"
+                    libname = "cbc-c-darwin-x86-64.dylib"
                     libLocation += "libraries"
                 }
                 Platform.OS.LINUX -> {
-                    library = "cbc-c-linux-x86-64.so"
+                    libname = "cbc-c-linux-x86-64.so"
                     libLocation += "libraries"
                 }
                 Platform.OS.WINDOWS -> {
-                    library = "libCbcSolver-0.dll"
+                    libname = "libCbcSolver-0.dll"
                     libLocation += "libraries\\win64"
                 }
                 else -> {
-                    library = null
+                    libname = null
                     libLocation = null
                 }
             }
 
-            return LibraryLoader
+            library = LibraryLoader
                 .create(CbcJnrLib::class.java)
                 .failImmediately()
-                .load(libLocation + File.separatorChar + library)
+                .load(libLocation + File.separatorChar + libname)
+            return library!!
         }
 
         /*

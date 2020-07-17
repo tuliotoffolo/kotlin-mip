@@ -1,16 +1,17 @@
 package mip.solvers
 
 import jnr.ffi.*
+import jnr.ffi.annotations.*
 import jnr.ffi.byref.PointerByReference
 
-internal interface CplexLibrary {
+internal interface CplexJnrLib {
 
     fun fflush(stream: Pointer?) = CLibrary.lib.fflush(stream)
 
     companion object {
 
         @JvmStatic
-        val lib: CplexLibrary
+        var library: CplexJnrLib
 
         init {
             val platform = Platform.getNativePlatform();
@@ -23,11 +24,11 @@ internal interface CplexLibrary {
                 else -> emptyList()
             }
 
-            var lib: CplexLibrary? = null
+            var lib: CplexJnrLib? = null
             for (library in libNames) {
                 try {
                     lib = LibraryLoader
-                        .create(CplexLibrary::class.java)
+                        .create(CplexJnrLib::class.java)
                         .failImmediately()
                         .load(library)
                 }
@@ -37,7 +38,7 @@ internal interface CplexLibrary {
                 if (lib != null) break
             }
 
-            this.lib = lib!!
+            this.library = lib!!
         }
 
         // region Generic constants
@@ -430,98 +431,103 @@ internal interface CplexLibrary {
     /**
      * CPXENVptr CPXopenCPLEX (int *status_p);
      */
-    fun CPXopenCPLEX(status_p: Pointer): Pointer
+    fun CPXopenCPLEX(@Out status_p: Pointer): Pointer
 
     /**
      * CPXLPptr CPXcreateprob (CPXCENVptr env, int *status_p, char const *probname_str);
      */
-    fun CPXcreateprob(env: Pointer, status_p: Pointer, probname_str: String): Pointer
+    fun CPXcreateprob(@Pinned @In env: Pointer, @Out status_p: Pointer, @Pinned @In probname_str: String): Pointer
 
     /**
      * int CPXlpopt (CPXCENVptr env, CPXLPptr lp);
      */
-    fun CPXlpopt(env: Pointer, lp: Pointer): Int
+    fun CPXlpopt(@Pinned @In env: Pointer, @Pinned @In lp: Pointer): Int
 
     /**
      * int CPXchgobjsen (CPXCENVptr env, CPXLPptr lp, int maxormin);
      */
-    fun CPXchgobjsen(env: Pointer, lp: Pointer, maxormin: Int): Int
+    fun CPXchgobjsen(@Pinned @In env: Pointer, @Pinned @In lp: Pointer, maxormin: Int): Int
 
 
     /**
      * int CPXgetobjsen (CPXCENVptr env, CPXCLPptr lp);
      */
-    fun CPXgetobjsen(env: Pointer, lp: Pointer): Int
+    fun CPXgetobjsen(@Pinned @In env: Pointer, @Pinned @In lp: Pointer): Int
+
+    /**
+     * int CPXchgobj (CPXCENVptr env, CPXLPptr lp, int cnt, int const *indices, double const *values);
+     */
+    fun CPXchgobj(@Pinned @In env: Pointer, @Pinned @In lp: Pointer, cnt: Int, @Pinned @In indices: IntArray, @Pinned @In values: DoubleArray);
 
     /**
      * int CPXgetnumcols (CPXCENVptr env, CPXCLPptr lp);
      */
-    fun CPXgetnumcols(env: Pointer, lp: Pointer): Int
+    fun CPXgetnumcols(@Pinned @In env: Pointer, @Pinned @In lp: Pointer): Int
 
     /**
      * int CPXgetnumrows (CPXCENVptr env, CPXCLPptr lp);
      */
-    fun CPXgetnumrows(env: Pointer, lp: Pointer): Int
+    fun CPXgetnumrows(@Pinned @In env: Pointer, @Pinned @In lp: Pointer): Int
 
     /**
      * int CPXgetsolnpoolnumsolns (CPXCENVptr env, CPXCLPptr lp);
      */
-    fun CPXgetsolnpoolnumsolns(env: Pointer, lp: Pointer): Int
+    fun CPXgetsolnpoolnumsolns(@Pinned @In env: Pointer, @Pinned @In lp: Pointer): Int
 
     /**
      * int CPXgetstat (CPXCENVptr env, CPXCLPptr lp);
      */
-    fun CPXgetstat(env: Pointer, lp: Pointer): Int
+    fun CPXgetstat(@Pinned @In env: Pointer, @Pinned @In lp: Pointer): Int
 
     /**
      *int CPXgetobjoffset (CPXCENVptr env, CPXCLPptr lp, double *objoffset_p);
      */
-    fun CPXgetobjoffset(env: Pointer, lp: Pointer, value: Pointer?): Int
+    fun CPXgetobjoffset(@Pinned @In env: Pointer, @Pinned @In lp: Pointer, value: Pointer?): Int
 
     /**
      * int CPXgetobjval (CPXCENVptr env, CPXCLPptr lp, double *objval_p);
      */
-    fun CPXgetobjval(env: Pointer, lp: Pointer, value: Pointer?): Int
+    fun CPXgetobjval(@Pinned @In env: Pointer, @Pinned @In lp: Pointer, value: Pointer?): Int
 
     /**
      * int CPXchgobjoffset (CPXCENVptr env, CPXLPptr lp, double offset);
      */
-    fun CPXchgobjoffset(env: Pointer, lp: Pointer, offset: Double): Int
+    fun CPXchgobjoffset(@Pinned @In env: Pointer, @Pinned @In lp: Pointer, offset: Double): Int
 
     /**
      * int CPXgetbestobjval (CPXCENVptr env, CPXCLPptr lp, double *objval_p);
      */
-    fun CPXgetbestobjval(env: Pointer, lp: Pointer, value: Pointer?): Int
+    fun CPXgetbestobjval(@Pinned @In env: Pointer, @Pinned @In lp: Pointer, value: Pointer?): Int
 
     /**
      * int CPXgetdj (CPXCENVptr env, CPXCLPptr lp, double *dj, int begin, int end);
      */
-    fun CPXgetdj(env: Pointer, lp: Pointer, values: Pointer?, begin: Int, end: Int): Int
+    fun CPXgetdj(@Pinned @In env: Pointer, @Pinned @In lp: Pointer, values: Pointer?, begin: Int, end: Int): Int
 
     /**
      * int CPXgetpi (CPXCENVptr env, CPXCLPptr lp, double *pi, int begin, int end);
      */
-    fun CPXgetpi(env: Pointer, lp: Pointer, values: Pointer?, begin: Int, end: Int): Int
+    fun CPXgetpi(@Pinned @In env: Pointer, @Pinned @In lp: Pointer, values: Pointer?, begin: Int, end: Int): Int
 
     /**
      * int CPXgetx (CPXCENVptr env, CPXCLPptr lp, double *x, int begin, int end);
      */
-    fun CPXgetx(env: Pointer, lp: Pointer, values: Pointer?, begin: Int, end: Int): Int
+    fun CPXgetx(@Pinned @In env: Pointer, @Pinned @In lp: Pointer, values: Pointer?, begin: Int, end: Int): Int
 
 
     /**
      * int CPXnewcols (CPXCENVptr env, CPXLPptr lp, int ccnt, double const *obj, double const *lb,
      *                 double const *ub, char const *xctype, char **colname);
      */
-    fun CPXnewcols(env: Pointer, lp: Pointer, ccnt: Int, obj: Pointer, lb: Pointer, ub: Pointer,
-                   xctype: Pointer, colname: PointerByReference): Int
+    fun CPXnewcols(@Pinned @In env: Pointer, @Pinned @In lp: Pointer, ccnt: Int, obj: DoubleArray, lb: DoubleArray, ub: DoubleArray,
+                   xctype: ByteArray, colname: PointerByReference): Int
 
     /**
      * int CPXaddrows (CPXCENVptr env, CPXLPptr lp, int ccnt, int rcnt, int nzcnt,
      *                 double const *rhs, char const *sense, int const *rmatbeg,
      *                 int const *rmatind, double const *rmatval, char **colname, char **rowname);
      */
-    fun CPXaddrows(env: Pointer, lp: Pointer, ccnt: Int, rcnt: Int, nzcnt: Int, rhs: Pointer,
+    fun CPXaddrows(@Pinned @In env: Pointer, @Pinned @In lp: Pointer, ccnt: Int, rcnt: Int, nzcnt: Int, rhs: Pointer,
                    sense: Pointer, rmatbeg: Pointer, rmatind: Pointer, rmatval: Pointer,
                    colname: PointerByReference?, rowname: PointerByReference?): Int
 
@@ -529,7 +535,7 @@ internal interface CplexLibrary {
      *  int CPXgetcolname (CPXCENVptr env, CPXCLPptr lp, char  **name, char *namestore,
      *                     int storespace, int *surplus_p, int begin, int end);
      */
-    fun CPXgetcolname(env: Pointer, lp: Pointer, name: PointerByReference?, namestore: String,
+    fun CPXgetcolname(@Pinned @In env: Pointer, @Pinned @In lp: Pointer, name: PointerByReference?, namestore: String,
                       storeespace: Int, surplus_p: Pointer, begin: Int, end: Int): Int
 
 
@@ -537,33 +543,33 @@ internal interface CplexLibrary {
      * int CPXsolution (CPXCENVptr env, CPXCLPptr lp, int *lpstat_p, double *objval_p, double *x,
      *                  double *pi, double *slack, double *dj);
      */
-    fun CPXsolution(env: Pointer, lp: Pointer, lpstat_p: Pointer, objval_p: Pointer, x: Pointer,
+    fun CPXsolution(@Pinned @In env: Pointer, @Pinned @In lp: Pointer, lpstat_p: Pointer, objval_p: Pointer, x: Pointer,
                     pi: Pointer, slack: Pointer, dj: Pointer): Int
 
 
     /**
      * CPXgetdblparam (CPXCENVptr env, int whichparam, double *value_p);
      */
-    fun CPXgetdblparam(env: Pointer, whichparam: Int, value_p: Pointer): Int
+    fun CPXgetdblparam(@Pinned @In env: Pointer, whichparam: Int, value_p: Pointer): Int
 
     /**
      * int CPXsetdblparam (CPXENVptr env, int whichparam, double newvalue);
      */
-    fun CPXsetdblparam(env: Pointer, whichparam: Int, newvalue: Double): Int
+    fun CPXsetdblparam(@Pinned @In env: Pointer, whichparam: Int, newvalue: Double): Int
 
     /**
      * CPXgetintparam (CPXCENVptr env, int whichparam, CPXINT *value_p);
      */
-    fun CPXgetintparam(env: Pointer, whichparam: Int, value_p: Pointer): Int
+    fun CPXgetintparam(@Pinned @In env: Pointer, whichparam: Int, value_p: Pointer): Int
 
     /**
      * int CPXsetintparam (CPXENVptr env, int whichparam, CPXINT newvalue);
      */
-    fun CPXsetintparam(env: Pointer, whichparam: Int, newvalue: Int): Int
+    fun CPXsetintparam(@Pinned @In env: Pointer, whichparam: Int, newvalue: Int): Int
 
 
     /**
      * int CPXwriteprob (CPXCENVptr env, CPXCLPptr lp, char const *filename_str, char const *filetype);
      */
-    fun CPXwriteprob(env: Pointer, lp: Pointer, filename_str: String, filetype: String): Int
+    fun CPXwriteprob(@Pinned @In env: Pointer, @Pinned @In lp: Pointer, filename_str: String, filetype: String): Int
 }

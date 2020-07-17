@@ -1,59 +1,45 @@
 import mip.*
 import mip.examples.*
-import org.junit.Test
+import org.spekframework.spek2.Spek
 
-class ExamplesTest {
+object ExampleTest: Spek({
+    // selecting available solvers from list
+    val solvers = mutableListOf(GUROBI, CBC)
+    for (solver in solvers) {
+        try {
+            Model(solverName = solver)
+        }
+        catch (e: Exception) {
+            solvers.remove(solver)
+        }
+    }
 
-    var solvers = mutableListOf(GUROBI)//, CPLEX, CBC)
+    for (solver in solvers) {
 
-    init {
-        for (solver in solvers) {
-            try {
-                Model(solverName = solver)
+        group("Running examples with $solver") {
+            beforeEachTest {
+                System.setProperty("SOLVER_NAME", solver)
             }
-            catch (e: Exception) {
-                solvers.remove(solver)
+
+            test("Solve BMCP Example") {
+                runBMCP()
+            }
+
+            test("Solve Queens Example") {
+                runQueens()
+            }
+
+            test("Solve RCPSP Example") {
+                runRCPSP()
+            }
+
+            test("Solve TSPCompact Example") {
+                runTSPCompact()
+            }
+
+            test("Solve TSPLarge Example") {
+                runTSPCompact()
             }
         }
     }
-
-    @Test
-    fun `Solve BMCP Example`() {
-        for (solver in solvers) {
-            System.setProperty("SOLVER_NAME", solver)
-            runBMCP()
-        }
-    }
-
-    @Test
-    fun `Solve Queens Example`() {
-        for (solver in solvers) {
-            System.setProperty("SOLVER_NAME", solver)
-            runQueens()
-        }
-    }
-
-    @Test
-    fun `Solve RCPSP Example`() {
-        for (solver in solvers) {
-            System.setProperty("SOLVER_NAME", solver)
-            runRCPSP()
-        }
-    }
-
-    @Test
-    fun `Solve TSPCompact Example`() {
-        for (solver in solvers) {
-            System.setProperty("SOLVER_NAME", solver)
-            runTSPCompact()
-        }
-    }
-
-    @Test
-    fun `Solve TSPLarge Example`() {
-        for (solver in solvers) {
-            System.setProperty("SOLVER_NAME", solver)
-            runTSPLarge()
-        }
-    }
-}
+})

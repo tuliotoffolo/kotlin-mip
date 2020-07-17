@@ -3,7 +3,6 @@ package mip.solvers
 import jnr.ffi.*
 import jnr.ffi.byref.*
 import mip.*
-import java.nio.charset.Charset
 
 class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sense) {
 
@@ -11,7 +10,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
 
     private var env: Pointer
     private var lp: Pointer
-    private val lib = CplexLibrary.lib
+    private val lib = CplexJnrJavaLib.loadLibrary()
     private val runtime: Runtime = Runtime.getRuntime(lib)
 
     // region properties override
@@ -24,14 +23,16 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
 
     override val objectiveBound
         get(): Double {
-            lib.CPXgetbestobjval(env, lp, dblBuffer)
-            return dblBuffer.getDouble(0)
+            val dblRef = DoubleByReference()
+            lib.CPXgetbestobjval(env, lp, dblRef)
+            return dblRef.value
         }
 
     override val objectiveValue
         get(): Double {
-            lib.CPXgetobjval(env, lp, dblBuffer)
-            return dblBuffer.getDouble(0)
+            val dblRef = DoubleByReference()
+            lib.CPXgetobjval(env, lp, dblRef)
+            return dblRef.value
         }
 
     override val status
@@ -51,40 +52,40 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
 
     // override var clique: Int
     override var cutoff: Double
-        get() = getDblParam(if (sense == MAXIMIZE) CplexLibrary.CPX_PARAM_CUTUP else CplexLibrary.CPX_PARAM_CUTLO)
-        set(value) = setDblParam(if (sense == MAXIMIZE) CplexLibrary.CPX_PARAM_CUTUP else CplexLibrary.CPX_PARAM_CUTLO, value)
+        get() = getDblParam(if (sense == MAXIMIZE) CplexJnrLib.CPX_PARAM_CUTUP else CplexJnrLib.CPX_PARAM_CUTLO)
+        set(value) = setDblParam(if (sense == MAXIMIZE) CplexJnrLib.CPX_PARAM_CUTUP else CplexJnrLib.CPX_PARAM_CUTLO, value)
 
     // override var cutPasses: Int
     // override var cuts: Int
     // override var cutsGenerator: Int
 
     override var infeasTol: Double
-        get() = getDblParam(CplexLibrary.CPXPARAM_Feasopt_Tolerance)
-        set(value) = setDblParam(CplexLibrary.CPXPARAM_Feasopt_Tolerance, value)
+        get() = getDblParam(CplexJnrLib.CPXPARAM_Feasopt_Tolerance)
+        set(value) = setDblParam(CplexJnrLib.CPXPARAM_Feasopt_Tolerance, value)
 
     // override var integerTol: Int
     // override var lazyConstrsGenerator: Int
     // override var lpMethod: LPMethod
 
     override var maxMipGap: Double
-        get() = getDblParam(CplexLibrary.CPXPARAM_MIP_Tolerances_MIPGap)
-        set(value) = setDblParam(CplexLibrary.CPXPARAM_MIP_Tolerances_MIPGap, value)
+        get() = getDblParam(CplexJnrLib.CPXPARAM_MIP_Tolerances_MIPGap)
+        set(value) = setDblParam(CplexJnrLib.CPXPARAM_MIP_Tolerances_MIPGap, value)
 
     override var maxMipGapAbs: Double
-        get() = getDblParam(CplexLibrary.CPXPARAM_MIP_Tolerances_AbsMIPGap)
-        set(value) = setDblParam(CplexLibrary.CPXPARAM_MIP_Tolerances_AbsMIPGap, value)
+        get() = getDblParam(CplexJnrLib.CPXPARAM_MIP_Tolerances_AbsMIPGap)
+        set(value) = setDblParam(CplexJnrLib.CPXPARAM_MIP_Tolerances_AbsMIPGap, value)
 
     override var maxNodes: Int
-        get() = getIntParam(CplexLibrary.CPXPARAM_MIP_Limits_Nodes)
-        set(value) = setIntParam(CplexLibrary.CPXPARAM_MIP_Limits_Nodes, value)
+        get() = getIntParam(CplexJnrLib.CPXPARAM_MIP_Limits_Nodes)
+        set(value) = setIntParam(CplexJnrLib.CPXPARAM_MIP_Limits_Nodes, value)
 
     override var maxSeconds: Double
-        get() = getDblParam(CplexLibrary.CPXPARAM_TimeLimit)
-        set(value) = setDblParam(CplexLibrary.CPXPARAM_TimeLimit, value)
+        get() = getDblParam(CplexJnrLib.CPXPARAM_TimeLimit)
+        set(value) = setDblParam(CplexJnrLib.CPXPARAM_TimeLimit, value)
 
     override var maxSolutions: Int
-        get() = getIntParam(CplexLibrary.CPXPARAM_MIP_Limits_Solutions)
-        set(value) = setIntParam(CplexLibrary.CPXPARAM_MIP_Limits_Solutions, value)
+        get() = getIntParam(CplexJnrLib.CPXPARAM_MIP_Limits_Solutions)
+        set(value) = setIntParam(CplexJnrLib.CPXPARAM_MIP_Limits_Solutions, value)
 
     override var objective: LinExpr
         get() {
@@ -94,37 +95,51 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
                 obj += v.obj * v
             return obj
         }
-        set(linExpr: LinExpr) {
-            TODO("Not yet implemented")
+        set(expr: LinExpr) {
+            assert(expr.isAffine)
+
+            val nz = model.vars.size
+            val vars = IntArray(nz) { it }
+            val objs = DoubleArray(nz) { 0.0 }
+            for ((v, coeff) in expr.terms)
+                objs[v.idx] = coeff
+
+            // setting constant and objective sense
+            objectiveConst = expr.const
+            if (sense == MINIMIZE || sense == MAXIMIZE) sense = expr.sense
+
+            // setting variable coefficients
+            lib.CPXchgobj(env, lp, nz, vars, objs)
         }
 
     override var objectiveConst: Double
         get() {
-            lib.CPXgetobjoffset(env, lp, dblBuffer)
-            return dblBuffer.getDouble(0)
+            val dblRef = DoubleByReference()
+            lib.CPXgetobjoffset(env, lp, dblRef)
+            return dblRef.value
         }
         set(value) {
             lib.CPXchgobjoffset(env, lp, value)
         }
 
     override var optTol: Double
-        get() = getDblParam(CplexLibrary.CPXPARAM_MIP_Tolerances_RelObjDifference)
-        set(value) = setDblParam(CplexLibrary.CPXPARAM_MIP_Tolerances_RelObjDifference, value)
+        get() = getDblParam(CplexJnrLib.CPXPARAM_MIP_Tolerances_RelObjDifference)
+        set(value) = setDblParam(CplexJnrLib.CPXPARAM_MIP_Tolerances_RelObjDifference, value)
 
     // override var plog: Boolean
     // override var preprocess: Int
     // override var roundIntVars: Boolean
 
     override var seed: Int
-        get() = getIntParam(CplexLibrary.CPXPARAM_RandomSeed)
-        set(value) = setIntParam(CplexLibrary.CPXPARAM_RandomSeed, value)
+        get() = getIntParam(CplexJnrLib.CPXPARAM_RandomSeed)
+        set(value) = setIntParam(CplexJnrLib.CPXPARAM_RandomSeed, value)
 
     override var sense: String
-        get() = if (lib.CPXgetobjsen(env, lp) == CplexLibrary.CPX_MIN) MINIMIZE else MAXIMIZE
+        get() = if (lib.CPXgetobjsen(env, lp) == CplexJnrLib.CPX_MIN) MINIMIZE else MAXIMIZE
         set(value) {
             when (value) {
-                MINIMIZE -> lib.CPXchgobjsen(env, lp, CplexLibrary.CPX_MIN)
-                MAXIMIZE -> lib.CPXchgobjsen(env, lp, CplexLibrary.CPX_MAX)
+                MINIMIZE -> lib.CPXchgobjsen(env, lp, CplexJnrLib.CPX_MIN)
+                MAXIMIZE -> lib.CPXchgobjsen(env, lp, CplexJnrLib.CPX_MAX)
                 else -> throw IllegalArgumentException("Model sense '$value' is invalid.")
             }
         }
@@ -134,58 +149,40 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     // override var storeSearchProgressLog: Double
 
     override var threads: Int
-        get() = getIntParam(CplexLibrary.CPXPARAM_Threads)
-        set(value) = setIntParam(CplexLibrary.CPXPARAM_Threads, value)
+        get() = getIntParam(CplexJnrLib.CPXPARAM_Threads)
+        set(value) = setIntParam(CplexJnrLib.CPXPARAM_Threads, value)
 
     // endregion properties override
 
     // region buffers
 
     private var statusInt = 0
-    private val statusPtr = Memory.allocateDirect(runtime, 8)
+    private val statusPtr = IntByReference()
 
-    private var bufferLength = 8192
-    private var dblBuffer = Memory.allocateDirect(runtime, bufferLength * 8)
-    private var intBuffer = Memory.allocateDirect(runtime, bufferLength * 4)
-    private var strBuffer = Memory.allocateDirect(runtime, bufferLength * 1)
-
-    private val chrByRef1 = Memory.allocateDirect(runtime, 1)
-    private val chrByRef2 = Memory.allocateDirect(runtime, 1)
-
-    private val intByRef1 = Memory.allocateDirect(runtime, 4)
-    private val intByRef2 = Memory.allocateDirect(runtime, 4)
-    private val intByRef3 = Memory.allocateDirect(runtime, 4)
-    private val intByRef4 = Memory.allocateDirect(runtime, 4)
-
-    private val dblByRef1 = Memory.allocateDirect(runtime, 8)
-    private val dblByRef2 = Memory.allocateDirect(runtime, 8)
-    private val dblByRef3 = Memory.allocateDirect(runtime, 8)
-    private val dblByRef4 = Memory.allocateDirect(runtime, 8)
-
-    private var pi: Pointer? = null
+    private var pi: DoubleArray? = null
         get() {
             if (field == null && hasSolution) {
-                field = Memory.allocateDirect(runtime, 8 * numRows)
+                field = DoubleArray(numRows)
                 val res = lib.CPXgetpi(env, lp, field, 0, numRows)
                 assert(res == 0)
             }
             return field
         }
 
-    private var rc: Pointer? = null
+    private var rc: DoubleArray? = null
         get() {
             if (field == null && hasSolution) {
-                field = Memory.allocateDirect(runtime, 8 * numCols)
+                field = DoubleArray(numCols)
                 val res = lib.CPXgetdj(env, lp, field, 0, numCols)
                 assert(res == 0)
             }
             return field
         }
 
-    private var solution: Pointer? = null
+    private var solution: DoubleArray? = null
         get() {
             if (field == null && hasSolution) {
-                field = Memory.allocateDirect(runtime, 8 * numCols)
+                field = DoubleArray(numCols)
                 val res = lib.CPXgetx(env, lp, field, 0, numCols)
                 assert(res == 0)
             }
@@ -203,53 +200,50 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
 
         // setting sense (if needed)
         if (sense == MAXIMIZE)
-            lib.CPXchgobjsen(env, lp, CplexLibrary.CPX_MAX)
+            lib.CPXchgobjsen(env, lp, CplexJnrLib.CPX_MAX)
 
-        lib.fflush(null)
+        CLibrary.lib.fflush(null)
     }
 
     override fun addConstr(linExpr: LinExpr, name: String) {
         val nz = linExpr.size
-        dblByRef1.putDouble(0, -linExpr.const)
+        val rhs = doubleArrayOf(-linExpr.const)
 
-        val sense = when (linExpr.sense) {
+        val sense = byteArrayOf(when (linExpr.sense) {
             LEQ -> 'L'.toByte()
             EQ -> 'E'.toByte()
             GEQ -> 'G'.toByte()
             else -> throw IllegalArgumentException("Invalid sense")
-        }
-        chrByRef1.putByte(0, sense)
+        })
 
         // matbeg array (one item with value 0)
-        intByRef2.putInt(0, 0)
+        val rmatbeg = intArrayOf(0)
 
-        checkBuffer(nz)
-        var i = 0L
+        val indices = IntArray(nz)
+        val vals = DoubleArray(nz)
+        var i = 0
         for ((v, coeff) in linExpr.terms) {
-            intBuffer.putInt(4L * i, v.idx)
-            dblBuffer.putDouble(8L * i, coeff)
+            indices[i] = v.idx
+            vals[i] = coeff
             i++
         }
 
-        strBuffer.putString(0, name, name.length, Charset.defaultCharset())
-
-        lib.CPXaddrows(env, lp, 0, 1, nz, dblByRef1, chrByRef1, intByRef1, intBuffer, dblBuffer,
-            null, PointerByReference(strBuffer))
+        lib.CPXaddrows(env, lp, 0, 1, nz, rhs, sense, rmatbeg, indices, vals, null, arrayOf(name))
     }
 
     override fun addVar(name: String, obj: Double, lb: Double, ub: Double, varType: VarType,
                         column: Column) {
         // val nz = column.size
-        dblByRef1.putDouble(0, obj)
-        dblByRef2.putDouble(0, if (lb == -INF) -GurobiJnrLib.GRB_INFINITY else lb)
-        dblByRef3.putDouble(0, if (ub == INF) GurobiJnrLib.GRB_INFINITY else ub)
+        val objArray = doubleArrayOf(obj)
+        val lbArray = doubleArrayOf(lb)
+        val ubArray = doubleArrayOf(ub)
+        // TODO: if (ub == INF) GurobiJnrLib.GRB_INFINITY else ub)
 
-        val vtype = when (varType) {
+        val vtype = byteArrayOf(when (varType) {
             VarType.Binary -> 'B'.toByte()
             VarType.Continuous -> 'C'.toByte()
             VarType.Integer -> 'I'.toByte()
-        }
-        chrByRef1.putByte(0, vtype)
+        })
 
         // if (nz > 0) {
         //     checkBuffer(nz)
@@ -262,7 +256,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         //     // TODO lib.GRBaddvar(lp, nz, intBuffer, dblBuffer, obj, lowerBound, upperBound, vtype, name)
         // }
 
-        lib.CPXnewcols(env, lp, 1, dblByRef1, dblByRef2, dblByRef3, chrByRef1, PointerByReference(strBuffer))
+        lib.CPXnewcols(env, lp, 1, lbArray, ubArray, objArray, vtype, arrayOf(name))
     }
 
     override fun optimize(): OptimizationStatus {
@@ -272,7 +266,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         // optimizing... and flushing stdout
         statusInt = lib.CPXlpopt(env, lp)
         assert(statusInt != 0)
-        lib.fflush(null)
+        CLibrary.lib.fflush(null)
 
         return status
     }
@@ -301,7 +295,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     }
 
     override fun getConstrPi(idx: Int): Double =
-        pi?.getDouble(8 * idx.toLong()) ?: throw Error("Solution not available")
+        pi?.get(idx) ?: throw Error("Solution not available")
 
     override fun getConstrRHS(idx: Int): Double = throw NotImplementedError()
     override fun setConstrRHS(idx: Int, value: Double): Unit = throw NotImplementedError()
@@ -333,8 +327,9 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         throw UnsupportedOperationException("Gurobi interface does not permit setting column")
 
     override fun getVarLB(idx: Int): Double {
-        // TODO lib.GRBgetdblattrelement(lp, "LB", idx, dblBuffer)
-        return dblBuffer.getDouble(0)
+        val dblRef = DoubleByReference()
+        lib.CPXgetlb(env, lp, dblRef, idx, idx)
+        return dblRef.value
     }
 
     override fun setVarLB(idx: Int, value: Double) {
@@ -348,8 +343,9 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     }
 
     override fun getVarObj(idx: Int): Double {
-        // TODO lib.GRBgetdblattrelement(lp, "Obj", idx, dblBuffer)
-        return dblBuffer.getDouble(0)
+        val dblRef = DoubleByReference()
+        lib.CPXgetobj(env, lp, dblRef, idx, idx)
+        return dblRef.value
     }
 
     override fun setVarObj(idx: Int, value: Double) {
@@ -357,17 +353,15 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     }
 
     override fun getVarRC(idx: Int): Double =
-        rc?.getDouble(8 * idx.toLong()) ?: throw Error("Solution not available.")
+        rc?.get(idx) ?: throw Error("Solution not available.")
 
     override fun getVarType(idx: Int): VarType {
-        // TODO lib.GRBgetcharattrelement(lp, "VType", idx, strBuffer)
-        // val vtype = strBuffer.getByte(0).toChar()
-
-        return when (strBuffer.getByte(0).toChar()) {
-            'B' -> VarType.Binary
-            'I' -> VarType.Integer
-            else -> VarType.Continuous
-        }
+        TODO("not implemented yet...")
+        // return when (strBuffer.getByte(0).toChar()) {
+        //     'B' -> VarType.Binary
+        //     'I' -> VarType.Integer
+        //     else -> VarType.Continuous
+        // }
     }
 
     override fun setVarType(idx: Int, value: VarType) {
@@ -380,8 +374,9 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     }
 
     override fun getVarUB(idx: Int): Double {
-        // TODO lib.GRBgetdblattrelement(lp, "UB", idx, dblBuffer)
-        return dblBuffer.getDouble(0)
+        val dblRef = DoubleByReference()
+        lib.CPXgetub(env, lp, dblRef, idx, idx)
+        return dblRef.value
     }
 
     override fun setVarUB(idx: Int, value: Double) {
@@ -389,7 +384,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     }
 
     override fun getVarX(idx: Int): Double =
-        solution?.getDouble(8 * idx.toLong()) ?: throw Error("Solution not available")
+        solution?.get(idx) ?: throw Error("Solution not available")
 
     // override fun getVarXi(idx: Int, i: Int): Double {
     //     if (idx == 0) return getVarX(idx)
@@ -402,17 +397,10 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
 
     // region private useful functions
 
-    private fun checkBuffer(nz: Int) {
-        if (nz > bufferLength) {
-            bufferLength = nz
-            dblBuffer = Memory.allocateDirect(runtime, bufferLength * 8)
-            intBuffer = Memory.allocateDirect(runtime, bufferLength * 4)
-        }
-    }
-
     private fun getDblParam(param: Int): Double {
-        lib.CPXgetdblparam(env, param, dblBuffer)
-        return dblBuffer.getDouble(0)
+        val dblRef = DoubleByReference()
+        lib.CPXgetdblparam(env, param, dblRef)
+        return dblRef.value
     }
 
     private fun setDblParam(param: Int, value: Double): Unit {
@@ -420,8 +408,9 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     }
 
     private fun getIntParam(param: Int): Int {
-        lib.CPXgetintparam(env, param, intBuffer)
-        return intBuffer.getInt(0)
+        val intRef = IntByReference()
+        lib.CPXgetintparam(env, param, intRef)
+        return intRef.value
     }
 
     private fun setIntParam(param: Int, value: Int): Unit {
