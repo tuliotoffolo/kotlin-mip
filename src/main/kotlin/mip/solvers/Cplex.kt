@@ -8,8 +8,8 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
 
     override val solverName = "Cplex"
 
-    private var env: Pointer
-    private var lp: Pointer
+    private var env: Pointer? = null
+    private var lp: Pointer? = null
     private val lib = CplexJnrJavaLib.loadLibrary()
     private val runtime: Runtime = Runtime.getRuntime(lib)
 
@@ -165,7 +165,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         get() {
             if (field == null && hasSolution) {
                 field = DoubleArray(numRows)
-                val res = lib.CPXgetpi(env, lp, field, 0, numRows-1)
+                val res = lib.CPXgetpi(env, lp, field, 0, numRows - 1)
                 assert(res == 0)
             }
             return field
@@ -175,7 +175,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         get() {
             if (field == null && hasSolution) {
                 field = DoubleArray(numCols)
-                val res = lib.CPXgetdj(env, lp, field, 0, numCols-1)
+                val res = lib.CPXgetdj(env, lp, field, 0, numCols - 1)
                 assert(res == 0)
             }
             return field
@@ -212,8 +212,8 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     }
 
     protected fun finalize() {
-        lib.CPXfreeprob(env, PointerByReference(lp))
-        lib.CPXcloseCPLEX(PointerByReference(env))
+        // lib.CPXfreeprob(env, PointerByReference(lp))
+        // lib.CPXcloseCPLEX(PointerByReference(env))
     }
 
     override fun addConstr(linExpr: LinExpr, name: String) {
