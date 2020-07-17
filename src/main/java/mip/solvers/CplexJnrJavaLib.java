@@ -14,20 +14,22 @@ public interface CplexJnrJavaLib {
         if (library != null) return library;
 
         String libname;
-        String libLocation = System.getProperty("user.dir") + File.separatorChar;
+
+        String libLocation = System.getenv("CPLEX_HOME");
+        if (libLocation == null)
+            libLocation = System.getProperty("CPLEX_HOME");
+        if (libLocation == null)
+            libLocation = System.getProperty("user.dir") + File.separatorChar;
 
         Platform platform = Platform.getNativePlatform();
         if (platform.getOS() == Platform.OS.DARWIN) {
-            libname = "cbc-c-darwin-x86-64.dylib";
-            libLocation += "libraries";
+            libname = "cplex/bin/x86-64_osx//libcplex12100.dylib";
         }
         else if (platform.getOS() == Platform.OS.LINUX) {
-            libname = "cbc-c-darwin-x86-64.dylib";
-            libLocation += "libraries";
+            libname = "cplex/bin/x86-64_linux/libcplex12100.so";
         }
         else if (platform.getOS() == Platform.OS.WINDOWS) {
-            libname = "libCbcSolver-0.dll";
-            libLocation += "libraries\\win64";
+            libname = "cplex/bin/win64/libcplex12100.dll";
         }
         else {
             libname = null;
@@ -588,7 +590,7 @@ public interface CplexJnrJavaLib {
     /**
      * int CPXgetcolname (CPXCENVptr env, CPXCLPptr lp, char  **name, char *namestore, int storespace, int *surplus_p, int begin, int end);
      */
-    int CPXgetcolname(@Pinned @In Pointer env, @Pinned @In Pointer lp, Pointer name, String namestore, int storespace, int[] surplus_p, int begin, int end);
+    int CPXgetcolname(@Pinned @In Pointer env, @Pinned @In Pointer lp, @Pinned @In Pointer[] name, @Out Pointer namestore, int storespace, IntByReference surplus_p, int begin, int end);
 
     /**
      * int CPXgetcols (CPXCENVptr env, CPXCLPptr lp, int *nzcnt_p, int *cmatbeg, int *cmatind, double *cmatval, int cmatspace, int *surplus_p, int begin, int end);
@@ -958,7 +960,7 @@ public interface CplexJnrJavaLib {
     /**
      * int CPXgetslack (CPXCENVptr env, CPXCLPptr lp, double *slack, int begin, int end);
      */
-    int CPXgetslack(@Pinned @In Pointer env, @Pinned @In Pointer lp, double[] slack, int begin, int end);
+    int CPXgetslack(@Pinned @In Pointer env, @Pinned @In Pointer lp, @Out DoubleByReference slack, int begin, int end);
 
     /**
      * int CPXgetsolnpooldblquality (CPXCENVptr env, CPXCLPptr lp, int soln, double *quality_p, int what);

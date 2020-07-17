@@ -13,10 +13,12 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     private val lib = CplexJnrJavaLib.loadLibrary()
     private val runtime: Runtime = Runtime.getRuntime(lib)
 
+    private var hasIntVars = false
+
     // region properties override
 
     // override val gap by Param<Double>()
-    override val hasSolution get() = numSolutions > 0
+    override val hasSolution get() = true//numSolutions > 0
     override val numCols get() = lib.CPXgetnumcols(env, lp)
     override val numRows get() = lib.CPXgetnumrows(env, lp)
     override val numSolutions get() = lib.CPXgetsolnpoolnumsolns(env, lp)
@@ -38,7 +40,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     override val status
         // http://www-eio.upc.es/lceio/manuals/cplex75/doc/refmanccpp/html/appendixB.html#151095
         get(): OptimizationStatus = when (lib.CPXgetstat(env, lp)) {
-            1, 101, 102 -> OptimizationStatus.Loaded
+            1, 101, 102 -> OptimizationStatus.Optimal
             2, 19, 32, 34, 103 -> OptimizationStatus.Infeasible
             3, 33, 37 -> OptimizationStatus.Unbounded
             4, 35 -> OptimizationStatus.Cutoff
@@ -163,7 +165,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         get() {
             if (field == null && hasSolution) {
                 field = DoubleArray(numRows)
-                val res = lib.CPXgetpi(env, lp, field, 0, numRows)
+                val res = lib.CPXgetpi(env, lp, field, 0, numRows-1)
                 assert(res == 0)
             }
             return field
@@ -173,7 +175,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         get() {
             if (field == null && hasSolution) {
                 field = DoubleArray(numCols)
-                val res = lib.CPXgetdj(env, lp, field, 0, numCols)
+                val res = lib.CPXgetdj(env, lp, field, 0, numCols-1)
                 assert(res == 0)
             }
             return field
@@ -183,7 +185,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         get() {
             if (field == null && hasSolution) {
                 field = DoubleArray(numCols)
-                val res = lib.CPXgetx(env, lp, field, 0, numCols)
+                val res = lib.CPXgetx(env, lp, field, 0, numCols - 1)
                 assert(res == 0)
             }
             return field
@@ -196,11 +198,15 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     init {
         // initializing environment and problem
         env = lib.CPXopenCPLEX(statusPtr)
+        assert(statusPtr.value == 0)
         lp = lib.CPXcreateprob(env, statusPtr, name)
+        assert(statusPtr.value == 0)
 
         // setting sense (if needed)
-        if (sense == MAXIMIZE)
-            lib.CPXchgobjsen(env, lp, CplexJnrLib.CPX_MAX)
+        if (sense == MAXIMIZE) {
+            val status = lib.CPXchgobjsen(env, lp, CplexJnrLib.CPX_MAX)
+            assert(status == 0)
+        }
 
         CLibrary.lib.fflush(null)
     }
@@ -239,6 +245,9 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         val ubArray = doubleArrayOf(ub)
         // TODO: if (ub == INF) GurobiJnrLib.GRB_INFINITY else ub)
 
+        if (varType == VarType.Binary || varType == VarType.Integer)
+            hasIntVars = true
+
         val vtype = byteArrayOf(when (varType) {
             VarType.Binary -> 'B'.toByte()
             VarType.Continuous -> 'C'.toByte()
@@ -256,7 +265,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         //     // TODO lib.GRBaddvar(lp, nz, intBuffer, dblBuffer, obj, lowerBound, upperBound, vtype, name)
         // }
 
-        lib.CPXnewcols(env, lp, 1, lbArray, ubArray, objArray, vtype, arrayOf(name))
+        lib.CPXnewcols(env, lp, 1, objArray, lbArray, ubArray, vtype, arrayOf(name))
     }
 
     override fun optimize(): OptimizationStatus {
@@ -264,8 +273,8 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         removeSolution()
 
         // optimizing... and flushing stdout
-        statusInt = lib.CPXlpopt(env, lp)
-        assert(statusInt != 0)
+        statusInt = if (hasIntVars) lib.CPXmipopt(env, lp) else lib.CPXlpopt(env, lp)
+        assert(statusInt == 0)
         CLibrary.lib.fflush(null)
 
         return status
@@ -280,7 +289,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     }
 
     override fun write(path: String) {
-        lib.CPXwriteprob(env, lp, path, "LP")
+        lib.CPXwriteprob(env, lp, path, null)
     }
 
     // region constraints getters and setters
@@ -300,7 +309,11 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     override fun getConstrRHS(idx: Int): Double = throw NotImplementedError()
     override fun setConstrRHS(idx: Int, value: Double): Unit = throw NotImplementedError()
 
-    override fun getConstrSlack(idx: Int): Double = throw NotImplementedError()
+    override fun getConstrSlack(idx: Int): Double {
+        val dblRef = DoubleByReference()
+        lib.CPXgetslack(env, lp, dblRef, idx, idx)
+        return dblRef.value
+    }
 
     // endregion constraints getters and setters
 
@@ -337,9 +350,10 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     }
 
     override fun getVarName(idx: Int): String {
-        val pointer = PointerByReference()
-        // TODO lib.GRBgetstrattrelement(lp, "VarName", idx, pointer)
-        return pointer.value.getString(0)
+        val name = Memory.allocateDirect(runtime, 256)
+        val surplus = IntByReference()
+        lib.CPXgetcolname(env, lp, arrayOf(name), name, 256, surplus, idx, idx)
+        return name.getString(0)
     }
 
     override fun getVarObj(idx: Int): Double {

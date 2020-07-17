@@ -13,7 +13,7 @@ fun main() {
     val I = 0 until w.size
 
     // creating model
-    val m = Model("Knapsack")
+    val m = Model("Knapsack", solverName = CPLEX)
 
     // creating vars and setting objective function
     val x = I.list { i -> m.addBinVar("item_$i") }
@@ -22,9 +22,11 @@ fun main() {
     // adding constraint and solving model
     m += I.sum { i -> w[i] * x[i] } leq c
     m.optimize()
+    m.write("queens.lp")
 
     // printing result
     val selected = x.filter { it.x >= 0.99 }
+    print("Total cost: ${m.objectiveValue}")
     print("Selected items: $selected")
 
     // sanity tests

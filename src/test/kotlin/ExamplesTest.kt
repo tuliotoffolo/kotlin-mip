@@ -4,7 +4,7 @@ import org.spekframework.spek2.Spek
 
 object ExampleTest: Spek({
     // selecting available solvers from list
-    val solvers = mutableListOf(GUROBI, CBC)
+    val solvers = mutableListOf(GUROBI, CPLEX, CBC)
     for (solver in solvers) {
         try {
             Model(solverName = solver)
