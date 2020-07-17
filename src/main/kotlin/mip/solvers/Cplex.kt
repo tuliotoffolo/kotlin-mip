@@ -211,6 +211,11 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         CLibrary.lib.fflush(null)
     }
 
+    protected fun finalize() {
+        lib.CPXfreeprob(env, PointerByReference(lp))
+        lib.CPXcloseCPLEX(PointerByReference(env))
+    }
+
     override fun addConstr(linExpr: LinExpr, name: String) {
         val nz = linExpr.size
         val rhs = doubleArrayOf(-linExpr.const)
