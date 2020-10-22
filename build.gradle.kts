@@ -4,8 +4,8 @@ val spekVersion = "2.0.12"
 
 plugins {
     `java-library`
-    kotlin("jvm") version "1.4-M1"
-    id("org.jetbrains.dokka") version "0.10.0"
+    id("org.jetbrains.kotlin.jvm") version "1.4.10"
+    id("org.jetbrains.dokka") version "1.4.10.2"
 }
 
 group = "mip"
@@ -13,7 +13,6 @@ version = "0.1.0"
 
 repositories {
     maven("https://dl.bintray.com/kyonifer/maven")
-    maven("https://dl.bintray.com/kotlin/kotlin-eap")
     maven("https://dl.bintray.com/spekframework/spek-dev")
     jcenter()
     mavenCentral()
@@ -26,7 +25,12 @@ configurations {
 }
 
 dependencies {
+    // Align versions of all Kotlin components
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+
+    // Use the Kotlin JDK 8 standard library.
     implementation(kotlin("stdlib-jdk8"))
+
     implementation("com.github.jnr:jnr-ffi:2.1.15")
     // implementation("com.github.jnr:jnr-posix:3.0.54")
     // implementation("com.github.jnr:jnr-constants:0.9.15")
@@ -39,6 +43,8 @@ dependencies {
     testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
     testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVersion")
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.10.2")
 }
 
 java {
@@ -79,14 +85,14 @@ tasks {
         )
     }
 
-    dokka {
-        outputFormat = "javadoc"
-        outputDirectory = "$buildDir/javadoc"
-
-        configuration {
-            includes = listOf("README.md")
-        }
-    }
+    // dokka {
+    //     outputFormat = "javadoc"
+    //     outputDirectory = "$buildDir/javadoc"
+    //
+    //     configuration {
+    //         includes = listOf("README.md")
+    //     }
+    // }
 
     test {
         useJUnitPlatform {
