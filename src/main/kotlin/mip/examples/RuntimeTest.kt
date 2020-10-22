@@ -13,7 +13,7 @@ fun main() {
     val n = 250
     val ns = 0 until n
 
-    val model = Model("RuntimeTest", MINIMIZE, GUROBI)
+    val model = Model("RuntimeTest", MINIMIZE, CPLEX)
 
     println("Model started in ${runtime(checkpoint)} seconds!")
     checkpoint = System.currentTimeMillis()

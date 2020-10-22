@@ -138,7 +138,19 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         }
 
     // override var solPoolSize: Boolean
-    // override var start: Int
+
+    override var start: Map<Var, Double>
+        get() = mapOf()
+        set(solution) {
+            val pairList = solution.entries.map { it.key.idx to it.value }.toList()
+            val nz = pairList.size
+            val vars = IntArray(nz) { pairList[it].first }
+            val values = DoubleArray(nz) { pairList[it].second }
+
+            // setting variable coefficients
+            lib.GRBsetdblattrlist(gurobi, "Start", nz, vars, values)
+        }
+
     // override var storeSearchProgressLog: Double
 
     override var threads: Int
@@ -307,7 +319,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     override fun getConstrRHS(idx: Int): Double = throw NotImplementedError()
     override fun setConstrRHS(idx: Int, value: Double) = throw NotImplementedError()
 
-    override fun getConstrSlack(idx: Int): Double = throw NotImplementedError()
+    override fun getConstrSlack(idx: Int): Double = getDblAttrElem("Slack", idx)
 
     // endregion constraints getters and setters
 
@@ -410,6 +422,12 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     private fun getDblAttr(attr: String): Double {
         val dblRef = DoubleByReference()
         lib.GRBgetdblattr(gurobi, attr, dblRef)
+        return dblRef.value
+    }
+
+    private fun getDblAttrElem(attr: String, idx: Int): Double {
+        val dblRef = DoubleByReference()
+        lib.GRBgetdblattrelement(gurobi, attr, idx, dblRef)
         return dblRef.value
     }
 

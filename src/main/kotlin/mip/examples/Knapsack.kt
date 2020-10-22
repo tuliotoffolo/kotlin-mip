@@ -13,11 +13,17 @@ fun main() {
     val I = 0 until w.size
 
     // creating model
-    val m = Model("Knapsack", solverName = CPLEX)
+    val m = Model("Knapsack", solverName = GUROBI)
 
     // creating vars and setting objective function
     val x = I.list { i -> m.addBinVar("item_$i") }
     m.objective = maximize(I.sum { i -> p[i] * x[i] })
+
+    // adding an initial solution (not all variables need to be set)
+    val start = HashMap<Var, Double>()
+    start[x[0]] = 1.0
+    start[x[3]] = 1.0
+    m.start = start
 
     // adding constraint and solving model
     m += I.sum { i -> w[i] * x[i] } leq c

@@ -272,7 +272,7 @@ abstract class Properties {
      * non-zero values in the initial feasible solution need to be informed. Auxiliary or
      * continuous variables will have their values automatically computed.
      */
-    open var start by Param<Int>()
+    open var start by Param<Map<Var, Double>>()
 
     /**
      * Log of bound improvements in the search. The output of MIP solvers is a sequence of

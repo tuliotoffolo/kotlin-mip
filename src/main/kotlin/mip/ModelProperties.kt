@@ -163,7 +163,7 @@ abstract class ModelProperties() : Properties() {
             solver.solPoolSize = value
         }
 
-    override var start: Int
+    override var start: Map<Var, Double>
         get() = solver.start
         set(value) {
             solver.start = value
