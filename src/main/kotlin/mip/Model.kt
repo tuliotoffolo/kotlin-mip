@@ -244,6 +244,14 @@ class Model : ModelProperties {
 
     // endregion addVar aliases
 
+    operator fun minusAssign(arg: Any?) {
+        when (arg) {
+            is Constr? -> remove(arg)
+            is Iterable<Any?>? -> remove(arg)
+            is Var? -> remove(arg)
+        }
+    }
+
     fun optimize(): OptimizationStatus = solver.optimize()
 
     operator fun plusAssign(arg: Any?) {
@@ -261,7 +269,7 @@ class Model : ModelProperties {
     }
 
     fun remove(iterable: Iterable<Any?>?) {
-        if (iterable == null) return;
+        if (iterable == null) return
 
         val constrsToRemove = TreeSet<Constr>()
         val varsToRemove = TreeSet<Var>()
