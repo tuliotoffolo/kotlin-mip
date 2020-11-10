@@ -49,6 +49,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         }
 
     // override var clique: Int
+
     override var cutoff: Double
         get() = getDblParam("Cutoff")
         set(value) = setDblParam("Cutoff", value)
@@ -96,7 +97,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
                 obj += v.obj * v
             return obj
         }
-        set(expr: LinExpr) {
+        set(expr) {
             assert(expr.isAffine)
 
             val nz = model.vars.size
@@ -156,6 +157,11 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     override var threads: Int
         get() = getIntParam("Threads")
         set(value) = setIntParam("Threads", value)
+
+
+    override var verbose: Boolean
+        get() = getIntParam("OutputFlag") == 1
+        set(value) = setIntParam("OutputFlag", if (value) 1 else 0)
 
     // endregion properties override
 

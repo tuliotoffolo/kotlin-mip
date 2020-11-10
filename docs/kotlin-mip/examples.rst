@@ -224,17 +224,13 @@ Follows the example of a solver for the BMCP using the previous MIP formulation:
 Resource Constrained Project Scheduling
 ---------------------------------------
 
-The Resource-Constrained Project Scheduling Problem (RCPSP) is a combinatorial
-optimization problem that consists of finding a feasible scheduling for a set of
-:math:`n` jobs subject to resource and precedence constraints. Each job has a
-processing time, a set of successors jobs and a required amount of different
-resources. Resources are scarce but are renewable at each time period.
-Precedence constraints between jobs mean that no jobs may start before all its
-predecessors are completed. The jobs must be scheduled non-preemptively, i.e.,
-once started, their processing cannot be interrupted.
+The Resource-Constrained Project Scheduling Problem (RCPSP) is a combinatorial optimization problem that consists of finding a feasible scheduling for a set of :math:`n` jobs subject to resource and precedence constraints.
+Each job has a processing time, a set of successors jobs and a required amount of different resources.
+Resources may be scarce but are renewable at each time period.
+Precedence constraints between jobs mean that no jobs may start before all its predecessors are completed.
+The jobs must be scheduled non-preemptively, i.e., once started, their processing cannot be interrupted.
 
 The RCPSP has the following input data:
-
 
 :math:`\mathcal{J}`
     jobs set
@@ -257,60 +253,49 @@ The RCPSP has the following input data:
 :math:`c_r`
     capacity of renewable resource :math:`r`
 
-
-In addition to the jobs that belong to the project, the set :math:`\mathcal{J}`
-contains the jobs :math:`x_{0}` and :math:`x_{n+1}`. These jobs are dummy jobs and
-represent the beginning of the planning and the end of the planning. The
-processing time for the dummy jobs is zero and does not consume resources.
+In addition to the jobs that belong to the project, the set :math:`\mathcal{J}` contains jobs :math:`0` and :math:`n+1`, which are dummy jobs that represent the beginning and the end of the planning, respectively.
+The processing time for the dummy jobs is always zero and these jobs do not consume resources.
 
 A binary programming formulation was proposed by Pritsker et al. [PWW69]_.
-In this formulation, decision variables :math:`x_{jt} = 1` if job
-:math:`j` is assigned a completion time at the end of time :math:`t`;
-otherwise, :math:`x_{jt} = 0`. All jobs must finish in a single instant of
-time without violating the relationships of precedence and amount of
-available resources. The model proposed by Pristker can be stated as
-follows:
+In this formulation, decision variables :math:`x_{jt} = 1` if job :math:`j` is assigned to begin at time :math:`t`; otherwise, :math:`x_{jt} = 0`.
+All jobs must finish in a single instant of time without violating precedence constraints while respecting the amount of available resources.
+The model proposed by Pristker can be stated as follows:
 
 .. math::
 
-     \textrm{Minimize:} \;\;\;\;
-     &  \sum_{t\in \mathcal{T}} (t-1).x_{(n+1,t)}\\
-     \textrm{Subject to:} \;\;\;\;
-     & \sum_{t\in \mathcal{T}} x_{(j,t)} = 1  \,\,\, &\forall j\in J \cup \{n+1\}\\
-     & \sum_{j\in J} \sum_{t'=t-p_{j}+1} u_{(j,r)}x_{(j,t')} \leq c_{r}  \,\,\, &\forall t\in \mathcal{T}, r \in R\\
-     &\sum_{t\in \mathcal{T}} t.x_{(s,t)} - \sum_{t \in \mathcal{T}} t.x_{(j,t)} \geq p_{j}  \,\,\, &\forall (j,s) \in S\\
-     & x_{(j,t)} \in \{0,1\} \,\,\, &\forall j\in J \cup \{n+1\}, t \in \mathcal{T}
+     \textrm{Minimize} & \\
+     &  \sum_{t\in \mathcal{T}} t\cdot x_{(n+1,t)}\\
+     \textrm{Subject to:} & \\
+      \sum_{t\in \mathcal{T}} x_{(j,t)} & = 1  \,\,\, \forall j\in J\\
+      \sum_{j\in J} \sum_{t_2=t-p_{j}+1}^{t} u_{(j,r)}x_{(j,t_2)} & \leq c_{r}  \,\,\, \forall t\in \mathcal{T}, r \in R\\
+      \sum_{t\in \mathcal{T}} t\cdot x_{(s,t)} - \sum_{t \in \mathcal{T}} t\cdot x_{(j,t)} & \geq p_{j}  \,\,\, \forall (j,s) \in S\\
+     x_{(j,t)} & \in \{0,1\} \,\,\, \forall j\in J, t \in \mathcal{T}
 
+An instance is shown below. The figure shows a graph where jobs in :math:`\mathcal{J}` are represented by nodes and precedence relations :math:`\mathcal{S}` are represented by directed edges.
+The time-consumption :math:`p_{j}` and all information concerning resource consumption :math:`u_{(j,r)}` are included next to the graph.
+This instance contains 10 jobs and 2 renewable resources, :math:`\mathcal{R}=\{r_{1}, r_{2}\}`, where :math:`c_{1}` = 6 and :math:`c_{2}` = 8.
+Finally, a valid (but weak) upper bound on the time horizon :math:`\mathcal{T}` can be estimated by summing the duration of all jobs.
 
-An instance is shown below. The figure shows a graph where jobs :math:`\mathcal{J}`
-are represented by nodes and precedence relations :math:`\mathcal{S}` are represented
-by directed edges. Arc weights represent the time-consumption :math:`p_{j}`, while
-the information about resource consumption :math:`u_{(j,r)}` is included next to the
-graph. This instance contains 10 jobs and 2 renewable resources
-(:math:`\mathcal{R}=\{r_{1}, r_{2}\}`), where :math:`c_{1}` = 6 and :math:`c_{2}` = 8. The
-time horizon :math:`\mathcal{T}` can be estimated by summing the duration of all
-jobs.
-
-
-.. image:: ./images/rcpsp.*
+.. image:: ./images/rcpsp.png
     :width: 80%
     :align: center
 
-The Kotlin code for creating the binary programming model, optimize it and print the optimal
-scheduling for the RCPSP is included below:
+The Kotlin code for creating the binary programming model, optimize it and print the optimal scheduling for RCPSP is included below:
 
 .. literalinclude:: ../../src/main/kotlin/mip/examples/RCPSP.kt
     :language: kotlin
     :caption: Solves the Resource Constrained Project Scheduling Problem: RCPSP.kt
     :linenos:
-    :lines: 3-4, 7-55, 61
+    :lines: 3-4, 7-53, 60
 
-The optimal solution is shown bellow, from the viewpoint of resource
-consumption:
+One optimum solution is shown bellow, from the viewpoint of resource consumption.
 
 .. image:: ./images/rcpsp-opt.*
     :width: 80%
     :align: center
+
+It is noteworthy that this particular problem instance has multiple optimal solutions.
+Keep in the mind that the solver may obtain a different optimum solution.
 
 
 Job Shop Scheduling Problem

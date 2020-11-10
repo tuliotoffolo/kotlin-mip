@@ -8,7 +8,7 @@ private
 fun main() {
     // resource capacities (c), processing times (p), and resource consumptions (u)
     val c = arrayOf(6, 8)
-    val p = arrayOf(0, 3, 2, 5, 4, 2, 3, 4, 2, 4, 6, 0)
+    val p = arrayOf(0, 3, 2, 5, 4, 2, 3, 4, 2, 4, 6, 0) // dummy jobs (0 and n+1) are included
     val u = arrayOf(
         arrayOf(0, 0), arrayOf(5, 1), arrayOf(0, 4), arrayOf(1, 4),
         arrayOf(1, 3), arrayOf(3, 2), arrayOf(3, 1), arrayOf(2, 4),
@@ -27,9 +27,7 @@ fun main() {
     val T = 0 until p.sum() // p.sum() represents a weak upper bound on the total time
 
     val model = Model("RCPSP")
-
     val x = J.list { j -> T.list { t -> model.addBinVar("x($j,$t)") } }
-
     model.objective = minimize(T.sum { t -> t * x[J.last][t] })
 
     for (j in J)
