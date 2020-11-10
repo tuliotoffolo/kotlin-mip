@@ -263,13 +263,13 @@ The model proposed by Pristker can be stated as follows:
 
 .. math::
 
-     \textrm{Minimize} & \\
+     \textrm{Minimize: }   \;\;\;
      &  \sum_{t\in \mathcal{T}} t\cdot x_{(n+1,t)}\\
-     \textrm{Subject to:} & \\
-      \sum_{t\in \mathcal{T}} x_{(j,t)} & = 1  \,\,\, \forall j\in J\\
-      \sum_{j\in J} \sum_{t_2=t-p_{j}+1}^{t} u_{(j,r)}x_{(j,t_2)} & \leq c_{r}  \,\,\, \forall t\in \mathcal{T}, r \in R\\
-      \sum_{t\in \mathcal{T}} t\cdot x_{(s,t)} - \sum_{t \in \mathcal{T}} t\cdot x_{(j,t)} & \geq p_{j}  \,\,\, \forall (j,s) \in S\\
-     x_{(j,t)} & \in \{0,1\} \,\,\, \forall j\in J, t \in \mathcal{T}
+     \textrm{Subject to:}   \;\;\;
+     & \sum_{t\in \mathcal{T}} x_{(j,t)} = 1  &\,\,\, \forall j\in J\\
+     & \sum_{j\in J} \sum_{t_2=t-p_{j}+1}^{t} u_{(j,r)}x_{(j,t_2)} \leq c_{r}  &\,\,\, \forall t\in \mathcal{T}, r \in R\\
+     & \sum_{t\in \mathcal{T}} t\cdot x_{(s,t)} - \sum_{t \in \mathcal{T}} t\cdot x_{(j,t)} \geq p_{j}  &\,\,\, \forall (j,s) \in S\\
+     & x_{(j,t)} & \in \{0,1\} &\,\,\, \forall j\in J, t \in \mathcal{T}
 
 An instance is shown below. The figure shows a graph where jobs in :math:`\mathcal{J}` are represented by nodes and precedence relations :math:`\mathcal{S}` are represented by directed edges.
 The time-consumption :math:`p_{j}` and all information concerning resource consumption :math:`u_{(j,r)}` are included next to the graph.
