@@ -3,11 +3,12 @@
 Introduction
 ============
 
-The Kotlin-MIP package provides tools for modeling and solving `Mixed-Integer Linear Programming Problems <https://en.wikipedia.org/wiki/Integer_programming>`_ (MIPs) [Wols98]_ in Java/Kotlin.
+The Kotlin-MIP package is inspired by `Python-MIP <http://www.python-mip.com>`_, developed by the same authors.
+It provides tools for modeling and solving `Mixed-Integer Linear Programming Problems <https://en.wikipedia.org/wiki/Integer_programming>`_ (MIPs) [Wols98]_ in Java/Kotlin.
 The default installation includes the `COIN-OR Linear Programming Solver - CLP <http://github.com/coin-or/Clp>`_, which is currently the `fastest <http://plato.asu.edu/ftp/lpsimp.html>`_  open source linear programming solver and the `COIN-OR Branch-and-Cut solver - CBC <https://github.com/coin-or/Cbc>`_, a highly configurable MIP solver.
 It also works with the state-of-the-art `Gurobi <http://www.gurobi.com/>`_ MIP solver.
 Kotlin-MIP was written in Kotlin in a way to ensure it can be easily used by Java programmers.
-In fact, **J_MIP** is an alias for Kotlin-MIP in which all documentation and examples are written in Java.
+In fact, **Java-MIP** is an alias for Kotlin-MIP in which all documentation and examples are written in Java.
 
 In the modeling layer, models can be written very concisely, as in high-level mathematical programming languages such as `MathProg <http://gusek.sourceforge.net/gmpl.pdf>`_.
 Many examples and applications can be viewed in :ref:`Modelling Examples <chapExamples>`.
