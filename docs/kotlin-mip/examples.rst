@@ -28,7 +28,7 @@ To make the code easier to read, we use alias functions :code:`list` and :code:`
     :language: kotlin
     :caption: Solves the 0/1 knapsack problem: Knapsack.kt
     :linenos:
-    :lines: 3, 7-28, 35
+    :lines: 3, 7-30, 37
 
 Line 3 imports the required classes and definitions from Kotlin-MIP.
 Lines 5-8 define the problem data.
@@ -81,7 +81,7 @@ Note that we employ functions `map <https://kotlinlang.org/docs/reference/collec
     :language: kotlin
     :caption: Traveling salesman problem solver with compact formulation: TSPCompact.kt
     :linenos:
-    :lines: 3, 7-73, 79
+    :lines: 3, 7-72, 78
 
 Lines 5-27 describe the problem, providing names for the places to visit and the distances between them.
 Lines 30-31 stores the number of nodes (:code:`n`` and a range with nodes' ids starting from 0 (:code:`V`).
@@ -218,7 +218,7 @@ Follows the example of a solver for the BMCP using the previous MIP formulation:
     :language: kotlin
     :caption: Solver for the bandwidth multi coloring problem: BMCP.kt
     :linenos:
-    :lines: 8, 12-60, 69
+    :lines: 8, 12-62, 72
 
 
 Resource Constrained Project Scheduling

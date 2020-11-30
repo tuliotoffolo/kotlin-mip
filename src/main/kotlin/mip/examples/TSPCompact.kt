@@ -68,8 +68,7 @@ fun main() {
                 i = j
                 break
             }
-        }
-        while (i != 0)
+        } while (i != 0)
     }
 
     // sanity tests
