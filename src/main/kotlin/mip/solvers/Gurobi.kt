@@ -9,6 +9,9 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
 
     override val solverName = "Gurobi"
 
+    override val INF = GurobiJnrLib.GRB_INFINITY
+    override val INT_MAX = GurobiJnrLib.GRB_MAXINT
+
     private var env: Pointer
     private var gurobi: Pointer
     private val lib = GurobiJnrLib.loadLibrary()
@@ -215,7 +218,7 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
 
         // setting sense (if needed)
         if (sense == MAXIMIZE)
-            lib.GRBsetintattr(gurobi, "ModelSense", -1)
+            setIntAttr("ModelSense", -1)
 
         lib.fflush(null)
     }
@@ -272,7 +275,9 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         }
     }
 
-    override fun optimize(): OptimizationStatus {
+    override fun optimize(relax: Boolean): OptimizationStatus {
+        if (relax) TODO("Not yet implemented")
+
         // resetting buffers
         removeSolution()
 
@@ -301,6 +306,12 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
                 intBuffer[i] = variable.idx
             lib.GRBdelvars(gurobi, size, intBuffer)
         }
+    }
+
+    override fun setProcessingLimits(maxSeconds: Double, maxNodes: Int, maxSolutions: Int) {
+        this.maxSeconds = if (maxSeconds == INF) GurobiJnrLib.GRB_INFINITY else maxSeconds
+        this.maxNodes = if (maxNodes == INT_MAX) GurobiJnrLib.GRB_MAXINT else maxNodes
+        this.maxSolutions = if (maxSolutions == INT_MAX) GurobiJnrLib.GRB_MAXINT else maxSolutions
     }
 
     override fun write(path: String) {
@@ -442,12 +453,14 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     }
 
     private fun getDblParam(param: String): Double {
+        val env = lib.GRBgetenv(gurobi)
         val dblRef = DoubleByReference()
         lib.GRBgetdblparam(env, param, dblRef)
         return dblRef.value
     }
 
     private fun setDblParam(param: String, value: Double) {
+        val env = lib.GRBgetenv(gurobi)
         lib.GRBsetdblparam(env, param, value)
     }
 
@@ -462,12 +475,14 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     }
 
     private fun getIntParam(param: String): Int {
+        val env = lib.GRBgetenv(gurobi)
         val intRef = IntByReference()
         lib.GRBgetintparam(env, param, intRef)
         return intRef.value
     }
 
     private fun setIntParam(param: String, value: Int) {
+        val env = lib.GRBgetenv(gurobi)
         lib.GRBsetintparam(env, param, value)
     }
 

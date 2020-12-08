@@ -22,6 +22,10 @@ import kotlin.math.round
  */
 class Model : ModelProperties {
 
+    /** Infinity representation */
+    val INF: Double get() = solver.INF
+    val INT_MAX: Int get() = solver.INT_MAX
+
     var name: String
     override var sense: String
     override var solverName: String
@@ -203,9 +207,9 @@ class Model : ModelProperties {
     // endregion aliases for addConstr
 
     @JvmOverloads
-    fun addVar(name: String? = null, varType: VarType = VarType.Continuous,
-               obj: Number? = 0.0, lb: Number? = 0.0, ub: Number? = INF,
-               column: Column? = Column.EMPTY
+    fun addVar(
+        name: String? = null, varType: VarType = VarType.Continuous, obj: Number? = 0.0,
+        lb: Number? = 0.0, ub: Number? = INF, column: Column? = Column.EMPTY,
     ): Var {
         var lbComputed = lb?.toDouble() ?: 0.0
         var ubComputed = ub?.toDouble() ?: INF
@@ -217,7 +221,7 @@ class Model : ModelProperties {
         }
 
         solver.addVar(name ?: "v_${vars.size}", obj?.toDouble() ?: 0.0, lbComputed, ubComputed,
-            varType, column ?: Column.EMPTY)
+                      varType, column ?: Column.EMPTY)
         vars.add(Var(this, vars.size))
         return vars.last()
     }
@@ -225,22 +229,28 @@ class Model : ModelProperties {
     // region aliases for addVar
 
     @JvmOverloads
-    fun addBinVar(name: String? = null, obj: Number? = 0.0,
-                  column: Column? = Column.EMPTY): Var =
+    fun addBinVar(
+        name: String? = null, obj: Number? = 0.0,
+        column: Column? = Column.EMPTY,
+    ): Var =
         addVar(name = name, varType = VarType.Binary, obj = obj, lb = 0.0, ub = 1.0,
-            column = column)
+               column = column)
 
     @JvmOverloads
-    fun addIntVar(name: String? = null, obj: Number? = 0.0, lb: Number? = 0.0,
-                  ub: Number? = INF, column: Column? = Column.EMPTY): Var =
+    fun addIntVar(
+        name: String? = null, obj: Number? = 0.0, lb: Number? = 0.0,
+        ub: Number? = INF, column: Column? = Column.EMPTY,
+    ): Var =
         addVar(name = name, varType = VarType.Integer, obj = obj, lb = lb, ub = ub,
-            column = column)
+               column = column)
 
     @JvmOverloads
-    fun addNumVar(name: String? = null, obj: Number? = 0.0, lb: Number? = 0.0,
-                  ub: Number? = INF, column: Column? = Column.EMPTY): Var =
+    fun addNumVar(
+        name: String? = null, obj: Number? = 0.0, lb: Number? = 0.0,
+        ub: Number? = INF, column: Column? = Column.EMPTY,
+    ): Var =
         addVar(name = name, varType = VarType.Continuous, obj = obj, lb = lb, ub = ub,
-            column = column)
+               column = column)
 
     // endregion addVar aliases
 
@@ -252,7 +262,18 @@ class Model : ModelProperties {
         }
     }
 
-    fun optimize(): OptimizationStatus = solver.optimize()
+    @JvmOverloads
+    fun optimize(
+        relax: Boolean = false,
+        maxSeconds: Double = INF,
+        maxNodes: Int = INT_MAX,
+        maxSolutions: Int = INT_MAX,
+    ): OptimizationStatus {
+        solver.setProcessingLimits(maxSeconds, maxNodes, maxSolutions)
+        return solver.optimize(relax)
+    }
+
+    // endregion aliases for optimize
 
     operator fun plusAssign(arg: Any?) {
         when (arg) {
@@ -327,10 +348,10 @@ class Model : ModelProperties {
             for (c in constrs) {
                 if (c.expr.violation >= infeasTol + infeasTol * 0.1) { // TODO: check this (here and in Python-MIP)
                     throw Error("Constraint ${c.name} is violated:\n" +
-                        "    ${c.expr}\n" +
-                        "    Computed violation is ${c.expr.violation}\n" +
-                        "    Tolerance for infeasibility is $infeasTol\n" +
-                        "    Solution status is $status")
+                                "    ${c.expr}\n" +
+                                "    Computed violation is ${c.expr.violation}\n" +
+                                "    Tolerance for infeasibility is $infeasTol\n" +
+                                "    Solution status is $status")
                 }
             }
 
@@ -338,7 +359,7 @@ class Model : ModelProperties {
                 val x = v.x
                 if (x <= v.lb - 1e-10 || x >= v.ub + 1e-10) {
                     throw Error("Variable ${v.name}=${x} is out of its bounds.\n" +
-                        "    {$v.lb} <= ${x} <= ${v.ub}")
+                                "    {$v.lb} <= ${x} <= ${v.ub}")
                 }
 
                 if (v.type == VarType.Integer || v.type == VarType.Binary) {

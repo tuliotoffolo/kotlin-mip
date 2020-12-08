@@ -7,6 +7,10 @@ package mip
  */
 abstract class Solver(val model: Model, var name: String, sense: String = MINIMIZE) : Properties() {
 
+    /** Solver-specific infinity representation */
+    internal abstract val INT_MAX: Int
+    internal abstract val INF: Double
+
     internal abstract val hasSolution: Boolean
 
     internal abstract fun addConstr(linExpr: LinExpr, name: String): Unit
@@ -14,7 +18,7 @@ abstract class Solver(val model: Model, var name: String, sense: String = MINIMI
     internal abstract fun addVar(name: String, obj: Double, lb: Double, ub: Double, varType: VarType,
                                  column: Column): Unit
 
-    internal abstract fun optimize(): OptimizationStatus
+    internal abstract fun optimize(relax: Boolean): OptimizationStatus
 
     internal open fun relax(): Unit = throw NotImplementedError()
 
@@ -23,6 +27,8 @@ abstract class Solver(val model: Model, var name: String, sense: String = MINIMI
     internal abstract fun removeConstrs(constrs: Iterable<Constr>)
 
     internal abstract fun removeVars(vars: Iterable<Var>)
+
+    internal abstract fun setProcessingLimits(maxSeconds: Double, maxNodes: Int, maxSolutions: Int)
 
     internal open fun write(path: String): Unit = throw NotImplementedError()
 

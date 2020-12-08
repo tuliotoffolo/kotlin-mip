@@ -14,6 +14,7 @@ fun main() {
 
     // creating model
     val m = Model("Knapsack", solverName = GUROBI)
+    m.verbose = false
 
     // creating vars and setting objective function
     val x = I.map { i -> m.addBinVar("item_$i") }
@@ -22,7 +23,6 @@ fun main() {
     // adding constraint and solving model
     m += I.sum { i -> w[i] * x[i] } leq c
     m.optimize()
-    m.write("queens.lp")
 
     // printing result
     val selected = x.filter { it.x >= 0.99 }

@@ -14,9 +14,6 @@ package mip
 /** Epsilon number (practical zero) */
 const val EPS = 10e-10
 
-/** Infinity representation */
-val INF = Double.MAX_VALUE
-
 // constraint senses
 const val EQ = "=="
 const val LEQ = "<="

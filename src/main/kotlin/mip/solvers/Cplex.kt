@@ -8,6 +8,9 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
 
     override val solverName = "Cplex"
 
+    override val INF = Double.MAX_VALUE
+    override val INT_MAX = Int.MAX_VALUE
+
     private var env: Pointer? = null
     private var lp: Pointer? = null
     private val lib = CplexJnrJavaLib.loadLibrary()
@@ -273,7 +276,9 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         lib.CPXnewcols(env, lp, 1, objArray, lbArray, ubArray, vtype, arrayOf(name))
     }
 
-    override fun optimize(): OptimizationStatus {
+    override fun optimize(relax: Boolean): OptimizationStatus {
+        if (relax)TODO("Not yet implemented")
+
         // resetting buffers
         removeSolution()
 
@@ -290,6 +295,10 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     }
 
     override fun removeVars(vars: Iterable<Var>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun setProcessingLimits(maxSeconds: Double, maxNodes: Int, maxSolutions: Int) {
         TODO("Not yet implemented")
     }
 

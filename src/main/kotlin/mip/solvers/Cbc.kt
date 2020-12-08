@@ -7,6 +7,9 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
 
     override val solverName = "CBC"
 
+    override val INF = Double.MAX_VALUE
+    override val INT_MAX = Int.MAX_VALUE
+
     private var cbc: Pointer
     private val lib = CbcJnrLib.loadLibrary()
     private val runtime: Runtime = Runtime.getRuntime(lib)
@@ -146,7 +149,9 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         }
     }
 
-    override fun optimize(): OptimizationStatus {
+    override fun optimize(relax: Boolean): OptimizationStatus {
+        if (relax) TODO("Not yet implemented")
+
         // resetting buffers
         removeSolution()
 
@@ -253,6 +258,10 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
                 intBuffer[i] = variable.idx
             lib.Cbc_deleteCols(cbc, size, intBuffer)
         }
+    }
+
+    override fun setProcessingLimits(maxSeconds: Double, maxNodes: Int, maxSolutions: Int) {
+        TODO("Not yet implemented")
     }
 
     override fun <T> set(property: String, value: T) {
