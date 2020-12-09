@@ -123,8 +123,10 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         lib.Cbc_addRow(cbc, name, nz, intBuffer, dblBuffer, sense, rhs)
     }
 
-    override fun addVar(name: String, obj: Double, lb: Double, ub: Double, varType: VarType,
-                        column: Column) {
+    override fun addVar(
+        name: String, obj: Double, lb: Double, ub: Double, varType: VarType,
+        column: Column,
+    ) {
         val nz = column.size
 
         val isInteger = when (varType) {
@@ -149,20 +151,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         }
     }
 
-    override fun optimize(relax: Boolean): OptimizationStatus {
-        if (relax) TODO("Not yet implemented")
-
-        // resetting buffers
-        removeSolution()
-
-        // optimizing and flushing stdout
-        lib.Cbc_solve(cbc)
-        lib.fflush(null)
-
-        return status
-    }
-
-    override fun propertyGet(property: String): Any = when (property) {
+    override fun get(property: String): Any = when (property) {
         // vals
         "gap" -> if (hasSolution) (objectiveValue - objectiveBound) / objectiveBound else 1.0
         "hasSolution" -> hasSolution
@@ -208,36 +197,17 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         else -> throw NotImplementedError("Parameter $property is currently unavailable in CBC interface")
     }
 
-    override fun <T> propertySet(property: String, value: T) = when (property) {
-        "clique" -> lib.Cbc_setParameter(cbc, "clique", if (value == 0) "off" else "forceon")
-        "cutoff" -> lib.Cbc_setCutoff(cbc, value as Double)
-        // "cutPasses" -> ???
-        // "cuts" -> ???
-        // "cutsGenerator" -> ???
-        // "emphasis" -> ???
-        "infeasTol" -> lib.Cbc_setPrimalTolerance(cbc, value as Double)
-        "integerTol" -> lib.Cbc_setDblParam(cbc, CbcJnrLib.DBL_PARAM_INT_TOL, value as Double)
-        // "lazyConstrsGenerator" -> ???
-        // "lpMethod" -> ???
-        "maxMipGap" -> lib.Cbc_setAllowableFractionGap(cbc, value as Double)
-        "maxMipGapAbs" -> lib.Cbc_setAllowableGap(cbc, value as Double)
-        "maxNodes" -> lib.Cbc_setMaximumNodes(cbc, value as Int)
-        "maxSeconds" -> lib.Cbc_setMaximumSeconds(cbc, value as Double)
-        // "objective" -> using property
-        // "objectiveConst" -> using property
-        // "optTol" -> ???
-        // "preprocess" -> ???
-        // "roundIntVars" -> ???
-        "seed" -> lib.Cbc_setIntParam(cbc, CbcJnrLib.INT_PARAM_RANDOM_SEED, value as Int)
-        "sense" -> lib.Cbc_setObjSense(cbc, if (value == MAXIMIZE) -1.0 else 1.0)
-        // "solPoolSize" -> ???
-        // "start" -> ???
-        // "searchProgressLog" -> ???
-        // "storeSearchProgressLog" -> ???
-        "threads" -> lib.Cbc_setIntParam(cbc, CbcJnrLib.INT_PARAM_THREADS, value as Int)
-        "verbose" -> lib.Cbc_setLogLevel(cbc, if (value as Boolean) 1 else 0)
+    override fun optimize(relax: Boolean): OptimizationStatus {
+        if (relax) TODO("Not yet implemented")
 
-        else -> throw NotImplementedError("Parameter $property is currently unavailable in CBC interface")
+        // resetting buffers
+        removeSolution()
+
+        // optimizing and flushing stdout
+        lib.Cbc_solve(cbc)
+        lib.fflush(null)
+
+        return status
     }
 
     override fun removeConstrs(constrs: Iterable<Constr>) {
@@ -266,13 +236,43 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         if (maxSolutions != null) this.maxSolutions = maxSolutions
     }
 
-    override fun <T> set(property: String, value: T) {
-        when (value) {
-            is Int -> lib.Cbc_setIntParam(cbc, convertParam(property), value)
-            is Double -> lib.Cbc_setDblParam(cbc, convertParam(property), value)
-            is String -> lib.Cbc_setParameter(cbc, property, value)
+    override fun <T> set(property: String, value: T) = when(property) {
+        "clique" -> lib.Cbc_setParameter(cbc, "clique", if (value == 0) "off" else "forceon")
+        "cutoff" -> lib.Cbc_setCutoff(cbc, value as Double)
+        // "cutPasses" -> ???
+        // "cuts" -> ???
+        // "cutsGenerator" -> ???
+        // "emphasis" -> ???
+        "infeasTol" -> lib.Cbc_setPrimalTolerance(cbc, value as Double)
+        "integerTol" -> lib.Cbc_setDblParam(cbc, CbcJnrLib.DBL_PARAM_INT_TOL, value as Double)
+        // "lazyConstrsGenerator" -> ???
+        // "lpMethod" -> ???
+        "maxMipGap" -> lib.Cbc_setAllowableFractionGap(cbc, value as Double)
+        "maxMipGapAbs" -> lib.Cbc_setAllowableGap(cbc, value as Double)
+        "maxNodes" -> lib.Cbc_setMaximumNodes(cbc, value as Int)
+        "maxSeconds" -> lib.Cbc_setMaximumSeconds(cbc, value as Double)
+        // "objective" -> using property
+        // "objectiveConst" -> using property
+        // "optTol" -> ???
+        // "preprocess" -> ???
+        // "roundIntVars" -> ???
+        "seed" -> lib.Cbc_setIntParam(cbc, CbcJnrLib.INT_PARAM_RANDOM_SEED, value as Int)
+        "sense" -> lib.Cbc_setObjSense(cbc, if (value == MAXIMIZE)-1.0 else 1.0)
+        // "solPoolSize" -> ???
+        // "start" -> ???
+        // "searchProgressLog" -> ???
+        // "storeSearchProgressLog" -> ???
+        "threads" -> lib.Cbc_setIntParam(cbc, CbcJnrLib.INT_PARAM_THREADS, value as Int)
+        "verbose" -> lib.Cbc_setLogLevel(cbc, if (value as Boolean) 1 else 0)
 
-            else -> lib.Cbc_setParameter(cbc, property, value.toString())
+        else -> {
+            when (value) {
+                is Int -> lib.Cbc_setIntParam(cbc, convertParam(property), value)
+                is Double -> lib.Cbc_setDblParam(cbc, convertParam(property), value)
+                is String -> lib.Cbc_setParameter(cbc, property, value)
+
+                else -> lib.Cbc_setParameter(cbc, property, value.toString())
+            }
         }
     }
 
@@ -308,6 +308,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         }
         return expr
     }
+
     override fun setConstrExpr(idx: Int, value: LinExpr) {
         throw NotImplementedError()
     }

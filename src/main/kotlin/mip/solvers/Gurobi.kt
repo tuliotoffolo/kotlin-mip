@@ -342,6 +342,13 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         }
     }
 
+    override fun <T> set(property: String, value: T) {
+        when (value) {
+            is Int -> setIntParam(property, value)
+            is Double -> setDblParam(property, value)
+        }
+    }
+
     override fun setProcessingLimits(maxSeconds: Double?, maxNodes: Int?, maxSolutions: Int?) {
         if (maxSeconds != null) this.maxSeconds = maxSeconds
         if (maxNodes != null) this.maxNodes = maxNodes
