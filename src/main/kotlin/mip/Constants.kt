@@ -161,13 +161,13 @@ enum class SearchEmphasis(val value: Int) {
  */
 enum class VarType(val value: Char) {
     /** Binary variable, i.e. integer variable such that 0 <= value <= 1. */
-    Binary('B'),
+    Binary(BINARY),
 
     /** Continuous variable. */
-    Continuous('C'),
+    Continuous(CONTINUOUS),
 
     /** Integer variable. */
-    Integer('I'),
+    Integer(INTEGER),
 }
 
 

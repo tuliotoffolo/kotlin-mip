@@ -14,6 +14,8 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
 
     private var env: Pointer
     private var gurobi: Pointer
+    private var updated = true
+
     private val lib = GurobiJnrLib.loadLibrary()
     private val runtime: Runtime = Runtime.getRuntime(lib)
 
@@ -276,16 +278,48 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
     }
 
     override fun optimize(relax: Boolean): OptimizationStatus {
-        if (relax) TODO("Not yet implemented")
-
         // resetting buffers
         removeSolution()
+
+        // relaxing model (if necessary)
+        var intVars = emptyList<Pair<Int, VarType>>()
+        var indices = intArrayOf()
+        if (relax) {
+            update()
+            intVars = model.vars.filter { it.isInteger }.map { it.idx to it.type }
+            indices = intVars.map { it.first }.toIntArray()
+            val n = indices.size
+            val chars = ByteArray(n) { 'C'.toByte() }
+
+            lib.GRBsetcharattrlist(gurobi, "VType", n, indices, chars)
+        }
 
         // optimizing... and flushing stdout
         lib.GRBoptimize(gurobi)
         lib.fflush(null)
 
+        // undoing relax(), if necessary
+        if (relax && intVars.isNotEmpty()) {
+            val n = indices.size
+            val chars = intVars.map { it.second.value.toByte() }.toByteArray()
+
+            lib.GRBsetcharattrlist(gurobi, "VType", n, indices, chars)
+            update(true)
+        }
+
         return status
+    }
+
+    override fun relax() {
+        // making sure all variables were added to the model
+        update()
+
+        val indices = model.vars.filter { it.isInteger }.map { it.idx }.toIntArray()
+        val n = indices.size
+        val chars = ByteArray(n) { 'C'.toByte() }
+
+        lib.GRBsetcharattrlist(gurobi, "VType", n, indices, chars)
+        update(true)
     }
 
     override fun removeConstrs(constrs: Iterable<Constr>) {
@@ -308,14 +342,22 @@ class Gurobi(model: Model, name: String, sense: String) : Solver(model, name, se
         }
     }
 
-    override fun setProcessingLimits(maxSeconds: Double, maxNodes: Int, maxSolutions: Int) {
-        this.maxSeconds = if (maxSeconds == INF) GurobiJnrLib.GRB_INFINITY else maxSeconds
-        this.maxNodes = if (maxNodes == INT_MAX) GurobiJnrLib.GRB_MAXINT else maxNodes
-        this.maxSolutions = if (maxSolutions == INT_MAX) GurobiJnrLib.GRB_MAXINT else maxSolutions
+    override fun setProcessingLimits(maxSeconds: Double?, maxNodes: Int?, maxSolutions: Int?) {
+        if (maxSeconds != null) this.maxSeconds = maxSeconds
+        if (maxNodes != null) this.maxNodes = maxNodes
+        if (maxSolutions != null) this.maxSolutions = maxSolutions
     }
 
     override fun write(path: String) {
         lib.GRBwrite(gurobi, path)
+    }
+
+
+    private fun update(forceUpdate: Boolean = false) {
+        if (!updated || forceUpdate) {
+            lib.GRBupdatemodel(gurobi)
+            updated = true
+        }
     }
 
 

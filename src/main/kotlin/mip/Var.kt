@@ -13,6 +13,9 @@ class Var internal constructor(val model: Model, idx: Int) : Comparable<Var> {
     var idx: Int = idx
         internal set
 
+    val isInteger: Boolean
+        get() = type in arrayOf(VarType.Binary, VarType.Integer)
+
     var lb: Double
         get() = model.solver.getVarLB(idx)
         set(value) = model.solver.setVarLB(idx, value)

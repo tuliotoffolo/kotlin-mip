@@ -13,10 +13,9 @@ abstract class Solver(val model: Model, var name: String, sense: String = MINIMI
 
     internal abstract val hasSolution: Boolean
 
-    internal abstract fun addConstr(linExpr: LinExpr, name: String): Unit
+    internal abstract fun addConstr(linExpr: LinExpr, name: String)
 
-    internal abstract fun addVar(name: String, obj: Double, lb: Double, ub: Double, varType: VarType,
-                                 column: Column): Unit
+    internal abstract fun addVar(name: String, obj: Double, lb: Double, ub: Double, varType: VarType, column: Column)
 
     internal abstract fun optimize(relax: Boolean): OptimizationStatus
 
@@ -28,7 +27,7 @@ abstract class Solver(val model: Model, var name: String, sense: String = MINIMI
 
     internal abstract fun removeVars(vars: Iterable<Var>)
 
-    internal abstract fun setProcessingLimits(maxSeconds: Double, maxNodes: Int, maxSolutions: Int)
+    internal abstract fun setProcessingLimits(maxSeconds: Double? = null, maxNodes: Int? = null, maxSolutions: Int? = null)
 
     internal open fun write(path: String): Unit = throw NotImplementedError()
 

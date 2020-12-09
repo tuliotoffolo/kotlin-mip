@@ -182,8 +182,8 @@ internal interface GurobiJnrLib {
      * int GRBsetcharattrlist(GRBmodel *model, const char *attrname, int len, int *ind,
      *                        char *newvalues);
      */
-    fun GRBsetcharattrlist(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, len: Int, ind: Pointer?,
-                           newvalues: String): Int
+    fun GRBsetcharattrlist(@Pinned @In model: Pointer, @Pinned @In @Transient attrname: String, len: Int, ind: IntArray?,
+                           newvalues: ByteArray?): Int
 
     /** int GRBsetcallbackfunc(GRBmodel *model, gurobi_callback grbcb, void *usrdata); */
     fun GRBsetcallbackfunc(@Pinned @In model: Pointer, grbcb: GRBcallback, usrdata: Pointer): Int

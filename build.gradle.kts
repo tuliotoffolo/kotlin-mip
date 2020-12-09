@@ -1,10 +1,12 @@
 // additional properties
-val kotlinVersion = "1.4-M1"
+val dokkaVersion = "1.4.10.2"
+val kotlinVersion = "1.4.21"
 val spekVersion = "2.0.12"
 
 plugins {
     `java-library`
-    id("org.jetbrains.kotlin.jvm") version "1.4.10"
+
+    id("org.jetbrains.kotlin.jvm") version "1.4.20"
     id("org.jetbrains.dokka") version "1.4.10.2"
 }
 
@@ -14,8 +16,9 @@ version = "0.1.0"
 repositories {
     maven("https://dl.bintray.com/kyonifer/maven")
     maven("https://dl.bintray.com/spekframework/spek-dev")
-    jcenter()
+
     mavenCentral()
+    jcenter()
 }
 
 configurations {
@@ -44,7 +47,7 @@ dependencies {
     testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVersion")
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
 
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.10.2")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
 }
 
 java {
@@ -54,6 +57,8 @@ java {
 
 tasks {
     compileKotlin {
+        sourceCompatibility = JavaVersion.VERSION_1_8.toString()
+        targetCompatibility = JavaVersion.VERSION_1_8.toString()
         kotlinOptions {
             includeRuntime = true
             jvmTarget = "1.8"

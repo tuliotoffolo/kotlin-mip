@@ -21,5 +21,5 @@ class EmptySolver(model: Model, name: String, sense: String) : Solver(model, nam
 
     override fun removeVars(vars: Iterable<Var>) {}
 
-    override fun setProcessingLimits(maxSeconds: Double, maxNodes: Int, maxSolutions: Int) {}
+    override fun setProcessingLimits(maxSeconds: Double?, maxNodes: Int?, maxSolutions: Int?) {}
 }

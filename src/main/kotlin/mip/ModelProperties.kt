@@ -2,9 +2,9 @@ package mip
 
 /**
  * Simple class that redirects all parameter getters/setters to the solver. This class is
- * implemented as a replacement for reflection.
+ * implemented as a reflection replacement.
  */
-abstract class ModelProperties() : Properties() {
+abstract class ModelProperties : Properties() {
 
     internal abstract var solver: Solver
 
@@ -20,8 +20,10 @@ abstract class ModelProperties() : Properties() {
     override val objectiveBound: Double get() = solver.objectiveBound
     override val objectiveValue: Double get() = solver.objectiveValue
     override val status: OptimizationStatus get() = solver.status
+    override val solverName: String get() = solver.solverName
 
     // endregion vals
+
 
     // region vars
 
@@ -169,8 +171,11 @@ abstract class ModelProperties() : Properties() {
             solver.start = value
         }
 
-    override val searchProgressLog: String
+    override var searchProgressLog: String
         get() = solver.searchProgressLog
+        set(value) {
+            solver.searchProgressLog = value
+        }
 
     override var storeSearchProgressLog: Boolean
         get() = solver.storeSearchProgressLog
@@ -193,7 +198,50 @@ abstract class ModelProperties() : Properties() {
     // endregion vars
 
 
-    override fun get(property: String) = solver.get(property)
+    override fun get(property: String) = when (property) {
+        // vals
+        "gap" -> gap
+        "numCols" -> numCols
+        "numInt" -> numInt
+        "numRows" -> numRows
+        "numNZ" -> numNZ
+        "numSolutions" -> numSolutions
+        "objectiveBound" -> objectiveBound
+        "objectiveValue" -> objectiveValue
+        "status" -> status
+        "solverName" -> solverName
+
+        // vars
+        "clique" -> clique
+        "cutoff" -> cutoff
+        "cutPasses" -> cutPasses
+        "cuts" -> cuts
+        "cutsGenerator" -> cutsGenerator
+        "emphasis" -> emphasis
+        "infeasTol" -> infeasTol
+        "integerTol" -> integerTol
+        "lazyConstrsGenerator" -> lazyConstrsGenerator
+        "lpMethod" -> lpMethod
+        "maxMipGap" -> maxMipGap
+        "maxMipGapAbs" -> maxMipGapAbs
+        "maxNodes" -> maxNodes
+        "maxSeconds" -> maxSeconds
+        "maxSolutions" -> maxSolutions
+        "objective" -> objective
+        "objectiveConst" -> objectiveConst
+        "optTol" -> optTol
+        "preprocess" -> preprocess
+        "roundIntVars" -> roundIntVars
+        "seed" -> seed
+        "sense" -> sense
+        "solPoolSize" -> solPoolSize
+        "start" -> start
+        "storeSearchProgressLog" -> storeSearchProgressLog
+        "threads" -> threads
+        "verbose" -> verbose
+
+        else -> solver.get(property)
+    }
 
     override fun getDouble(property: String) = solver.getDouble(property)
 
@@ -201,10 +249,36 @@ abstract class ModelProperties() : Properties() {
 
     override fun getString(property: String) = solver.getString(property)
 
-    override fun <T> set(property: String, value: T) = solver.set(property, value)
+    override fun <T> set(property: String, value: T) = when (property) {
+        // vars
+        "clique" -> clique = value as Int
+        "cutoff" -> cutoff = value as Double
+        "cutPasses" -> cutPasses = value as Int
+        "cuts" -> cuts = value as Int
+        "cutsGenerator" -> cutsGenerator = value as Int
+        "emphasis" -> emphasis = value as SearchEmphasis
+        "infeasTol" -> infeasTol = value as Double
+        "integerTol" -> integerTol = value as Double
+        "lazyConstrsGenerator" -> lazyConstrsGenerator = value as Int
+        "lpMethod" -> lpMethod = value as LPMethod
+        "maxMipGap" -> maxMipGap = value as Double
+        "maxMipGapAbs" -> maxMipGapAbs = value as Double
+        "maxNodes" -> maxNodes = value as Int
+        "maxSeconds" -> maxSeconds = value as Double
+        "maxSolutions" -> maxSolutions = value as Int
+        "objective" -> objective = value as LinExpr
+        "objectiveConst" -> objectiveConst = value as Double
+        "optTol" -> optTol = value as Double
+        "preprocess" -> preprocess = value as Int
+        "roundIntVars" -> roundIntVars = value as Boolean
+        "seed" -> seed = value as Int
+        "sense" -> sense = value as String
+        "solPoolSize" -> solPoolSize = value as Int
+        "start" -> start = value as Map<Var, Double>
+        "storeSearchProgressLog" -> storeSearchProgressLog = value as Boolean
+        "threads" -> threads = value as Int
+        "verbose" -> verbose = value as Boolean
 
-
-    override fun propertyGet(property: String) = solver.propertyGet(property)
-
-    override fun <T> propertySet(property: String, value: T) = solver.propertySet(property, value)
+        else -> solver.set(property, value)
+    }
 }

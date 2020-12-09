@@ -286,7 +286,7 @@ abstract class Properties {
      * formulation with cutting planes, for example, to produce better dual bounds. To enable
      * storing the [searchProgressLog] set [storeSearchProgressLog] to `true`.
      */
-    open val searchProgressLog by Param<String>()
+    open var searchProgressLog by Param<String>()
 
     /**
      * Defines whether [searchProgressLog] will be stored or not when optimizing. Activate it if
@@ -325,42 +325,39 @@ abstract class Properties {
      * Getter used to directly query solver *Double* parameters and/or arguments.
      */
     open fun getDouble(property: String): Double {
-        throw NotImplementedError("Parameter or attribute '$property' unavailable in solver $solverName")
+        val res = get(property)
+        if (res !is Double)
+            throw TypeCastException("Parameter or attribute '$property' is not a Double\n" +
+                                    "(at least not in solver $solverName)")
+        return res
     }
 
     /**
      * Getter used to directly query solver *Int* parameters and/or arguments.
      */
     open fun getInt(property: String): Int {
-        throw NotImplementedError("Parameter or attribute '$property' unavailable in solver $solverName")
+        val res = get(property)
+        if (res !is Int)
+            throw TypeCastException("Parameter or attribute '$property' is not an Int\n" +
+                                    "(at least not in solver $solverName)")
+        return res
     }
 
     /**
      * Getter used to directly query solver *String* parameters and/or arguments.
      */
     open fun getString(property: String): String {
-        throw NotImplementedError("Parameter or attribute '$property' unavailable in solver $solverName")
+        val res = get(property)
+        if (res !is String)
+            throw TypeCastException("Parameter or attribute '$property' is not a String\n" +
+                                    "(at least not in solver $solverName)")
+        return res
     }
 
     /**
      * Setter used to directly set solver parameters and/or arguments.
      */
     open fun <T> set(property: String, value: T) {
-        throw NotImplementedError("Parameter or attribute '$property' unavailable in solver $solverName")
-    }
-
-
-    /**
-     * Getter used by delegated properties.
-     */
-    internal open fun propertyGet(property: String): Any {
-        throw NotImplementedError("Parameter or attribute '$property' unavailable in solver $solverName")
-    }
-
-    /**
-     * Getter used by delegated properties.
-     */
-    internal open fun <T> propertySet(property: String, value: T) {
         throw NotImplementedError("Parameter or attribute '$property' unavailable in solver $solverName")
     }
 
@@ -375,14 +372,14 @@ abstract class Properties {
          * Delegate getter.
          */
         inline operator fun getValue(param: Properties, property: KProperty<*>): T {
-            return param.propertyGet(property.name) as T
+            return param.get(property.name) as T
         }
 
         /**
          * Delegate setter.
          */
         inline operator fun setValue(param: Properties, property: KProperty<*>, value: T) {
-            param.propertySet(property.name, value)
+            param.set(property.name, value)
         }
     }
 }

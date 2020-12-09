@@ -165,7 +165,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
     override fun propertyGet(property: String): Any = when (property) {
         // vals
         "gap" -> if (hasSolution) (objectiveValue - objectiveBound) / objectiveBound else 1.0
-        // "hasSolution" -> using property
+        "hasSolution" -> hasSolution
         "numCols" -> lib.Cbc_getNumCols(cbc)
         "numInt" -> lib.Cbc_getNumIntegers(cbc)
         "numRows" -> lib.Cbc_getNumRows(cbc)
@@ -191,7 +191,7 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         "maxMipGapAbs" -> lib.Cbc_getAllowableGap(cbc)
         "maxNodes" -> lib.Cbc_getMaximumNodes(cbc)
         "maxSeconds" -> lib.Cbc_getMaximumSeconds(cbc)
-        // "objective" -> using property
+        "objective" -> objective
         // "objectiveConst" -> using property
         // "optTol" -> ???
         // "preprocess" -> ???
@@ -260,8 +260,10 @@ class Cbc(model: Model, name: String, sense: String) : Solver(model, name, sense
         }
     }
 
-    override fun setProcessingLimits(maxSeconds: Double, maxNodes: Int, maxSolutions: Int) {
-        TODO("Not yet implemented")
+    override fun setProcessingLimits(maxSeconds: Double?, maxNodes: Int?, maxSolutions: Int?) {
+        if (maxSeconds != null) this.maxSeconds = maxSeconds
+        if (maxNodes != null) this.maxNodes = maxNodes
+        if (maxSolutions != null) this.maxSolutions = maxSolutions
     }
 
     override fun <T> set(property: String, value: T) {

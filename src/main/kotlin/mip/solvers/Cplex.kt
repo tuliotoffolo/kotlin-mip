@@ -48,7 +48,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
             3, 33, 37 -> OptimizationStatus.Unbounded
             4, 35 -> OptimizationStatus.Cutoff
 
-            in 5..11, in 37..42, in 104..114 ->
+            in 5 .. 11, in 37 .. 42, in 104 .. 114 ->
                 if (numSolutions >= 1) OptimizationStatus.Feasible
                 else OptimizationStatus.NoSolutionFound
 
@@ -224,11 +224,11 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         val rhs = doubleArrayOf(-linExpr.const)
 
         val sense = byteArrayOf(when (linExpr.sense) {
-            LEQ -> 'L'.toByte()
-            EQ -> 'E'.toByte()
-            GEQ -> 'G'.toByte()
-            else -> throw IllegalArgumentException("Invalid sense")
-        })
+                                    LEQ -> 'L'.toByte()
+                                    EQ -> 'E'.toByte()
+                                    GEQ -> 'G'.toByte()
+                                    else -> throw IllegalArgumentException("Invalid sense")
+                                })
 
         // matbeg array (one item with value 0)
         val rmatbeg = intArrayOf(0)
@@ -257,10 +257,10 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
             hasIntVars = true
 
         val vtype = byteArrayOf(when (varType) {
-            VarType.Binary -> 'B'.toByte()
-            VarType.Continuous -> 'C'.toByte()
-            VarType.Integer -> 'I'.toByte()
-        })
+                                    VarType.Binary -> 'B'.toByte()
+                                    VarType.Continuous -> 'C'.toByte()
+                                    VarType.Integer -> 'I'.toByte()
+                                })
 
         // if (nz > 0) {
         //     checkBuffer(nz)
@@ -277,7 +277,7 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
     }
 
     override fun optimize(relax: Boolean): OptimizationStatus {
-        if (relax)TODO("Not yet implemented")
+        if (relax) TODO("Not yet implemented")
 
         // resetting buffers
         removeSolution()
@@ -298,8 +298,10 @@ class Cplex(model: Model, name: String, sense: String) : Solver(model, name, sen
         TODO("Not yet implemented")
     }
 
-    override fun setProcessingLimits(maxSeconds: Double, maxNodes: Int, maxSolutions: Int) {
-        TODO("Not yet implemented")
+    override fun setProcessingLimits(maxSeconds: Double?, maxNodes: Int?, maxSolutions: Int?) {
+        if (maxSeconds != null) this.maxSeconds = maxSeconds
+        if (maxNodes != null) this.maxNodes = maxNodes
+        if (maxSolutions != null) this.maxSolutions = maxSolutions
     }
 
     override fun write(path: String) {

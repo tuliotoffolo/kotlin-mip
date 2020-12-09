@@ -28,7 +28,6 @@ class Model : ModelProperties {
 
     var name: String
     override var sense: String
-    override var solverName: String
 
     val constrs = ArrayList<Constr>()
     val vars = ArrayList<Var>()
@@ -52,9 +51,6 @@ class Model : ModelProperties {
             GUROBI -> mip.solvers.Gurobi(this, name, sense)
             else -> findSolver(sense)
         }
-
-        // updating solver name
-        this.solverName = solver.solverName
     }
 
 
@@ -265,15 +261,13 @@ class Model : ModelProperties {
     @JvmOverloads
     fun optimize(
         relax: Boolean = false,
-        maxSeconds: Double = INF,
-        maxNodes: Int = INT_MAX,
-        maxSolutions: Int = INT_MAX,
+        maxSeconds: Double? = null,
+        maxNodes: Int? = null,
+        maxSolutions: Int? = null,
     ): OptimizationStatus {
         solver.setProcessingLimits(maxSeconds, maxNodes, maxSolutions)
         return solver.optimize(relax)
     }
-
-    // endregion aliases for optimize
 
     operator fun plusAssign(arg: Any?) {
         when (arg) {
