@@ -1,12 +1,14 @@
 package mip.examples;
 
 import mip.*;
+
 import java.util.*;
 
 public class Knapsack {
-    public static void main(String args[]) {
-        int p[] = {10, 13, 18, 31, 7, 15 };
-        int w[] = {11, 15, 20, 35, 10, 33};
+
+    public static void main(String[] args) {
+        int[] p = { 10, 13, 18, 31, 7, 15 };
+        int[] w = { 11, 15, 20, 35, 10, 33 };
         int c = 47;
         int n = w.length;
 
@@ -14,7 +16,7 @@ public class Knapsack {
         Model m = new Model("Knapsack");
 
         // creating vars and setting objective function
-        List<Var> x = new ArrayList();
+        List<Var> x = new ArrayList<>();
         for (int i = 0; i < n; i++)
             x.add(m.addBinVar("item_" + i));
 
